@@ -14,13 +14,13 @@ kernel/kernel.bin: kernel/kernel.o gash/shell.o kernel/string.o
 	ld -m elf_i386 -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o
 
 kernel/kernel.o: kernel/core.c
-	gcc -m32 -ffreestanding -c kernel/core.c -o kernel/kernel.o
+	gcc -m32 -ffreestanding -fno-stack-protector -c kernel/core.c -o kernel/kernel.o
 
 gash/shell.o: gash/shell.c
-	gcc -m32 -ffreestanding -c gash/shell.c -o gash/shell.o
+	gcc -m32 -ffreestanding -fno-stack-protector -c gash/shell.c -o gash/shell.o
 
 kernel/string.o: kernel/string.c
-	gcc -m32 -ffreestanding -c kernel/string.c -o kernel/string.o
+	gcc -m32 -ffreestanding -fno-stack-protector -c kernel/string.c -o kernel/string.o
 
 clean:
 	rm -rf *.bin *.o *.iso isodir
