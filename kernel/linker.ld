@@ -1,21 +1,20 @@
-ENTRY(start)
-SECTIONS
-{
-    . = 0x100000;
-    .text :
-    {
+ENTRY(kernel_main)
+SECTIONS {
+    . = 0x00100000;  /* Set kernel base address */
+
+    .text : {
         *(.text)
     }
-    .rodata :
-    {
+
+    .rodata : {
         *(.rodata)
     }
-    .data :
-    {
+
+    .data : {
         *(.data)
     }
-    .bss :
-    {
+
+    .bss : {
         *(.bss)
     }
 }
