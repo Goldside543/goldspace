@@ -8,11 +8,19 @@ void shell_help() {
     print("Available commands:\n");
     print("help - Display this help message\n");
     print("echo <message> - Echo the message back to the screen\n");
+    print("clear - Clear the console screen\n");
 }
 
 void shell_echo(const char *message) {
     print(message);
     print("\n");
+}
+
+void shell_clear() {
+    // this clears the screen by printing a ton of blank lines
+    for (int i = 0; i < 25; ++i) {
+        print("\n");
+    }
 }
 
 void shell_execute_command(const char *command) {
@@ -31,6 +39,8 @@ void shell_execute_command(const char *command) {
         } else {
             print("echo: missing argument\n");
         }
+    } else if (strcmp(token, "clear") == 0) {
+        shell_clear();
     } else {
         print("Command not found. Type 'help' for a list of commands.\n");
     }
