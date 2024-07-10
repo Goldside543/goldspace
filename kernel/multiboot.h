@@ -1,0 +1,13 @@
+#ifndef MULTIBOOT_HEADER
+#define MULTIBOOT_HEADER
+
+#define MULTIBOOT_MAGIC 0x1BADB002
+#define MULTIBOOT_FLAG  0x00010003
+
+.section .multiboot
+.align 4
+.long MULTIBOOT_MAGIC
+.long MULTIBOOT_FLAG
+.long -(MULTIBOOT_MAGIC + MULTIBOOT_FLAG)
+
+#endif
