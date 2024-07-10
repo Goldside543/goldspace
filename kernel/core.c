@@ -9,12 +9,12 @@ void kernel_main();  // Forward declaration
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
     .flags = 0x0,
-    .checksum = -(0x1BADB002 + 0x0),  // Verify the checksum
+    .checksum = -(0x1BADB002 + 0x0),
     .header_addr = (uint32_t)&mb_header,
-    .load_addr = 0x00100000,  // Kernel loaded at 0x00100000 in virtual memory
-    .load_end_addr = 0x00A00000,  // Arbitrary end address for kernel
-    .bss_end_addr = 0x00B00000,  // Arbitrary end address for BSS
-    .entry_addr = (uint32_t)&kernel_main  // Entry point of kernel
+    .load_addr = 0x00100000,
+    .load_end_addr = 0x00A00000,
+    .bss_end_addr = 0x00B00000,
+    .entry_addr = (uint32_t)&kernel_main
 };
 
 void print(const char *str) {
@@ -36,17 +36,18 @@ void kernel_main() {
 
     while (1) {
         char command[256];
+        size_t command_len = 0;
         print("> ");
 
         // Read user input
-        for (size_t i = 0; i < sizeof(command) - 1; ++i) {
-            command[i] = get_char();
-            command[i + 1] = '\0';  // Ensure null-terminated string
-            if (command[i] == '\n') {
-                command[i] = '\0';  // Replace newline with null terminator
+        while (1) {
+            char c = get_char();
+            if (c == '\n') {
+                command[command_len] = '\0';
                 break;
             }
-            print(command + i);
+            command[command_len++] = c;
+            print(&c);  // Echo back the character
         }
 
         // Execute command
