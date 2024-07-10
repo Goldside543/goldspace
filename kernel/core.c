@@ -87,13 +87,21 @@ char scancode_to_ascii_table[128] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
+char input_buffer[256];
+int input_len = 0;
+
 char get_char() {
     // Read character from keyboard port (for simplicity, polling)
     while (!(inb(0x64) & 0x01));  // Wait until input buffer is not empty
     char ascii = scancode_to_ascii_table[inb(0x60)];  // Convert scan code to ASCII
-    if (ascii == 0) {
-        // Handle error: unknown scancode
-        return '\0';
+    if (ascii == '\b') {  // If backspace was pressed
+        if (input_len > 0) {  // If there are characters in the buffer
+            input_len--;  // Remove the last character
+            input_buffer[input_len] = '\0';  // Null-terminate the string
+        }
+    } else if (ascii != 0 && input_len < sizeof(input_buffer) - 1) {  // If a regular character was pressed and there's room in the buffer
+        input_buffer[input_len] = ascii;  // Add the character to the buffer
+        input_len++;  // Increment the length
     }
     return ascii;
 }
