@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "../gash/shell.h"
 #include "io.h"
+#include "multiboot.h"
 
 typedef struct multiboot_header {
     uint32_t magic;     // Must be 0x1BADB002
