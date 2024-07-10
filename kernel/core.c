@@ -32,65 +32,53 @@ void move_cursor() {
     outb(0x3D5, cursorLocation);      // Send the low cursor byte
 }
 
-void display_char(char c) {
-    uint16_t charAttribute = (0x0F << 8);  // Define the character attribute (color)
-    uint16_t *location;  // Pointer to the memory location to write to
-
-    // Handle newline
-    if (c == '\n') {
-        cursor_x = 0;
-        cursor_y++;
-    } 
-    // Handle carriage return
-    else if (c == '\r') {
-        cursor_x = 0;
-    } 
-    // For all other characters
-    else {
-        location = VideoMemory + (cursor_y * 80 + cursor_x);
-        *location = c | charAttribute;
-        cursor_x++;
-    }
-
-    cursor_x++;
-    if (cursor_x >= 80) {
-        cursor_x = 0;
-        cursor_y++;
-    }
-    if (cursor_y >= 25) {
-        for (int i = 0; i < 24 * 80; i++) {
-            VideoMemory[i] = VideoMemory[i + 80];
+void print(const char *str) {
+    while (*str != '\0') {
+        switch (*str) {
+            case '\n':
+                cursor_x = 0;
+                cursor_y++;
+                break;
+            default:
+                // Write character to VGA buffer at current cursor position
+                VideoMemory[cursor_y * 80 + cursor_x] = (VideoMemory[cursor_y * 80 + cursor_x] & 0xFF00) | *str;
+                cursor_x++;
+                break;
         }
-        for (int i = 24 * 80; i < 25 * 80; i++) {
-            VideoMemory[i] = (0x0F << 8) | ' ';
+
+        // Check if we need to wrap to next line
+        if (cursor_x >= 80) {
+            cursor_x = 0;
+            cursor_y++;
         }
-        cursor_y = 24;
+
+        // Check if we need to scroll
+        if (cursor_y >= 25) {
+            // Scroll up by copying each line up one row
+            for (int i = 0; i < 24 * 80; i++) {
+                VideoMemory[i] = VideoMemory[i + 80];
+            }
+            // Clear the last line
+            for (int i = 24 * 80; i < 25 * 80; i++) {
+                VideoMemory[i] = (VideoMemory[i] & 0xFF00) | ' ';
+            }
+            cursor_y = 24;
+        }
+
+        str++;
     }
     move_cursor();
 }
 
-void print(const char *str) {
-    while (*str != '\0') {
-        display_char(*str++);
-    }
+void print_char(char c) {
+    char str[2] = {c, '\0'};
+    print(str);
 }
-
-// Define a lookup table for scan codes to ASCII
-char scancode_to_ascii[128] = {
-    0, 0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 0, 0,
-    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', 0, 0,
-    'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', 0,
-    '\\', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 0, '*',
-    0, ' ', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '7',
-    '8', '9', '-', '4', '5', '6', '+', '1', '2', '3', '0', '.', 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
 
 char get_char() {
     // Read character from keyboard port (for simplicity, polling)
     while (!(inb(0x64) & 0x01));  // Wait until input buffer is not empty
-    return scancode_to_ascii[inb(0x60)];  // Convert scan code to ASCII
+    return inb(0x60);             // Read from keyboard port
 }
 
 void kernel_main() {
@@ -116,7 +104,7 @@ void kernel_main() {
             } else {
                 command[command_len++] = c;
                 // Echo back the character to the screen
-                display_char(c);
+                print_char(c);
             }
         }
 
