@@ -2,46 +2,64 @@ BITS 16
 org 0x7c00
 
 start:
-    mov ax, 0x07C0
-    add ax, 288
-    mov ss, ax
-    mov sp, 4096
-
-    mov ax, 0
+    ; Set up 16-bit real mode segment registers
+    xor ax, ax
     mov ds, ax
     mov es, ax
+    mov ss, ax
+    mov sp, 0x7c00
 
-    cli
-    lgdt [gdt_descriptor]
+    ; Load the kernel into memory
+    mov bx, 0x1000     ; Address to load the kernel
+    mov ah, 0x02       ; BIOS read sector function
+    mov al, 10         ; Number of sectors to read
+    mov ch, 0          ; Cylinder
+    mov cl, 2          ; Sector (starting from 2)
+    mov dh, 0          ; Head
+    int 0x13
+
+    ; Switch to protected mode
+    cli                ; Disable interrupts
+    lgdt [gdt_descriptor] ; Load the GDT
+
+    ; Set up protected mode control registers
     mov eax, cr0
     or eax, 1
     mov cr0, eax
-    jmp 0x08:protected_mode
 
-[BITS 32]
-
-protected_mode:
-    mov ax, 0x10
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    mov ss, ax
-    mov esp, 0x90000
-
-    call kernel_main
-.loop:
-    jmp .loop
+    jmp CODE_SEG:init_protected_mode
 
 gdt_start:
-    dq 0x0000000000000000
-    dq 0x00CF9A000000FFFF
-    dq 0x00CF92000000FFFF
-gdt_end:
+    ; GDT (Global Descriptor Table)
+    dq 0x0000000000000000 ; Null descriptor
+    dq 0x00cf9a000000ffff ; Code segment descriptor
+    dq 0x00cf92000000ffff ; Data segment descriptor
 
 gdt_descriptor:
     dw gdt_end - gdt_start - 1
     dd gdt_start
 
+gdt_end:
+
+init_protected_mode:
+    ; Set up segment registers
+    mov ax, DATA_SEG
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+
+    ; Call the kernel main function
+    call KERNEL_OFFSET
+
+    ; Halt the system if kernel_main returns
+    hlt
+
+; Define segment selectors
+CODE_SEG equ 0x08
+DATA_SEG equ 0x10
+KERNEL_OFFSET equ 0x1000
+
 times 510-($-$$) db 0
-    dw 0xAA55
+dw 0xAA55
