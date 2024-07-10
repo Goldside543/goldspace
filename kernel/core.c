@@ -37,17 +37,18 @@ void kernel_main() {
     while (1) {
         char command[256];
         size_t command_len = 0;
-        print("> ");
 
         // Read user input
+        print("> ");
         while (1) {
             char c = get_char();
-            if (c == '\n') {
-                command[command_len] = '\0';
+            if (c == '\n' || c == '\r') {
+                command[command_len] = '\0';  // Null-terminate the command string
                 break;
+            } else {
+                command[command_len++] = c;
+                print(&c);  // Echo back the character to the screen
             }
-            command[command_len++] = c;
-            print(&c);  // Echo back the character
         }
 
         // Execute command
