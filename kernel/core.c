@@ -75,10 +75,10 @@ void print_char(char c) {
     print(str);
 }
 
-// Define a lookup table for scan codes to ASCII
-char scancode_to_ascii[128] = {
-    0, 0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 0, 0,
-    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', 0, 0,
+// Improved scancode to ASCII table
+char scancode_to_ascii_table[128] = {
+    0, 0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b', '\t',  // '\b' is backspace, '\t' is tab
+    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', 0,  // '\n' is enter
     'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', 0,
     '\\', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 0, '*',
     0, ' ', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '7',
@@ -90,9 +90,13 @@ char scancode_to_ascii[128] = {
 char get_char() {
     // Read character from keyboard port (for simplicity, polling)
     while (!(inb(0x64) & 0x01));  // Wait until input buffer is not empty
-    return scancode_to_ascii[inb(0x60)];  // Convert scan code to ASCII
+    char ascii = scancode_to_ascii_table[inb(0x60)];  // Convert scan code to ASCII
+    if (ascii == 0) {
+        // Handle error: unknown scancode
+        return '\0';
+    }
+    return ascii;
 }
-
 
 void kernel_main() {
     // Initialize cursor position
