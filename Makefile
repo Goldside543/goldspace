@@ -10,11 +10,17 @@ os.iso: boot/boot.bin kernel/kernel.bin
 boot/boot.bin: boot/boot.asm
     nasm -f bin boot/boot.asm -o boot/boot.bin
 
-kernel/kernel.bin: kernel/core.c gash/shell.c kernel/string.c
+kernel/kernel.bin: kernel/kernel.o gash/shell.o kernel/string.o
+    ld -m elf_i386 -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o --oformat binary
+
+kernel/kernel.o: kernel/kernel.c
     gcc -m32 -ffreestanding -c kernel/core.c -o kernel/kernel.o
+
+gash/shell.o: gash/shell.c
     gcc -m32 -ffreestanding -c gash/shell.c -o gash/shell.o
+
+kernel/string.o: kernel/string.c
     gcc -m32 -ffreestanding -c kernel/string.c -o kernel/string.o
-    ld -m elf_i386 -T kernel/linker.ld kernel/kernel.o gash/shell.o kernel/string.o -o kernel/kernel.bin
 
 clean:
     rm -rf *.bin *.o *.iso isodir
