@@ -63,6 +63,11 @@ void print(const char *str) {
     }
 }
 
+void print_char(char c) {
+    char str[2] = {c, '\0'};
+    print(str);
+}
+
 char get_char() {
     // Read character from keyboard port (for simplicity, polling)
     while (!(inb(0x64) & 0x01));  // Wait until input buffer is not empty
@@ -70,6 +75,10 @@ char get_char() {
 }
 
 void kernel_main() {
+    // Initialize cursor position
+    cursor_x = 0;
+    cursor_y = 0;
+
     print("Welcome to Goldspace and the Gash shell!\n");
     print("Type 'help' for available commands.\n");
 
@@ -86,7 +95,8 @@ void kernel_main() {
                 break;
             } else {
                 command[command_len++] = c;
-                print(&c);  // Echo back the character to the screen
+                // Echo back the character to the screen
+                print_char(c);
             }
         }
 
