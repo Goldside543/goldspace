@@ -1,6 +1,6 @@
 #include <stddef.h>
 #include <stdint.h>
-#include "../gash/shell.c"
+#include "../gash/shell.h"
 #include "io.h"
 
 void print(const char *str) {
