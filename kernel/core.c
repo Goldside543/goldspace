@@ -17,10 +17,49 @@ multiboot_header_t mb_header = {
     .entry_addr = (uint32_t)&kernel_main
 };
 
+// Define VGA text mode buffer address
+volatile uint16_t *VideoMemory = (volatile uint16_t *)0xB8000;
+
+// Cursor position variables
+static uint8_t cursor_x = 0;
+static uint8_t cursor_y = 0;
+
 void print(const char *str) {
-    unsigned short *VideoMemory = (unsigned short *)0xb8000;
-    for (size_t i = 0; str[i] != '\0'; i++) {
-        VideoMemory[i] = (VideoMemory[i] & 0xFF00) | str[i];
+    while (*str != '\0') {
+        switch (*str) {
+            case '\n':
+                cursor_x = 0;
+                cursor_y++;
+                break;
+            default:
+                // Write character to VGA buffer at current cursor position
+                VideoMemory[cursor_y * 80 + cursor_x] = (VideoMemory[cursor_y * 80 + cursor_x] & 0xFF00) | *str;
+                cursor_x++;
+                break;
+        }
+
+        // Check if we need to wrap to next line
+        if (cursor_x >= 80) {
+            cursor_x = 0;
+            cursor_y++;
+        }
+
+        // Check if we need to scroll
+        if (cursor_y >= 25) {
+            // Scroll up by copying each line up one row
+            for (int i = 0; i < 24; i++) {
+                for (int j = 0; j < 80; j++) {
+                    VideoMemory[i * 80 + j] = VideoMemory[(i + 1) * 80 + j];
+                }
+            }
+            // Clear the last line
+            for (int j = 0; j < 80; j++) {
+                VideoMemory[24 * 80 + j] = (VideoMemory[24 * 80 + j] & 0xFF00) | ' ';
+            }
+            cursor_y = 24;
+        }
+
+        str++;
     }
 }
 
