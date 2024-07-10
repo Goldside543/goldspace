@@ -11,7 +11,7 @@ boot/boot.bin: boot/boot.asm
 	nasm -f bin boot/boot.asm -o boot/boot.bin
 
 kernel/kernel.bin: kernel/kernel.o gash/shell.o kernel/string.o
-	ld -m elf_i386 -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o --oformat binary
+	ld -m elf_i386 -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o
 
 kernel/kernel.o: kernel/core.c
 	gcc -m32 -ffreestanding -c kernel/core.c -o kernel/kernel.o
