@@ -33,26 +33,48 @@ void move_cursor() {
 }
 
 void display_char(char c) {
-    if (c >= ' ' && c <= '~') {  // Printable ASCII characters
+    if (c >= 'a' && c <= 'z') {
         VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | c;
-    } else if (c == '\n') {
+    } else if (c >= 'A' && c <= 'Z') {
+        VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | c;
+    } else if (c >= '0' && c <= '9') {
+        VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | c;
+    } else {
+        switch (c) {
+            case ' ':
+                VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | ' ';
+                break;
+            case '\n':
+                cursor_x = 0;
+                cursor_y++;
+                break;
+            case '\r':
+                cursor_x = 0;
+                break;
+            default:
+                // Handle other characters (for example, punctuation)
+                VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | c;
+                break;
+        }
+    }
+
+    cursor_x++;
+    if (cursor_x >= 80) {
         cursor_x = 0;
         cursor_y++;
-    } else if (c == '\r') {
-        cursor_x = 0;
-    } else if (c == '\b') {  // Handle backspace
-        if (cursor_x > 0) {
-            cursor_x--;
-            VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | ' ';
-        }
-    } else if (c == '\t') {  // Handle tab
-        cursor_x = (cursor_x + 8) & ~(8 - 1);  // Tab stop every 8 columns
-    } else if (c >= '\x01' && c <= '\x1F') {  // Control characters
-        // Handle as needed (e.g., ignore, special representation)
-    } else {
-        // Handle non-printable or unrecognized characters
-        VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | '?';  // Placeholder for unrecognized characters
     }
+    if (cursor_y >= 25) {
+        for (int i = 0; i < 24 * 80; i++) {
+            VideoMemory[i] = VideoMemory[i + 80];
+        }
+        for (int i = 24 * 80; i < 25 * 80; i++) {
+            VideoMemory[i] = (0x0F << 8) | ' ';
+        }
+        cursor_y = 24;
+    }
+    move_cursor();
+}
+
 
     cursor_x++;
     if (cursor_x >= 80) {
