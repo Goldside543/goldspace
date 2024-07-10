@@ -3,6 +3,7 @@
 #include <string.h>
 #include "shell.h"
 #include "../kernel/io.h"
+#include "../kernel/string.h"
 
 void print(const char *str);
 
