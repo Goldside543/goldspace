@@ -87,6 +87,12 @@ char scancode_to_ascii_table[128] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
+// Update the scancodes for 'Enter', 'E', 'A', and 'U'
+scancode_to_ascii_table[28] = '\n';  // 'Enter'
+scancode_to_ascii_table[18] = 'e';  // 'E'
+scancode_to_ascii_table[30] = 'a';  // 'A'
+scancode_to_ascii_table[22] = 'u';  // 'U'
+
 char input_buffer[256];
 int input_len = 0;
 
