@@ -27,22 +27,22 @@ void shell_clear() {
 }
 
 void shell_execute_command(const char *command) {
-    char *token = strtok((char *)command, " ");
+    char *token = my_strtok((char *)command, " ");
 
     if (token == NULL) {
         return;
     }
 
-    if (strcmp(token, "help") == 0) {
+    if (my_strcmp(token, "help") == 0) {
         shell_help();
-    } else if (strcmp(token, "echo") == 0) {
-        token = strtok(NULL, "");
+    } else if (my_strcmp(token, "echo") == 0) {
+        token = my_strtok(NULL, "");
         if (token != NULL) {
             shell_echo(token);
         } else {
             print("echo: missing argument\n");
         }
-    } else if (strcmp(token, "clear") == 0) {
+    } else if (my_strcmp(token, "clear") == 0) {
         shell_clear();
     } else {
         print("Command not found. Type 'help' for a list of commands.\n");
