@@ -90,10 +90,31 @@ void print(const char *str) {
 }
 
 char get_char() {
+    // Define key code mappings for special keys
+    static const char keymap[] = {
+        0, 0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b', '\t', // 0-15
+        'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', 0, 'a', 's', // 16-31
+        'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', 0, '\\', 'z', 'x', 'c', 'v', // 32-47
+        'b', 'n', 'm', ',', '.', '/', 0, '*', 0, ' ', 0, // 48-59
+        0, 0, 0, 0, 0, 0, 0, '7', '8', '9', '-', '4', '5', '6', '+', '1', // 60-75
+        '2', '3', '0', '.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 76-91
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 92-107
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 108-123
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 // 124-139
+    };
+
     // Read character from keyboard port (for simplicity, polling)
     while (!(inb(0x64) & 0x01));  // Wait until input buffer is not empty
-    return inb(0x60);             // Read from keyboard port
+
+    char keycode = inb(0x60);    // Read from keyboard port
+
+    if (keycode >= 0 && keycode < sizeof(keymap)) {
+        return keymap[keycode];
+    }
+
+    return 0;  // Return null for unrecognized key codes
 }
+
 
 void kernel_main() {
     // Initialize cursor position
