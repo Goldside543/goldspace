@@ -1,6 +1,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
+#include "shell.h"
+#include "../kernel/io.h"
 
 void print(const char *str);
 
