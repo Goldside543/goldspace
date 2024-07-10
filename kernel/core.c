@@ -1,3 +1,5 @@
+void kernel_main();  // Forward declaration
+
 #include <stddef.h>
 #include <stdint.h>
 #include "../gash/shell.h"
