@@ -1,6 +1,6 @@
 #include <stddef.h>
 #include <stdint.h>
-#include "gash/shell.c"
+#include "../gash/shell.c"
 
 void print(const char *str) {
     unsigned short *VideoMemory = (unsigned short *)0xb8000;
