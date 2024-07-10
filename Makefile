@@ -1,7 +1,7 @@
 all: os.iso
 
 os.iso: boot/boot.bin kernel/kernel.bin
-        mkdir -p isodir/boot/grub
+	mkdir -p isodir/boot/grub
         cp boot/boot.bin isodir/boot/
         cp kernel/kernel.bin isodir/boot/
         cp grub.cfg isodir/boot/grub/
