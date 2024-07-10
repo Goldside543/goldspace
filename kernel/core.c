@@ -33,48 +33,26 @@ void move_cursor() {
 }
 
 void display_char(char c) {
-    if (c >= 'a' && c <= 'z') {
+    if (c >= ' ' && c <= '~') {  // Printable ASCII characters
         VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | c;
-    } else if (c >= 'A' && c <= 'Z') {
-        VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | c;
-    } else if (c >= '0' && c <= '9') {
-        VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | c;
-    } else {
-        switch (c) {
-            case ' ':
-                VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | ' ';
-                break;
-            case '\n':
-                cursor_x = 0;
-                cursor_y++;
-                break;
-            case '\r':
-                cursor_x = 0;
-                break;
-            default:
-                // Handle other characters (for example, punctuation)
-                VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | c;
-                break;
-        }
-    }
-
-    cursor_x++;
-    if (cursor_x >= 80) {
+    } else if (c == '\n') {
         cursor_x = 0;
         cursor_y++;
-    }
-    if (cursor_y >= 25) {
-        for (int i = 0; i < 24 * 80; i++) {
-            VideoMemory[i] = VideoMemory[i + 80];
+    } else if (c == '\r') {
+        cursor_x = 0;
+    } else if (c == '\b') {  // Handle backspace
+        if (cursor_x > 0) {
+            cursor_x--;
+            VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | ' ';
         }
-        for (int i = 24 * 80; i < 25 * 80; i++) {
-            VideoMemory[i] = (0x0F << 8) | ' ';
-        }
-        cursor_y = 24;
+    } else if (c == '\t') {  // Handle tab
+        cursor_x = (cursor_x + 8) & ~(8 - 1);  // Tab stop every 8 columns
+    } else if (c >= '\x01' && c <= '\x1F') {  // Control characters
+        // Handle as needed (e.g., ignore, special representation)
+    } else {
+        // Handle non-printable or unrecognized characters
+        VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | '?';  // Placeholder for unrecognized characters
     }
-    move_cursor();
-}
-
 
     cursor_x++;
     if (cursor_x >= 80) {
@@ -112,31 +90,10 @@ void print(const char *str) {
 }
 
 char get_char() {
-    // Define key code mappings for special keys
-    static const char keymap[] = {
-        0, 0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b', '\t', // 0-15
-        'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', 0, 'a', 's', // 16-31
-        'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', 0, '\\', 'z', 'x', 'c', 'v', // 32-47
-        'b', 'n', 'm', ',', '.', '/', 0, '*', 0, ' ', 0, // 48-59
-        0, 0, 0, 0, 0, 0, 0, '7', '8', '9', '-', '4', '5', '6', '+', '1', // 60-75
-        '2', '3', '0', '.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 76-91
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 92-107
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 108-123
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 // 124-139
-    };
-
     // Read character from keyboard port (for simplicity, polling)
     while (!(inb(0x64) & 0x01));  // Wait until input buffer is not empty
-
-    char keycode = inb(0x60);    // Read from keyboard port
-
-    if (keycode >= 0 && keycode < sizeof(keymap)) {
-        return keymap[keycode];
-    }
-
-    return 0;  // Return null for unrecognized key codes
+    return inb(0x60);             // Read from keyboard port
 }
-
 
 void kernel_main() {
     // Initialize cursor position
