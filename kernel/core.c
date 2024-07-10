@@ -40,8 +40,8 @@ void print(const char *str) {
                 cursor_y++;
                 break;
             default:
-                // Write character to VGA buffer at current cursor position
-                VideoMemory[cursor_y * 80 + cursor_x] = (VideoMemory[cursor_y * 80 + cursor_x] & 0xFF00) | *str;
+                // Write character to VGA buffer at current cursor position with white on black color
+                VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | *str;
                 cursor_x++;
                 break;
         }
@@ -60,7 +60,7 @@ void print(const char *str) {
             }
             // Clear the last line
             for (int i = 24 * 80; i < 25 * 80; i++) {
-                VideoMemory[i] = (VideoMemory[i] & 0xFF00) | ' ';
+                VideoMemory[i] = (0x0F << 8) | ' ';
             }
             cursor_y = 24;
         }
@@ -71,8 +71,38 @@ void print(const char *str) {
 }
 
 void print_char(char c) {
-    char str[2] = {c, '\0'};
-    print(str);
+    // Write character to VGA buffer at current cursor position with white on black color
+    switch (c) {
+        case '\n':
+            cursor_x = 0;
+            cursor_y++;
+            break;
+        default:
+            VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | c;
+            cursor_x++;
+            break;
+    }
+
+    // Check if we need to wrap to next line
+    if (cursor_x >= 80) {
+        cursor_x = 0;
+        cursor_y++;
+    }
+
+    // Check if we need to scroll
+    if (cursor_y >= 25) {
+        // Scroll up by copying each line up one row
+        for (int i = 0; i < 24 * 80; i++) {
+            VideoMemory[i] = VideoMemory[i + 80];
+        }
+        // Clear the last line
+        for (int i = 24 * 80; i < 25 * 80; i++) {
+            VideoMemory[i] = (0x0F << 8) | ' ';
+        }
+        cursor_y = 24;
+    }
+
+    move_cursor();
 }
 
 char get_char() {
