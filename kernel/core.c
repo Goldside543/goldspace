@@ -33,29 +33,23 @@ void move_cursor() {
 }
 
 void display_char(char c) {
-    if (c >= 'a' && c <= 'z') {
-        VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | c;
-    } else if (c >= 'A' && c <= 'Z') {
-        VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | c;
-    } else if (c >= '0' && c <= '9') {
-        VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | c;
-    } else {
-        switch (c) {
-            case ' ':
-                VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | ' ';
-                break;
-            case '\n':
-                cursor_x = 0;
-                cursor_y++;
-                break;
-            case '\r':
-                cursor_x = 0;
-                break;
-            default:
-                // Handle other characters (for example, punctuation)
-                VideoMemory[cursor_y * 80 + cursor_x] = (0x0F << 8) | c;
-                break;
-        }
+    uint16_t charAttribute = (0x0F << 8);  // Define the character attribute (color)
+    uint16_t *location;  // Pointer to the memory location to write to
+
+    // Handle newline
+    if (c == '\n') {
+        cursor_x = 0;
+        cursor_y++;
+    } 
+    // Handle carriage return
+    else if (c == '\r') {
+        cursor_x = 0;
+    } 
+    // For all other characters
+    else {
+        location = VideoMemory + (cursor_y * 80 + cursor_x);
+        *location = c | charAttribute;
+        cursor_x++;
     }
 
     cursor_x++;
