@@ -24,6 +24,14 @@ volatile uint16_t *VideoMemory = (volatile uint16_t *)0xB8000;
 static uint8_t cursor_x = 0;
 static uint8_t cursor_y = 0;
 
+void move_cursor() {
+    uint16_t cursorLocation = cursor_y * 80 + cursor_x;
+    outb(0x3D4, 14);                  // Tell VGA board we are setting the high cursor byte
+    outb(0x3D5, cursorLocation >> 8); // Send the high cursor byte
+    outb(0x3D4, 15);                  // Tell VGA board we are setting the low cursor byte
+    outb(0x3D5, cursorLocation);      // Send the low cursor byte
+}
+
 void print(const char *str) {
     while (*str != '\0') {
         switch (*str) {
@@ -47,20 +55,19 @@ void print(const char *str) {
         // Check if we need to scroll
         if (cursor_y >= 25) {
             // Scroll up by copying each line up one row
-            for (int i = 0; i < 24; i++) {
-                for (int j = 0; j < 80; j++) {
-                    VideoMemory[i * 80 + j] = VideoMemory[(i + 1) * 80 + j];
-                }
+            for (int i = 0; i < 24 * 80; i++) {
+                VideoMemory[i] = VideoMemory[i + 80];
             }
             // Clear the last line
-            for (int j = 0; j < 80; j++) {
-                VideoMemory[24 * 80 + j] = (VideoMemory[24 * 80 + j] & 0xFF00) | ' ';
+            for (int i = 24 * 80; i < 25 * 80; i++) {
+                VideoMemory[i] = (VideoMemory[i] & 0xFF00) | ' ';
             }
             cursor_y = 24;
         }
 
         str++;
     }
+    move_cursor();
 }
 
 void print_char(char c) {
@@ -78,6 +85,7 @@ void kernel_main() {
     // Initialize cursor position
     cursor_x = 0;
     cursor_y = 0;
+    move_cursor();
 
     print("Welcome to Goldspace and the Gash shell!\n");
     print("Type 'help' for available commands.\n");
