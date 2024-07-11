@@ -52,7 +52,7 @@ char *my_strtok(char *str, const char *delim) {
         *end = '\0';
         last = end + 1;
     } else {
-        last = NULL;
+        last = start + strlen(start);
     }
     return start;
 }
