@@ -2,6 +2,7 @@ void kernel_main();  // Forward declaration
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "../gash/shell.h"
 #include "io.h"
 #include "multiboot.h"
@@ -140,7 +141,7 @@ void kernel_main() {
             } else {
                 command[command_len++] = c;
                 // Echo back the character to the screen
-                print_char(c);
+                print_char(c, false);
             }
         }
 
