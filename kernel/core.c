@@ -39,6 +39,12 @@ void print(const char *str) {
                 cursor_x = 0;
                 cursor_y++;
                 break;
+            case '\b':  // Handle backspace
+                if (cursor_x > 0) {
+                    cursor_x--;
+                    VideoMemory[cursor_y * 80 + cursor_x] = (VideoMemory[cursor_y * 80 + cursor_x] & 0xFF00) | ' ';
+                }
+                break;
             default:
                 // Write character to VGA buffer at current cursor position
                 VideoMemory[cursor_y * 80 + cursor_x] = (VideoMemory[cursor_y * 80 + cursor_x] & 0xFF00) | *str;
