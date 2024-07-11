@@ -33,15 +33,21 @@ char *my_strpbrk(const char *s, const char *accept) {
 }
 
 char *my_strtok(char *str, const char *delim) {
-    static char *last = "";
-    if (str == NULL) str = last;
-    if (str == NULL) return NULL;
+    static char *last = NULL;
+    if (str != NULL) {
+        last = str;
+    }
+    if (last == NULL) {
+        return NULL;
+    }
 
-    char *end = str + my_strspn(str, delim);
-    if (*end == '\0') return NULL;
+    char *start = last + my_strspn(last, delim);
+    if (*start == '\0') {
+        last = NULL;
+        return NULL;
+    }
 
-    char *start = end;
-    end = my_strpbrk(start, delim);
+    char *end = my_strpbrk(start, delim);
     if (end) {
         *end = '\0';
         last = end + 1;
