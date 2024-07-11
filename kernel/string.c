@@ -1,6 +1,12 @@
 #include <stddef.h>
 #include <stdint.h>
 
+size_t my_strlen(const char *str) {
+    const char *s;
+    for (s = str; *s; ++s);
+    return s - str;
+}
+
 size_t my_strspn(const char *s, const char *accept) {
     const char *p;
     const char *a;
