@@ -110,6 +110,10 @@ char get_char() {
         return 0;
     }
 
+    if (scancode & 0x80) {  // If it's a key release event
+        return 0;  // Ignore it
+    }
+
     if (extended) {  // If we're in the middle of a multi-byte scan code
         extended = false;  // Reset the flag
         // Handle the second byte of the scan code (you'll need to add cases for each arrow key)
