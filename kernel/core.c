@@ -102,6 +102,7 @@ char get_char() {
     } else if (ascii != 0 && input_len < sizeof(input_buffer) - 1) {  // If a regular character was pressed and there's room in the buffer
         input_buffer[input_len] = ascii;  // Add the character to the buffer
         input_len++;  // Increment the length
+        input_buffer[input_len] = '\0';  // Null-terminate the string
     }
     return ascii;
 }
