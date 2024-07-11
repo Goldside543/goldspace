@@ -2,7 +2,6 @@ void kernel_main();  // Forward declaration
 
 #include <stddef.h>
 #include <stdint.h>
-#include <stdbool.h>
 #include "../gash/shell.h"
 #include "io.h"
 #include "multiboot.h"
@@ -71,15 +70,7 @@ void print(const char *str) {
     move_cursor();
 }
 
-void print_char(char c, bool backspace) {
-    if (backspace) {
-        cursor_x--;
-        if (cursor_x < 0) {
-            cursor_x = 79;
-            cursor_y--;
-        }
-        c = ' ';
-    }
+void print_char(char c) {
     char str[2] = {c, '\0'};
     print(str);
 }
@@ -107,13 +98,11 @@ char get_char() {
         if (input_len > 0) {  // If there are characters in the buffer
             input_len--;  // Remove the last character
             input_buffer[input_len] = '\0';  // Null-terminate the string
-            print_char(' ', true);  // Print a space at the current cursor position
         }
     } else if (ascii != 0 && input_len < sizeof(input_buffer) - 1) {  // If a regular character was pressed and there's room in the buffer
         input_buffer[input_len] = ascii;  // Add the character to the buffer
         input_len++;  // Increment the length
         input_buffer[input_len] = '\0';  // Null-terminate the string
-        print_char(ascii, false);  // Print the character at the current cursor position
     }
     return ascii;
 }
@@ -141,7 +130,7 @@ void kernel_main() {
             } else {
                 command[command_len++] = c;
                 // Echo back the character to the screen
-                print_char(c, false);
+                print_char(c);
             }
         }
 
