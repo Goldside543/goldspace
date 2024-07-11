@@ -33,7 +33,7 @@ char *my_strpbrk(const char *s, const char *accept) {
 }
 
 char *my_strtok(char *str, const char *delim) {
-    static char *last;
+    static char *last = "";
     if (str == NULL) str = last;
     if (str == NULL) return NULL;
 
