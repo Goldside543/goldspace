@@ -97,20 +97,43 @@ char input_buffer[256];
 int input_len = 0;
 
 char get_char() {
+    static bool extended = false;
+    uint8_t scancode;
+
     // Read character from keyboard port (for simplicity, polling)
     while (!(inb(0x64) & 0x01));  // Wait until input buffer is not empty
-    char ascii = scancode_to_ascii_table[inb(0x60)];  // Convert scan code to ASCII
-    if (ascii == '\b') {  // If backspace was pressed
-        if (input_len > 0) {  // If there are characters in the buffer
-            input_len--;  // Remove the last character
+    scancode = inb(0x60);  // Get the scan code
+
+    if (scancode == 0xE0) {  // If it's the first byte of a multi-byte scan code
+        extended = true;  // Set a flag to indicate we're in the middle of a multi-byte scan code
+        return 0;
+    }
+
+    if (extended) {  // If we're in the middle of a multi-byte scan code
+        extended = false;  // Reset the flag
+        // Handle the second byte of the scan code (you'll need to add cases for each arrow key)
+        switch (scancode) {
+            case 0x48: return 'U';  // Up arrow
+            case 0x50: return 'D';  // Down arrow
+            case 0x4B: return 'L';  // Left arrow
+            case 0x4D: return 'R';  // Right arrow
+            default: return 0;
+        }
+    } else {
+        // Convert scan code to ASCII
+        char ascii = scancode_to_ascii_table[scancode];
+        if (ascii == '\b') {  // If backspace was pressed
+            if (input_len > 0) {  // If there are characters in the buffer
+                input_len--;  // Remove the last character
+                input_buffer[input_len] = '\0';  // Null-terminate the string
+            }
+        } else if (ascii != 0 && input_len < sizeof(input_buffer) - 1) {  // If a regular character was pressed and there's room in the buffer
+            input_buffer[input_len] = ascii;  // Add the character to the buffer
+            input_len++;  // Increment the length
             input_buffer[input_len] = '\0';  // Null-terminate the string
         }
-    } else if (ascii != 0 && input_len < sizeof(input_buffer) - 1) {  // If a regular character was pressed and there's room in the buffer
-        input_buffer[input_len] = ascii;  // Add the character to the buffer
-        input_len++;  // Increment the length
-        input_buffer[input_len] = '\0';  // Null-terminate the string
+        return ascii;
     }
-    return ascii;
 }
 
 void kernel_main() {
