@@ -2,6 +2,7 @@ void kernel_main();  // Forward declaration
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "../gash/shell.h"
 #include "io.h"
 #include "multiboot.h"
