@@ -60,8 +60,11 @@ char *my_strtok(char * str, const char * delim)
     str=p+my_strspn(p,delim);
     p=str+my_strcspn(str,delim);
     if(p==str)
-        return p=0;
-   p = *p ? *p=0, p-1 : 0;
+        return 0;
+    if (*p) {
+        *p=0;
+        p++;
+    }
     return str;
 }
 
