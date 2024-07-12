@@ -44,7 +44,7 @@ char *my_strcpy(char *dest, const char* src)
 short my_strspn(const char *s1, const char *s2)
 {
     short ret=0;
-    while(*s1 && strchr(s2,*s1++))
+    while(*s1 && my_strchr(s2,*s1++))
         ret++;
     return ret;    
 }
@@ -56,11 +56,11 @@ char *my_strtok(char * str, const char * delim)
         p=str;
     else if(!p)
         return 0;
-    str=p+strspn(p,delim);
-    p=str+strcspn(str,delim);
+    str=p+my_strspn(p,delim);
+    p=str+my_strcspn(str,delim);
     if(p==str)
         return p=0;
-    p = *p ? *p=0,p+1 : 0;
+    p = *p ? *(p-1)=0,p : 0;
     return str;
 }
 
@@ -68,7 +68,7 @@ short my_strcspn(const char *s1, const char *s2)
 {
     short ret=0;
     while(*s1)
-        if(strchr(s2,*s1))
+        if(my_strchr(s2,*s1) != NULL)
             return ret;
         else
             s1++,ret++;
