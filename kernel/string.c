@@ -50,23 +50,32 @@ short my_strspn(const char *s1, const char *s2)
     return ret;    
 }
 
-char *my_strtok(char * str, const char * delim)
-{
-    static char* p=0;
-    if(str)
-        p=str;
-    else if(!p)
+char *my_strtok(char *str, const char *delim) {
+    static char *p = 0;
+    if (str) {
+        p = str;
+    } else if (!p) {
         return 0;
-    str=p+my_strspn(p,delim);
-    p=str+my_strcspn(str,delim);
-    if(*p == '\0') {
-        p = NULL;
-    } else {
-        *p = '\0';
-        p++;
     }
+
+    str = p + strspn(p, delim);
+    p = str + strcspn(str, delim);
+
+    if (p == str) {
+        p = 0;
+        return str;
+    }
+
+    if (*p) {
+        *p = 0;
+        p++;
+    } else {
+        p = 0;
+    }
+
     return str;
 }
+
 
 short my_strcspn(const char *s1, const char *s2)
 {
