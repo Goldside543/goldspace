@@ -2,6 +2,19 @@
 #include <stdint.h>
 short my_strcspn(const char *s1, const char *s2);
 
+char *my_strpbrk(const char *str1, const char *str2) {
+    const char *sc1;
+    const char *sc2;
+
+    for (sc1 = str1; *sc1 != '\0'; ++sc1) {
+        for (sc2 = str2; *sc2 != '\0'; ++sc2) {
+            if (*sc1 == *sc2)
+                return (char *)sc1;
+        }
+    }
+    return NULL;  /* terminating nulls match */
+}
+
 short my_strlen(const char *__s){
     short i = 0;
     while(*__s){
@@ -51,31 +64,26 @@ short my_strspn(const char *s1, const char *s2)
 }
 
 char *my_strtok(char *str, const char *delim) {
-    static char *p = 0;
-    if (str) {
-        p = str;
-    } else if (!p) {
-        return 0;
+    static char *src = NULL;
+    char *p, *ret = 0;
+
+    if(str != NULL)
+        src = str;
+
+    if(src == NULL)
+        return NULL;
+
+    if((p = my_strpbrk(src, delim)) != NULL) {
+        *p  = 0;
+        ret = src;
+        src = ++p;
+    } else if(*src) {
+        ret = src;
+        src = NULL;
     }
 
-    str = p + strspn(p, delim);
-    p = str + strcspn(str, delim);
-
-    if (p == str) {
-        p = 0;
-        return str;
-    }
-
-    if (*p) {
-        *p = 0;
-        p++;
-    } else {
-        p = 0;
-    }
-
-    return str;
+    return ret;
 }
-
 
 short my_strcspn(const char *s1, const char *s2)
 {
