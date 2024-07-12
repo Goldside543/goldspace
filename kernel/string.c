@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <stdint.h>
+short my_strcspn(const char *s1, const char *s2);
 
 short my_strlen(const char *__s){
     short i = 0;
