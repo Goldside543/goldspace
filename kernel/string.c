@@ -64,25 +64,20 @@ short my_strspn(const char *s1, const char *s2)
 }
 
 char *my_strtok(char *str, const char *delim) {
-    static char *src = NULL;
-    char *p, *ret = 0;
+    static char *lasts;
+    register int ch;
 
-    if(str != NULL)
-        src = str;
-
-    if(src == NULL)
-        return NULL;
-
-    if((p = my_strpbrk(src, delim)) != NULL) {
-        *p  = 0;
-        ret = src;
-        src = ++p;
-    } else if(*src) {
-        ret = src;
-        src = NULL;
-    }
-
-    return ret;
+    if (str == 0)
+        str = lasts;
+    do {
+        if ((ch = *str++) == '\0')
+            return 0;
+    } while (my_strchr(delim, ch));
+    --str;
+    lasts = str + my_strcspn(str, delim);
+    if (*lasts != 0)
+        *lasts++ = 0;
+    return str;
 }
 
 short my_strcspn(const char *s1, const char *s2)
