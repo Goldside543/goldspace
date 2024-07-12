@@ -59,10 +59,10 @@ char *my_strtok(char * str, const char * delim)
         return 0;
     str=p+my_strspn(p,delim);
     p=str+my_strcspn(str,delim);
-    if(p==str)
-        return 0;
-    if (*p) {
-        *p=0;
+    if(*p == '\0') {
+        p = NULL;
+    } else {
+        *p = '\0';
         p++;
     }
     return str;
