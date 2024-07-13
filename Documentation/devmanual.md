@@ -34,3 +34,13 @@ Gash's purpose is Gash source code files. In here, you'll mostly be working on s
 Kernel... ooh, boy. Kernel contains core.c, the main part of the kernel, which includes the keyboard driver, the welcome message, command execution, etc. Then there's io.h, which is how the kernel sends info to devices. Then linker.ld, how the compiler links it all together. Then multiboot.h, which contains a part of the header file that core.c complained about having. Then string.c, where string functions from the standard C library are defined, and string.h, where they can be recognized by other files.
 # Chapter VII: Makefile
 The Makefile is further instructions for the compiler. It allows the convenience of typing `make` and watching it work. When including source files, make sure to note the syntax and style, and imitate it. 
+# Chapter VIII: Documentation contributions
+So you wish to contribute to Goldspace's documentation? Also cool. I allow manuals to be edited with similar policies to that of Wikipedia. Keep the tone I've got going, and I'll probably merge it.
+# Chapter IX: Drivers, in depth
+In case it weren't obvious by the fact that we only have one driver, Goldspace is currently in desperate need of drivers. Drivers needed include:
+* Ethernet drivers
+* Wi-Fi drivers
+* Mouse drivers <br> <br>
+Though it may seem that some of these are unnecessary, I have plans for them to be needed, and it doesn't hurt to future-proof.
+# Chapter X: In case of errors
+Unfortunately, Goldspace lacks any real error handling code, so if something DOES happen, you'll be in the dark about what it is. You can help by contributing kernel panic code and error messages.
