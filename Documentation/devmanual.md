@@ -22,3 +22,15 @@ But what's that? What if you don't want to do kernel development and just want t
 In your fork, go to/make a directory named "applications". This is where I store applications built into Goldspace.
 You will need to compile it without a file name, and as a 32-bit binary. For example, if it's a C application and you're using GCC, `gcc -m32 source.c -o program_name`.
 As for languages I support, the list is C, C++, C#, Java, and Rust.
+# Chapter V: Goldspace structure
+Back on topic, the kernel. If you're adding files, put bootloader things in boot, shell things in gash, and kernel things in kernel. This will allow the source code to be more organized and readable.
+# Notice
+The following chapter will go into detail on each directory. Skip to whichever one you need.
+# Chapter VI; Subchapter I: Boot
+Boot's purpose is bootloader files. Not really much to cover here, considering it's just one file.
+# Chapter VI; Subchapter II: Gash
+Gash's purpose is Gash source code files. In here, you'll mostly be working on shell.c, where commands are defined.
+# Chapter VI; Subchapter III: Kernel
+Kernel... ooh, boy. Kernel contains core.c, the main part of the kernel, which includes the keyboard driver, the welcome message, command execution, etc. Then there's io.h, which is how the kernel sends info to devices. Then linker.ld, how the compiler links it all together. Then multiboot.h, which contains a part of the header file that core.c complained about having. Then string.c, where string functions from the standard C library are defined, and string.h, where they can be recognized by other files.
+# Chapter VII: Makefile
+The Makefile is further instructions for the compiler. It allows the convenience of typing `make` and watching it work. When including source files, make sure to note the syntax and style, and imitate it. 
