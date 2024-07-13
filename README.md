@@ -7,3 +7,5 @@ Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is des
 * `help` displays help, duh!
 * `echo` allows you to type in something, and it'll be repeated!
 * `clear` clears the screen!
+# For additional documentation...
+See the user manual or developer manual, conveniently located in the Documentation directory!
