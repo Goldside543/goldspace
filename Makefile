@@ -1,17 +1,19 @@
 all: os.iso
 
-os.iso: boot/boot.bin kernel/kernel.bin
+os.iso: isodir/boot/kernel.bin grub.cfg
 	mkdir -p isodir/boot/grub
-	cp boot/boot.bin isodir/boot/
-	cp kernel/kernel.bin isodir/boot/
 	cp grub.cfg isodir/boot/grub/
 	grub-mkrescue -o os.iso isodir
 
+isodir/boot/kernel.bin: kernel/kernel.bin
+	mkdir -p isodir/boot
+	cp kernel/kernel.bin isodir/boot/
+
+kernel/kernel.bin: boot/boot.bin kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o
+	ld -m elf_i386 -T kernel/linker.ld -o kernel/kernel.bin boot/boot.bin kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o
+
 boot/boot.bin: boot/boot.asm
 	nasm -f bin boot/boot.asm -o boot/boot.bin
-
-kernel/kernel.bin: kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o
-	ld -m elf_i386 -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o
 
 kernel/kernel.o: kernel/core.c
 	gcc -m32 -ffreestanding -fno-stack-protector -c kernel/core.c -o kernel/kernel.o
