@@ -10,8 +10,8 @@ os.iso: boot/boot.bin kernel/kernel.bin
 boot/boot.bin: boot/boot.asm
 	nasm -f bin boot/boot.asm -o boot/boot.bin
 
-kernel/kernel.bin: kernel/kernel.o gash/shell.o kernel/string.o
-	ld -m elf_i386 -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o
+kernel/kernel.bin: kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o
+	ld -m elf_i386 -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o
 
 kernel/kernel.o: kernel/core.c
 	gcc -m32 -ffreestanding -fno-stack-protector -c kernel/core.c -o kernel/kernel.o
@@ -21,6 +21,9 @@ gash/shell.o: gash/shell.c
 
 kernel/string.o: kernel/string.c
 	gcc -m32 -ffreestanding -fno-stack-protector -c kernel/string.c -o kernel/string.o
+
+fs/bffs.o: fs/bffs.c
+	gcc -m32 -ffreestanding -fno-stack-protector -c fs/bffs.c -o fs/bffs.o
 
 clean:
 	rm -rf *.bin *.o *.iso isodir
