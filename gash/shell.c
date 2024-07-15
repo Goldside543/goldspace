@@ -27,15 +27,8 @@ void shell_clear() {
 }
 
 void shell_execute_command(const char *command) {
- print("Command: ");
-    print(command);
-    print("\n");
 
     char *token = my_strtok((char *)command, " ");
-
-    print("Token: ");
-    print(token);
-    print("\n");
 
     if (token == NULL) {
         return;
