@@ -9,5 +9,4 @@ Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is des
 * `clear` clears the screen!
 # For additional documentation...
 See the user manual or developer manual, conveniently located in the Documentation directory!
-# Version number: v1.0.0
-I thought I'd give Goldspace a version number now, because why not?
+# Version number: v1.1.0
