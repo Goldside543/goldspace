@@ -1,4 +1,4 @@
-BITS 32
+BITS 16
 org 0x7c00
 
 section .multiboot
