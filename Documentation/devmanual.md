@@ -32,6 +32,8 @@ Boot's purpose is bootloader files. Not really much to cover here, considering i
 Gash's purpose is Gash source code files. In here, you'll mostly be working on shell.c, where commands are defined.
 # Chapter VI; Subchapter III: Kernel
 Kernel... ooh, boy. Kernel contains core.c, the main part of the kernel, which includes the keyboard driver, the welcome message, command execution, etc. Then there's io.h, which is how the kernel sends info to devices. Then linker.ld, how the compiler links it all together. Then multiboot.h, which contains a part of the header file that core.c complained about having. Then string.c, where string functions from the standard C library are defined, and string.h, where they can be recognized by other files.
+# Chapter VI; Subchapter IV: FS
+FS contains BFFS (Baby's First File System), a little file system I made. Quite a simple file system. Not much to say.
 # Chapter VII: Makefile
 The Makefile is further instructions for the compiler. It allows the convenience of typing `make` and watching it work. When including source files, make sure to note the syntax and style, and imitate it. 
 # Chapter VIII: Documentation contributions
