@@ -12,9 +12,9 @@ multiboot_header_t mb_header = {
     .flags = 0x0,
     .checksum = -(0x1BADB002 + 0x0),
     .header_addr = (uint32_t)&mb_header,
-    .load_addr = 0x00100000,
-    .load_end_addr = 0x00A00000,
-    .bss_end_addr = 0x00B00000,
+    .load_addr = 0x0,
+    .load_end_addr = 0x0,
+    .bss_end_addr = 0x0,
     .entry_addr = (uint32_t)&kernel_main
 };
 
