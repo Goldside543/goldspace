@@ -34,7 +34,7 @@ void shell_execute_command(const char *command) {
         return;
     }
 
-    if (my_strcmp(token, "help") == 0) {
+    if (my_strcmp(token, "h") == 0) {
         shell_help();
     } else if (my_strcmp(token, "echo") == 0) {
         token = my_strtok(NULL, "");
@@ -43,7 +43,7 @@ void shell_execute_command(const char *command) {
         } else {
             print("echo: missing argument\n");
         }
-    } else if (my_strcmp(token, "clear") == 0) {
+    } else if (my_strcmp(token, "c") == 0) {
         shell_clear();
     } else {
         print("Command not found. Type 'help' for a list of commands.\n");
