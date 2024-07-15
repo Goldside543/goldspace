@@ -9,4 +9,4 @@ Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is des
 * `clear` clears the screen!
 # For additional documentation...
 See the user manual or developer manual, conveniently located in the Documentation directory!
-# Version number: v1.1.0
+# Version number: v1.1.1
