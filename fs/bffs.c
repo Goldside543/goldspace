@@ -53,7 +53,7 @@ int write_file(int file_index, const char* data, int size) {
 
     // Write data to the block
     for (int i = 0; i < size && i < BLOCK_SIZE; i++) {
-        ((char*)fs)[BLOCK_SIZE * block_index + i] = data[i];
+        fs.storage[BLOCK_SIZE * block_index + i] = data[i];
     }
 
     fs.files[file_index].size = size;
@@ -71,7 +71,7 @@ int read_file(int file_index, char* buffer, int size) {
 
     // Read data from the block
     for (int i = 0; i < size && i < fs.files[file_index].size && i < BLOCK_SIZE; i++) {
-        buffer[i] = ((char*)fs)[BLOCK_SIZE * block_index + i];
+        buffer[i] = fs.storage[BLOCK_SIZE * block_index + i];
     }
 
     return 0;
