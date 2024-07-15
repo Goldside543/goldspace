@@ -46,3 +46,5 @@ In case it weren't obvious by the fact that we only have one driver, Goldspace i
 Though it may seem that some of these are unnecessary, I have plans for them to be needed, and it doesn't hurt to future-proof.
 # Chapter X: In case of errors
 Unfortunately, Goldspace lacks any real error handling code, so if something DOES happen, you'll be in the dark about what it is. You can help by contributing kernel panic code and error messages.
+# Chapter XI: Automation scripts
+Automation scripts are welcome additions to Goldspace, as they offer quick ways to perform build operations. Accepted languages include Bash script files, Perl, Python, etc.
