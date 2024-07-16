@@ -137,7 +137,7 @@ void shell_execute_command(const char *command) {
 
     // Extract the command
     char command_name[2]; // Assuming single character commands
-    strncpy(command_name, command, command_end_index);
+    my_strncpy(command_name, command, command_end_index);
     command_name[command_end_index] = '\0'; // Null-terminate the command name
 
     // Move past the space to get the arguments
