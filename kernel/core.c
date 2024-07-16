@@ -125,20 +125,23 @@ char get_char() {
             case 0x4D: return 'R';  // Right arrow
             default: return 0;
         }
+        
     } else {
         // Convert scan code to ASCII
         char ascii = scancode_to_ascii_table[scancode];
+
+        // Handle special keys
         if (ascii == '\b') {  // If backspace was pressed
             if (input_len > 0) {  // If there are characters in the buffer
                 input_len--;  // Remove the last character
                 input_buffer[input_len] = '\0';  // Null-terminate the string
-            }
-        } else if (ascii != 0 && input_len < sizeof(input_buffer) - 1) {  // If a regular character was pressed and there's room in the buffer
-            input_buffer[input_len] = ascii;  // Add the character to the buffer
-            input_len++;  // Increment the length
-            input_buffer[input_len] = '\0';  // Null-terminate the string
+           
+        } else if (ascii == '\n' || ascii == '\r') {  // If newline or carriage return
+            return '\n';  // Return newline character to terminate input
+        } else {
+            // Regular character input
+            return ascii;
         }
-        return ascii;
     }
 }
 
