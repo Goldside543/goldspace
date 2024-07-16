@@ -76,15 +76,25 @@ void shell_read(const char *name) {
 }
 
 void shell_delete(const char *name) {
-    int file_index = find_file_index(name);
-    if (file_index != -1) {
-        int result = delete_file(file_index);
-        if (result == 0) {
-            print("File deleted successfully.\n");
-            return;
+    int file_index = -1;
+    for (int i = 0; i < MAX_FILES; i++) {
+        if (my_strcmp(fs.files[i].name, name) == 0) {
+            file_index = i;
+            break;
         }
     }
-    print("Error: Could not delete file.\n");
+
+    if (file_index == -1) {
+        print("Error: File not found.\n");
+        return;
+    }
+
+    int result = delete_file(file_index);
+    if (result == 0) {
+        print("File deleted successfully.\n");
+    } else {
+        print("Error: Could not delete file.\n");
+    }
 }
 
 void shell_execute_command(const char *command) {
