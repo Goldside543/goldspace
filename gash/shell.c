@@ -48,31 +48,55 @@ void shell_create(const char *name) {
 void shell_write(const char *args) {
     char *filename = my_strtok((char *)args, " ");
     char *data = my_strtok(NULL, "");
-    if (filename != NULL && data != NULL) {
-        int file_index = find_file_index(filename);
-        if (file_index != -1) {
-            int result = write_file(file_index, data, my_strlen(data));
-            if (result == 0) {
-                print("Data written successfully.\n");
-                return;
-            }
+    
+    if (filename == NULL || data == NULL) {
+        print("write: missing filename or data\n");
+        return;
+    }
+
+    int file_index = -1;
+    for (int i = 0; i < MAX_FILES; i++) {
+        if (my_strcmp(fs.files[i].name, filename) == 0) {
+            file_index = i;
+            break;
         }
     }
-    print("Error: Could not write data to file.\n");
+
+    if (file_index == -1) {
+        print("Error: File not found.\n");
+        return;
+    }
+
+    int result = write_file(file_index, data, my_strlen(data));
+    if (result == 0) {
+        print("Data written successfully.\n");
+    } else {
+        print("Error: Could not write data to file.\n");
+    }
 }
 
 void shell_read(const char *name) {
-    int file_index = find_file_index(name);
-    if (file_index != -1) {
-        char buffer[BLOCK_SIZE];
-        int result = read_file(file_index, buffer, BLOCK_SIZE);
-        if (result == 0) {
-            print(buffer);
-            print("\n");
-            return;
+    int file_index = -1;
+    for (int i = 0; i < MAX_FILES; i++) {
+        if (my_strcmp(fs.files[i].name, name) == 0) {
+            file_index = i;
+            break;
         }
     }
-    print("Error: Could not read file.\n");
+
+    if (file_index == -1) {
+        print("Error: File not found.\n");
+        return;
+    }
+
+    char buffer[BLOCK_SIZE];
+    int result = read_file(file_index, buffer, BLOCK_SIZE);
+    if (result == 0) {
+        print(buffer);
+        print("\n");
+    } else {
+        print("Error: Could not read file.\n");
+    }
 }
 
 void shell_delete(const char *name) {
