@@ -6,6 +6,7 @@ void kernel_main();  // Forward declaration
 #include "../gash/shell.h"
 #include "io.h"
 #include "multiboot.h"
+#include "../fs/simple_fs.h"
 
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
