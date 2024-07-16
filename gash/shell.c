@@ -41,29 +41,45 @@ void shell_create(const char *name) {
 void shell_write(const char *args) {
     // Parse filename and data manually
     char filename[100]; // Assuming maximum filename length
-    char *data = NULL;
+    char data[100];     // Assuming maximum data length
+    int filename_idx = 0, data_idx = 0;
+    int state = 0; // 0 for filename, 1 for data
+    char current_char;
 
-    // Copy filename until space or end of string
-    int i = 0;
-    while (args[i] != ' ' && args[i] != '\0') {
-        filename[i] = args[i];
-        i++;
+    // Iterate through the input arguments
+    while ((current_char = *args++) != '\0') {
+        switch (state) {
+            case 0: // Parsing filename
+                if (current_char == ' ') {
+                    filename[filename_idx] = '\0'; // Null-terminate filename
+                    state = 1; // Switch to data parsing state
+                } else {
+                    filename[filename_idx++] = current_char;
+                }
+                break;
+            case 1: // Parsing data
+                data[data_idx++] = current_char;
+                break;
+        }
     }
-    filename[i] = '\0'; // Null-terminate filename
+    data[data_idx] = '\0'; // Null-terminate data
 
-    // Move past the space to get the data
-    if (args[i] == ' ') {
-        data = args + i + 1;
-    }
-
-    if (filename[0] == '\0' || data == NULL || data[0] == '\0') {
+    if (filename[0] == '\0' || data[0] == '\0') {
         print("write: missing filename or data\n");
         return;
     }
 
+    // Find file index by comparing filename
     int file_index = -1;
     for (int i = 0; i < MAX_FILES; i++) {
-        if (my_strcmp(fs.files[i].name, filename) == 0) {
+        int match = 1;
+        for (int j = 0; fs.files[i].name[j] != '\0' || filename[j] != '\0'; j++) {
+            if (fs.files[i].name[j] != filename[j]) {
+                match = 0;
+                break;
+            }
+        }
+        if (match) {
             file_index = i;
             break;
         }
@@ -74,6 +90,7 @@ void shell_write(const char *args) {
         return;
     }
 
+    // Write data to file
     int result = write_file(file_index, data, my_strlen(data));
     if (result == 0) {
         print("Data written successfully.\n");
@@ -82,10 +99,37 @@ void shell_write(const char *args) {
     }
 }
 
-void shell_read(const char *name) {
+void shell_read(const char *args) {
+    // Parse filename manually
+    char filename[100]; // Assuming maximum filename length
+    int filename_idx = 0;
+    char current_char;
+
+    // Iterate through the input arguments
+    while ((current_char = *args++) != '\0') {
+        if (current_char == ' ') {
+            filename[filename_idx] = '\0'; // Null-terminate filename
+            break;
+        }
+        filename[filename_idx++] = current_char;
+    }
+
+    if (filename[0] == '\0') {
+        print("read: missing filename\n");
+        return;
+    }
+
+    // Find file index by comparing filename
     int file_index = -1;
     for (int i = 0; i < MAX_FILES; i++) {
-        if (my_strcmp(fs.files[i].name, name) == 0) {
+        int match = 1;
+        for (int j = 0; fs.files[i].name[j] != '\0' || filename[j] != '\0'; j++) {
+            if (fs.files[i].name[j] != filename[j]) {
+                match = 0;
+                break;
+            }
+        }
+        if (match) {
             file_index = i;
             break;
         }
@@ -96,6 +140,7 @@ void shell_read(const char *name) {
         return;
     }
 
+    // Read data from file
     char buffer[BLOCK_SIZE];
     int result = read_file(file_index, buffer, BLOCK_SIZE);
     if (result == 0) {
@@ -106,10 +151,37 @@ void shell_read(const char *name) {
     }
 }
 
-void shell_delete(const char *name) {
+void shell_delete(const char *args) {
+    // Parse filename manually
+    char filename[100]; // Assuming maximum filename length
+    int filename_idx = 0;
+    char current_char;
+
+    // Iterate through the input arguments
+    while ((current_char = *args++) != '\0') {
+        if (current_char == ' ') {
+            filename[filename_idx] = '\0'; // Null-terminate filename
+            break;
+        }
+        filename[filename_idx++] = current_char;
+    }
+
+    if (filename[0] == '\0') {
+        print("delete: missing filename\n");
+        return;
+    }
+
+    // Find file index by comparing filename
     int file_index = -1;
     for (int i = 0; i < MAX_FILES; i++) {
-        if (my_strcmp(fs.files[i].name, name) == 0) {
+        int match = 1;
+        for (int j = 0; fs.files[i].name[j] != '\0' || filename[j] != '\0'; j++) {
+            if (fs.files[i].name[j] != filename[j]) {
+                match = 0;
+                break;
+            }
+        }
+        if (match) {
             file_index = i;
             break;
         }
@@ -120,6 +192,7 @@ void shell_delete(const char *name) {
         return;
     }
 
+    // Delete file
     int result = delete_file(file_index);
     if (result == 0) {
         print("File deleted successfully.\n");
@@ -137,7 +210,9 @@ void shell_execute_command(const char *command) {
 
     // Extract the command
     char command_name[2]; // Assuming single character commands
-    my_strncpy(command_name, command, command_end_index);
+    for (int i = 0; i < command_end_index; i++) {
+        command_name[i] = command[i];
+    }
     command_name[command_end_index] = '\0'; // Null-terminate the command name
 
     // Move past the space to get the arguments
