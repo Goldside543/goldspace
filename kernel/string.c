@@ -63,21 +63,40 @@ short my_strspn(const char *s1, const char *s2)
     return ret;    
 }
 
-char *my_strtok(char *str, const char *delim) {
-    static char *lasts;
-    register int ch;
+char* my_strtok(char* str, const char* delim) {
+    static char* last;
+    if (str == NULL) {
+        str = last;
+    }
+    if (str == NULL) {
+        return NULL;
+    }
 
-    if (str == 0)
-        str = lasts;
-    do {
-        if ((ch = *str++) == '\0')
-            return 0;
-    } while (my_strchr(delim, ch));
-    --str;
-    lasts = str + my_strcspn(str, delim);
-    if (*lasts != 0)
-        *lasts++ = 0;
-    return str;
+    // Skip leading delimiters
+    while (*str && my_strchr(delim, *str)) {
+        str++;
+    }
+
+    if (*str == '\0') {
+        last = NULL;
+        return NULL;
+    }
+
+    char* token_start = str;
+
+    // Find the end of the token
+    while (*str && !my_strchr(delim, *str)) {
+        str++;
+    }
+
+    if (*str == '\0') {
+        last = NULL;
+    } else {
+        *str = '\0';
+        last = str + 1;
+    }
+
+    return token_start;
 }
 
 short my_strcspn(const char *s1, const char *s2)
