@@ -5,7 +5,7 @@ It's practically better than Linux.
 Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is designed specifically for Goldspace. How the hell do I give it input, you ask? Well, the core of the kernel has a keyboard driver inside of it!
 # Command list:
 * `h` displays help.
-* `echo` allows you to type in something, and it'll be repeated! (not working as of v1.1.2)
+* `echo` allows you to type in something, and it'll be repeated! (not working as of v1.1.4)
 * `c` clears the screen!
 # For additional documentation...
 See the user manual or developer manual, conveniently located in the Documentation directory!
