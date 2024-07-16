@@ -147,7 +147,7 @@ void kernel_main() {
     cursor_y = 0;
     move_cursor();
 
-    init_fs();
+    fs_init();
 
     print("Welcome to Goldspace and the Gash shell!\n");
     print("Type 'h' for available commands.\n");
