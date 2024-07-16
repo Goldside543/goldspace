@@ -1,6 +1,6 @@
 all: goldspace.iso
 
-os.iso: boot/boot.bin kernel/kernel.bin
+goldspace.iso: boot/boot.bin kernel/kernel.bin
 	mkdir -p isodir/boot/grub
 	cp boot/boot.bin isodir/boot/
 	cp kernel/kernel.bin isodir/boot/

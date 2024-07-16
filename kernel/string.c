@@ -15,20 +15,20 @@ char *my_strpbrk(const char *str1, const char *str2) {
     return NULL;  /* terminating nulls match */
 }
 
-short my_strlen(const char *__s){
-    short i = 0;
-    while(*__s){
-        i++;
-        __s++;
+size_t my_strlen(const char *str) {
+    size_t len = 0;
+    while (*str++) {
+        len++;
     }
-    return i;
+    return len;
 }
 
-int my_strcmp(const char* s1, const char* s2)
-{
-    while(*s1 && (*s1==*s2))
-        s1++,s2++;
-    return *(const unsigned char*)s1-*(const unsigned char*)s2;
+int my_strcmp(const char *s1, const char *s2) {
+    while (*s1 && (*s1 == *s2)) {
+        s1++;
+        s2++;
+    }
+    return *(unsigned char *)s1 - *(unsigned char *)s2;
 }
 
 char *my_strcat(char *dest, const char *src)
@@ -40,12 +40,14 @@ char *my_strcat(char *dest, const char *src)
     return ret;
 }
 
-char *my_strchr(const char *s, int c)
-{
-    while (*s != (char)c)
-        if (!*s++)
-            return 0;
-    return (char *)s;
+char *my_strchr(const char *str, int c) {
+    while (*str) {
+        if (*str == (char)c) {
+            return (char *)str;
+        }
+        str++;
+    }
+    return NULL;
 }
 
 char *my_strcpy(char *dest, const char* src)
@@ -63,21 +65,40 @@ short my_strspn(const char *s1, const char *s2)
     return ret;    
 }
 
-char *my_strtok(char *str, const char *delim) {
-    static char *lasts;
-    register int ch;
+char *my_strtok(char* str, const char* delim) {
+    static char* last;
+    if (str == NULL) {
+        str = last;
+    }
+    if (str == NULL) {
+        return NULL;
+    }
 
-    if (str == 0)
-        str = lasts;
-    do {
-        if ((ch = *str++) == '\0')
-            return 0;
-    } while (my_strchr(delim, ch));
-    --str;
-    lasts = str + my_strcspn(str, delim);
-    if (*lasts != 0)
-        *lasts++ = 0;
-    return str;
+    // Skip leading delimiters
+    while (*str && my_strchr(delim, *str)) {
+        str++;
+    }
+
+    if (*str == '\0') {
+        last = NULL;
+        return NULL;
+    }
+
+    char* token_start = str;
+
+    // Find the end of the token
+    while (*str && !my_strchr(delim, *str)) {
+        str++;
+    }
+
+    if (*str == '\0') {
+        last = NULL;
+    } else {
+        *str = '\0';
+        last = str + 1;
+    }
+
+    return token_start;
 }
 
 short my_strcspn(const char *s1, const char *s2)
@@ -89,4 +110,19 @@ short my_strcspn(const char *s1, const char *s2)
         else
             s1++,ret++;
     return ret;
+}
+
+char* my_strncpy(char* dest, const char* src, size_t n) {
+    size_t i;
+
+    for (i = 0; i < n && src[i] != '\0'; i++) {
+        dest[i] = src[i];
+    }
+
+    // If src has less than n characters, append null bytes to the end of dest
+    for (; i < n; i++) {
+        dest[i] = '\0';
+    }
+
+    return dest;
 }

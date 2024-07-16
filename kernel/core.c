@@ -6,6 +6,7 @@ void kernel_main();  // Forward declaration
 #include "../gash/shell.h"
 #include "io.h"
 #include "multiboot.h"
+#include "../fs/simple_fs.h"
 
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
@@ -127,16 +128,23 @@ char get_char() {
     } else {
         // Convert scan code to ASCII
         char ascii = scancode_to_ascii_table[scancode];
+        
+        // Handle special characters
         if (ascii == '\b') {  // If backspace was pressed
             if (input_len > 0) {  // If there are characters in the buffer
                 input_len--;  // Remove the last character
                 input_buffer[input_len] = '\0';  // Null-terminate the string
             }
+        } else if (ascii == '\r' || ascii == '\n') {  // If newline or carriage return
+            // End of input line, null-terminate and reset input_len
+            input_buffer[input_len] = '\0';  // Null-terminate the string
+            input_len = 0;  // Reset input length for the next input
         } else if (ascii != 0 && input_len < sizeof(input_buffer) - 1) {  // If a regular character was pressed and there's room in the buffer
             input_buffer[input_len] = ascii;  // Add the character to the buffer
             input_len++;  // Increment the length
             input_buffer[input_len] = '\0';  // Null-terminate the string
         }
+        
         return ascii;
     }
 }
@@ -146,6 +154,8 @@ void kernel_main() {
     cursor_x = 0;
     cursor_y = 0;
     move_cursor();
+
+    fs_init();
 
     print("Welcome to Goldspace and the Gash shell!\n");
     print("Type 'h' for available commands.\n");
@@ -161,7 +171,7 @@ void kernel_main() {
             if (c == '\n' || c == '\r') {
                 command[command_len] = '\0';  // Null-terminate the command string
                 break;
-            } else {
+            } else if (command_len < sizeof(command) - 1) {
                 command[command_len++] = c;
                 // Echo back the character to the screen
                 print_char(c);
