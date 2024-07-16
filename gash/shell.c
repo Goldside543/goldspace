@@ -1,6 +1,5 @@
 #include <stddef.h>
 #include <stdint.h>
-#include <string.h>
 #include "shell.h"
 #include "../kernel/io.h"
 #include "../kernel/string.h"
