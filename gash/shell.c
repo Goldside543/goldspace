@@ -64,7 +64,7 @@ void shell_write(const char *args) {
 
     int file_index = -1;
     for (int i = 0; i < MAX_FILES; i++) {
-        if (strcmp(fs.files[i].name, filename) == 0) {
+        if (my_strcmp(fs.files[i].name, filename) == 0) {
             file_index = i;
             break;
         }
@@ -75,7 +75,7 @@ void shell_write(const char *args) {
         return;
     }
 
-    int result = write_file(file_index, data, strlen(data));
+    int result = write_file(file_index, data, my_strlen(data));
     if (result == 0) {
         print("Data written successfully.\n");
     } else {
@@ -86,7 +86,7 @@ void shell_write(const char *args) {
 void shell_read(const char *name) {
     int file_index = -1;
     for (int i = 0; i < MAX_FILES; i++) {
-        if (strcmp(fs.files[i].name, name) == 0) {
+        if (my_strcmp(fs.files[i].name, name) == 0) {
             file_index = i;
             break;
         }
@@ -110,7 +110,7 @@ void shell_read(const char *name) {
 void shell_delete(const char *name) {
     int file_index = -1;
     for (int i = 0; i < MAX_FILES; i++) {
-        if (strcmp(fs.files[i].name, name) == 0) {
+        if (my_strcmp(fs.files[i].name, name) == 0) {
             file_index = i;
             break;
         }
