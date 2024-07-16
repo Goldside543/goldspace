@@ -65,7 +65,7 @@ short my_strspn(const char *s1, const char *s2)
     return ret;    
 }
 
-char* my_strtok(char* str, const char* delim) {
+char *my_strtok(char* str, const char* delim) {
     static char* last;
     if (str == NULL) {
         str = last;
