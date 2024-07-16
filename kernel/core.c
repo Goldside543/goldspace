@@ -164,7 +164,7 @@ void kernel_main() {
             if (c == '\n' || c == '\r') {
                 command[command_len] = '\0';  // Null-terminate the command string
                 break;
-            } else {
+            } else if (command_len < sizeof(command) - 1) {
                 command[command_len++] = c;
                 // Echo back the character to the screen
                 print_char(c);
