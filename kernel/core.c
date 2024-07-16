@@ -127,23 +127,16 @@ char get_char() {
     } else {
         // Convert scan code to ASCII
         char ascii = scancode_to_ascii_table[scancode];
-        
-        // Handle special characters
         if (ascii == '\b') {  // If backspace was pressed
             if (input_len > 0) {  // If there are characters in the buffer
                 input_len--;  // Remove the last character
                 input_buffer[input_len] = '\0';  // Null-terminate the string
             }
-        } else if (ascii == '\r' || ascii == '\n') {  // If newline or carriage return
-            // End of input line, null-terminate and reset input_len
-            input_buffer[input_len] = '\0';  // Null-terminate the string
-            input_len = 0;  // Reset input length for the next input
         } else if (ascii != 0 && input_len < sizeof(input_buffer) - 1) {  // If a regular character was pressed and there's room in the buffer
             input_buffer[input_len] = ascii;  // Add the character to the buffer
             input_len++;  // Increment the length
             input_buffer[input_len] = '\0';  // Null-terminate the string
         }
-        
         return ascii;
     }
 }
