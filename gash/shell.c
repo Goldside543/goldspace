@@ -6,12 +6,6 @@
 #include "../kernel/string.h"
 #include "../fs/simple_fs.h"
 
-// Function prototypes for file system shell commands
-void shell_create(const char *args);
-void shell_write(const char *args);
-void shell_read(const char *args);
-void shell_delete(const char *args);
-
 void print(const char *str);
 
 void shell_help() {
@@ -46,17 +40,28 @@ void shell_create(const char *name) {
 }
 
 void shell_write(const char *args) {
-    char *filename = my_strtok((char *)args, " ");
-    char *data = my_strtok(NULL, "");
-    
-    if (filename == NULL || data == NULL) {
+    // Parse filename and data manually
+    const char *filename = args;
+    const char *data = NULL;
+
+    // Find space after filename (start of data)
+    while (*args != ' ' && *args != '\0') {
+        args++;
+    }
+
+    if (*args == ' ') {
+        *args = '\0'; // Null-terminate filename
+        data = args + 1; // Move past the space to start of data
+    }
+
+    if (filename[0] == '\0' || data == NULL || data[0] == '\0') {
         print("write: missing filename or data\n");
         return;
     }
 
     int file_index = -1;
     for (int i = 0; i < MAX_FILES; i++) {
-        if (my_strcmp(fs.files[i].name, filename) == 0) {
+        if (strcmp(fs.files[i].name, filename) == 0) {
             file_index = i;
             break;
         }
@@ -67,7 +72,7 @@ void shell_write(const char *args) {
         return;
     }
 
-    int result = write_file(file_index, data, my_strlen(data));
+    int result = write_file(file_index, data, strlen(data));
     if (result == 0) {
         print("Data written successfully.\n");
     } else {
@@ -78,7 +83,7 @@ void shell_write(const char *args) {
 void shell_read(const char *name) {
     int file_index = -1;
     for (int i = 0; i < MAX_FILES; i++) {
-        if (my_strcmp(fs.files[i].name, name) == 0) {
+        if (strcmp(fs.files[i].name, name) == 0) {
             file_index = i;
             break;
         }
@@ -102,7 +107,7 @@ void shell_read(const char *name) {
 void shell_delete(const char *name) {
     int file_index = -1;
     for (int i = 0; i < MAX_FILES; i++) {
-        if (my_strcmp(fs.files[i].name, name) == 0) {
+        if (strcmp(fs.files[i].name, name) == 0) {
             file_index = i;
             break;
         }
@@ -122,52 +127,59 @@ void shell_delete(const char *name) {
 }
 
 void shell_execute_command(const char *command) {
-    char *token = my_strtok((char *)command, " ");
-
-    if (token == NULL) {
-        return;
+    // Find the first space or end of string to determine the command
+    int command_end_index = 0;
+    while (command[command_end_index] != ' ' && command[command_end_index] != '\0') {
+        command_end_index++;
     }
 
-    switch (token[0]) {
+    // Extract the command
+    char command_name[2]; // Assuming single character commands
+    strncpy(command_name, command, command_end_index);
+    command_name[command_end_index] = '\0'; // Null-terminate the command name
+
+    // Move past the space to get the arguments
+    const char *args = command + command_end_index;
+    while (*args == ' ') {
+        args++; // Move past any leading spaces
+    }
+
+    // Execute the command based on the command name
+    switch (command_name[0]) {
         case 'h':
             shell_help();
             break;
         case 'e':
-            token = my_strtok(NULL, "");
-            if (token != NULL) {
-                shell_echo(token);
+            if (*args != '\0') {
+                shell_echo(args);
             } else {
                 print("echo: missing argument\n");
             }
             break;
         case 'c':
-            token = my_strtok(NULL, "");
-            if (token != NULL) {
-                shell_create(token);
+            if (*args != '\0') {
+                shell_create(args);
             } else {
                 print("create: missing filename\n");
             }
-            break;
+            break
         case 'w':
-            token = my_strtok(NULL, "");
-            if (token != NULL) {
-                shell_write(token);
+            if (*args != '\0') {
+                shell_write(args);
             } else {
                 print("write: missing filename or data\n");
             }
             break;
         case 'r':
-            token = my_strtok(NULL, "");
-            if (token != NULL) {
-                shell_read(token);
+            if (*args != '\0') {
+                shell_read(args);
             } else {
                 print("read: missing filename\n");
             }
             break;
         case 'd':
-            token = my_strtok(NULL, "");
-            if (token != NULL) {
-                shell_delete(token);
+            if (*args != '\0') {
+                shell_delete(args);
             } else {
                 print("delete: missing filename\n");
             }
