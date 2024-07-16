@@ -15,20 +15,20 @@ char *my_strpbrk(const char *str1, const char *str2) {
     return NULL;  /* terminating nulls match */
 }
 
-short my_strlen(const char *__s){
-    short i = 0;
-    while(*__s){
-        i++;
-        __s++;
+size_t my_strlen(const char *str) {
+    size_t len = 0;
+    while (*str++) {
+        len++;
     }
-    return i;
+    return len;
 }
 
-int my_strcmp(const char* s1, const char* s2)
-{
-    while(*s1 && (*s1==*s2))
-        s1++,s2++;
-    return *(const unsigned char*)s1-*(const unsigned char*)s2;
+int my_strcmp(const char *s1, const char *s2) {
+    while (*s1 && (*s1 == *s2)) {
+        s1++;
+        s2++;
+    }
+    return *(unsigned char *)s1 - *(unsigned char *)s2;
 }
 
 char *my_strcat(char *dest, const char *src)
@@ -40,12 +40,14 @@ char *my_strcat(char *dest, const char *src)
     return ret;
 }
 
-char *my_strchr(const char *s, int c)
-{
-    while (*s != (char)c)
-        if (!*s++)
-            return 0;
-    return (char *)s;
+char *my_strchr(const char *str, int c) {
+    while (*str) {
+        if (*str == (char)c) {
+            return (char *)str;
+        }
+        str++;
+    }
+    return NULL;
 }
 
 char *my_strcpy(char *dest, const char* src)
