@@ -171,6 +171,9 @@ void kernel_main() {
             }
         }
 
+        // Clear input buffer
+        while (get_char() != '\n' && get_char() != '\r');
+
         // Execute command
         shell_execute_command(command);
     }
