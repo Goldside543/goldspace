@@ -41,17 +41,20 @@ void shell_create(const char *name) {
 
 void shell_write(const char *args) {
     // Parse filename and data manually
-    const char *filename = args;
-    const char *data = NULL;
+    char filename[100]; // Assuming maximum filename length
+    char *data = NULL;
 
-    // Find space after filename (start of data)
-    while (*args != ' ' && *args != '\0') {
-        args++;
+    // Copy filename until space or end of string
+    int i = 0;
+    while (args[i] != ' ' && args[i] != '\0') {
+        filename[i] = args[i];
+        i++;
     }
+    filename[i] = '\0'; // Null-terminate filename
 
-    if (*args == ' ') {
-        *args = '\0'; // Null-terminate filename
-        data = args + 1; // Move past the space to start of data
+    // Move past the space to get the data
+    if (args[i] == ' ') {
+        data = args + i + 1;
     }
 
     if (filename[0] == '\0' || data == NULL || data[0] == '\0') {
@@ -162,7 +165,7 @@ void shell_execute_command(const char *command) {
             } else {
                 print("create: missing filename\n");
             }
-            break
+            break;
         case 'w':
             if (*args != '\0') {
                 shell_write(args);
