@@ -10,5 +10,6 @@ short my_strspn(const char *s1, const char *s2);
 char *my_strtok(char *str, const char *delim);
 short my_strcspn(const char *s1, const char *s2);
 char *my_strpbrk(const char *str1, const char *str2);
+char* my_strncpy(char* dest, const char* src, size_t n);
 
 #endif /* STRING_H */
