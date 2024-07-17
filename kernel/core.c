@@ -158,7 +158,7 @@ void kernel_main() {
     fs_init();
 
     print("Welcome to Goldspace and the Gash shell!\n");
-    print("Type 'h' for available commands.\n");
+    print("Type 'help' for available commands.\n");
 
     while (1) {
         char command[256];
