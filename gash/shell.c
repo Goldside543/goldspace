@@ -9,12 +9,12 @@ void print(const char *str);
 
 void shell_help() {
     print("Available commands:\n");
-    print("h - Display this help message\n");
-    print("e <message> - Echo the message back to the screen\n");
-    print("c <filename> - Create a new file\n");
-    print("w <filename> <data> - Write data to a file\n");
-    print("r <filename> - Read data from a file\n");
-    print("d <filename> - Delete a file\n");
+    print("help - Display this help message\n");
+    print("echo <message> - Echo the message back to the screen\n");
+    print("create <filename> - Create a new file\n");
+    print("write <filename> <data> - Write data to a file\n");
+    print("read <filename> - Read data from a file\n");
+    print("delete <filename> - Delete a file\n");
 }
 
 void shell_echo(const char *message) {
@@ -209,7 +209,7 @@ void shell_execute_command(const char *command) {
     }
 
     // Extract the command
-    char command_name[2]; // Assuming single character commands
+    char command_name[10]; // Assuming command names won't exceed 9 characters
     for (int i = 0; i < command_end_index; i++) {
         command_name[i] = command[i];
     }
@@ -222,47 +222,39 @@ void shell_execute_command(const char *command) {
     }
 
     // Execute the command based on the command name
-    switch (command_name[0]) {
-        case 'h':
-            shell_help();
-            break;
-        case 'e':
-            if (*args != '\0') {
-                shell_echo(args);
-            } else {
-                print("echo: missing argument\n");
-            }
-            break;
-        case 'c':
-            if (*args != '\0') {
-                shell_create(args);
-            } else {
-                print("create: missing filename\n");
-            }
-            break;
-        case 'w':
-            if (*args != '\0') {
-                shell_write(args);
-            } else {
-                print("write: missing filename or data\n");
-            }
-            break;
-        case 'r':
-            if (*args != '\0') {
-                shell_read(args);
-            } else {
-                print("read: missing filename\n");
-            }
-            break;
-        case 'd':
-            if (*args != '\0') {
-                shell_delete(args);
-            } else {
-                print("delete: missing filename\n");
-            }
-            break;
-        default:
-            print("Command not found. Type 'h' for a list of commands.\n");
-            break;
+    if (my_strcmp(command_name, "help") == 0) {
+        shell_help();
+    } else if (my_strcmp(command_name, "echo") == 0) {
+        if (*args != '\0') {
+            shell_echo(args);
+        } else {
+            print("echo: missing argument\n");
+        }
+    } else if (my_strcmp(command_name, "create") == 0) {
+        if (*args != '\0') {
+            shell_create(args);
+        } else {
+            print("create: missing filename\n");
+        }
+    } else if (my_strcmp(command_name, "write") == 0) {
+        if (*args != '\0') {
+            shell_write(args);
+        } else {
+            print("write: missing filename or data\n");
+        }
+    } else if (my_strcmp(command_name, "read") == 0) {
+        if (*args != '\0') {
+            shell_read(args);
+        } else {
+            print("read: missing filename\n");
+        }
+    } else if (my_strcmp(command_name, "delete") == 0) {
+        if (*args != '\0') {
+            shell_delete(args);
+        } else {
+            print("delete: missing filename\n");
+        }
+    } else {
+        print("Command not found. Type 'help' for a list of commands.\n");
     }
 }
