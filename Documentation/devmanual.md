@@ -21,7 +21,7 @@ If it passes all of those, chances are, it'll be merged.
 But what's that? What if you don't want to do kernel development and just want to make an app or two? Totally cool.
 In your fork, go to/make a directory named "applications". This is where I store applications built into Goldspace.
 You will need to compile it without a file name, and as a 32-bit binary. For example, if it's a C application and you're using GCC, `gcc -m32 source.c -o program_name`.
-As for languages I support, the list is C, C++, C#, Java, and Rust.
+As for languages I support, the list is C, C++, C#, Java, and Rust. You will need to write your own libraries for most, if not all of these languages, as currently, *I* support them, yes. But the kernel? No.
 # Chapter V: Goldspace structure
 Back on topic, the kernel. If you're adding files, put bootloader things in boot, shell things in gash, and kernel things in kernel. This will allow the source code to be more organized and readable.
 # Notice
