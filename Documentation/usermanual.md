@@ -1,5 +1,5 @@
 # Preface
-Hello, and welcome to the Goldspace User Manual! This manual is intended for use by the general public. If you are a developer, see the upcoming dev manual.
+Hello, and welcome to the Goldspace User Manual! This manual is intended for use by the general public. If you are a developer, see the developer manual.
 
 # Chapter I: Installing Goldspace
 USB DRIVE: You'll typically use a program such as Rufus to make a bootable USB drive. Luckily, Goldspace happens to come in the form of a bootable ISO! Just follow the instructions in Rufus, and you'll be on your way! <br>
