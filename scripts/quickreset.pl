@@ -11,7 +11,7 @@ chdir '..' or die "Cannot change directory to parent: $!";
 system('rm -r goldspace') == 0 or die "Failed to remove 'goldspace': $!";
 
 # Clone the GitHub repository
-system('gh repo clone Goldside543/goldspace') == 0 or die "Failed to clone repository: $!";
+system('git clone https://github.com/Goldside543/goldspace.git') == 0 or die "Failed to clone repository: $!";
 
 # Change directory to the 'goldspace' directory
 chdir 'goldspace' or die "Cannot change directory to 'goldspace': $!";
