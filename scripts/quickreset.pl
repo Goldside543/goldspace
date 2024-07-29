@@ -8,7 +8,7 @@ use warnings;
 chdir '..' or die "Cannot change directory to parent: $!";
 
 # Remove the 'goldspace' directory recursively
-system('rm -r goldspace') == 0 or die "Failed to remove 'goldspace': $!";
+system('rm -rf goldspace') == 0 or die "Failed to remove 'goldspace': $!";
 
 # Clone the GitHub repository
 system('git clone https://github.com/Goldside543/goldspace.git') == 0 or die "Failed to clone repository: $!";
