@@ -1,5 +1,5 @@
 #include "networking.h"
-#include "io.h"
+#include "net-io.h"
 #include "../mm/memory.h"
 
 void init_net_interface(net_interface_t *iface, const char *name, unsigned char *mac, unsigned int ip, unsigned int netmask) {
