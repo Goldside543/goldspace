@@ -167,6 +167,10 @@ void kernel_main() {
 
     audio_init();
 
+    usb_init();
+
+    keyboard_init();
+
     net_interface_t iface;
     unsigned char mac[6] = {0x02, 0x1B, 0x34, 0xA5, 0xC6, 0xD7}; // Randomly generated MAC address
     unsigned int ip = 0xC0A895E2; // IP address 192.168.149.226
