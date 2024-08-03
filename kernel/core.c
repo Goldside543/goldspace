@@ -110,7 +110,7 @@ char get_char() {
 
     if (use_keyboard_driver) {
         // Use keyboard driver
-        scancode = keyboard_read();
+        scancode = read_keyboard();
     } else {
         // Use direct I/O port access
         while (!(inb(0x64) & 0x01));  // Wait until input buffer is not empty
