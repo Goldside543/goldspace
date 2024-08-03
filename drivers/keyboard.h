@@ -2,7 +2,7 @@
 #define KEYBOARD_H
 
 // Define base address for USB keyboard controller
-#define USB_KEYBOARD_BASE 0xFCBB0000  // Update this address based on your system
+#define USB_KEYBOARD_CONTROLLER_BASE 0xFCBB0000  // Update this address based on your system
 
 // Define offsets for the keyboard control registers
 #define USB_KEYBOARD_CTRL   (USB_KEYBOARD_CONTROLLER_BASE + 0x00) // Control register
