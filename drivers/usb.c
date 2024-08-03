@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include "usb.h"
 #include "keyboard.h"  // Ensure this header file contains the declaration for keyboard_read
 
