@@ -2,7 +2,7 @@
 This creates limitations, such as data being wiped upon shut down.
 Feel free to help out by assisting with transitioning the file system from memory to disk.
 
-            --Goldside543
+            Goldside543
 */
 
 #include "simple_fs.h"
