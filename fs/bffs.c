@@ -28,8 +28,6 @@ typedef struct {
     File files[MAX_FILES];
 } FileSystem;
 
-FileSystem fs;
-
 void fs_init() {
     // Initialize the free blocks array
     for (int i = 0; i < NUM_BLOCKS; i++) {
