@@ -35,18 +35,20 @@ void fs_init() {
 
 int create_file(const char* name) {
     for (int i = 0; i < MAX_FILES; i++) {
-        int j;
-        for (j = 0; j < MAX_FILE_NAME && name[j] != '\0'; j++) {
-            fs.files[i].name[j] = name[j];
-        }
-        if (j < MAX_FILE_NAME) {
-            fs.files[i].name[j] = '\0';
-        }
-
         if (fs.files[i].name[0] == '\0') { // Find an empty slot in the file table
+            // Copy the file name
+            int j;
+            for (j = 0; j < MAX_FILE_NAME && name[j] != '\0'; j++) {
+                fs.files[i].name[j] = name[j];
+            }
+            if (j < MAX_FILE_NAME) {
+                fs.files[i].name[j] = '\0'; // Null-terminate the name
+            }
+
             fs.files[i].size = 0;
             fs.files[i].start_block = -1;
-            return 0; // Return code 0
+
+            return i; // Return the index of the new file
         }
     }
     return -1; // No space left in the file table
