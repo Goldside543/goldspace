@@ -1,9 +1,9 @@
+#include <stdbool.h>
 void kernel_main();  // Forward declaration
 static bool use_keyboard_driver = false;  // This will be set in usb_init()
 
 #include <stddef.h>
 #include <stdint.h>
-#include <stdbool.h>
 #include "../gash/shell.h"
 #include "io.h"
 #include "multiboot.h"
