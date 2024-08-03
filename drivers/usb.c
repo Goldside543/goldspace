@@ -1,3 +1,5 @@
+#include "usb.h"
+
 void usb_init(void) {
     volatile unsigned int *usb_ctrl = (volatile unsigned int *)USB_CTRL_REG;
     volatile unsigned int *usb_status = (volatile unsigned int *)USB_STATUS_REG;
