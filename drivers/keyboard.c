@@ -2,9 +2,6 @@
 #include "keyboard.h"
 #include "../kernel/print.h"
 
-#define USB_KEYBOARD_RESET_CMD 0xFF 
-#define USB_KEYBOARD_ENABLE_CMD 0xF4 
-
 void init_keyboard(void) {
     volatile unsigned int *usb_keyboard_ctrl = (volatile unsigned int *)USB_KEYBOARD_CTRL;
     volatile unsigned int *usb_keyboard_data = (volatile unsigned int *)USB_KEYBOARD_DATA;
