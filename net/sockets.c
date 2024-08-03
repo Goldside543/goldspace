@@ -1,5 +1,6 @@
 #include "networking.h"
 #include "../mm/memory.h"
+#include "net_if.h"
 
 net_socket_t* create_socket() {
     net_socket_t *sock = (net_socket_t*)kmalloc(sizeof(net_socket_t));
