@@ -163,7 +163,27 @@ void kernel_main() {
 
     fs_init();
 
-    print("Welcome to Goldspace and the Gash shell!\n");
+    print(
+        "                                                \n"
+        "                            ++;;;;;; +                                    \n"
+        "                         +++++;;;;;;;++++                                 \n"
+        "                        +++++;::;;:x:;+++                                 \n"
+        "                            ;;;;;;;;;;;                                    \n"
+        "                            ;;;;$$;;;;;                                    \n"
+        "                            +&&$$$$&&&&                                    \n"
+        "                          ++++xxxxxxx+++                 ;;               \n"
+        "                           ;;;;;++;;;+++                ;;;               \n"
+        "                           ;;;;;;;;;;;;;;;;;;;;;;;;;;  ;;;;               \n"
+        "                           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;                \n"
+        "                            ;;;;;;;;;;;;;;;;;;;;;;;;;;                    \n"
+        "                              ;;;;;;;;;;;;;;;;;;;;;;;                     \n"
+        "                                ;;;;       ;;;;;                          \n"
+        "                               ;;;;;      ;;;;;;                          \n"
+        "                                        ;;;;;;;             \n"
+    );
+}
+
+    print("\nWelcome to Goldspace and the Gash shell!\n");
     print("Type 'help' for available commands.\n");
 
     while (1) {
