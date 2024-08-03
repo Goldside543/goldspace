@@ -8,7 +8,7 @@ void usb_init(void) {
     *usb_ctrl = USB_CTRL_ENABLE;
 
     // Wait for the USB controller to be ready
-    unsigned int timeout = 5000000;
+    unsigned int timeout = 1000000;
     while (!(*usb_status & USB_STATUS_READY)) {
         if (--timeout == 0) {
             return;
