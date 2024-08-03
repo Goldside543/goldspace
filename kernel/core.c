@@ -187,7 +187,7 @@ void kernel_main() {
     unsigned int netmask = 0xFFFFF000; // Example netmask (255.255.240.0)
     init_net_interface(&iface, "eth0", mac, ip, netmask);    
     
-    cpu_delay(3000000);
+    cpu_delay(10000000);
 
     shell_clear();
 
