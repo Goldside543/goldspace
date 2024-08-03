@@ -1,5 +1,5 @@
-#ifndef NET-IO_H
-#define NET-IO_H
+#ifndef NET_IO_H
+#define NET_IO_H
 
 // Write a byte to a hardware port
 void outb(unsigned short port, unsigned char data);
@@ -7,4 +7,4 @@ void outb(unsigned short port, unsigned char data);
 // Read a byte from a hardware port
 unsigned char inb(unsigned short port);
 
-#endif // NET-IO_H
+#endif // NET_IO_H
