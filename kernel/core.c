@@ -12,6 +12,7 @@ static bool use_keyboard_driver = false;  // This will be set in usb_init()
 #include "../drivers/audio.h"
 #include "../drivers/usb.h"
 #include "../drivers/keyboard.h"
+#include "cpudelay.h"
 
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
@@ -185,6 +186,8 @@ void kernel_main() {
     unsigned int ip = 0xC0A895E2; // IP address 192.168.149.226
     unsigned int netmask = 0xFFFFF000; // Example netmask (255.255.240.0)
     init_net_interface(&iface, "eth0", mac, ip, netmask);    
+    
+    cpu_delay(3000000);
 
     shell_clear();
 
