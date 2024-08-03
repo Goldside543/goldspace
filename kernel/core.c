@@ -7,6 +7,7 @@ void kernel_main();  // Forward declaration
 #include "io.h"
 #include "multiboot.h"
 #include "../fs/simple_fs.h"
+#include "../net/net_if.h"
 
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
@@ -163,27 +164,13 @@ void kernel_main() {
 
     fs_init();
 
-    print(
-        "                                                \n"
-        "                            ++;;;;;; +                                    \n"
-        "                         +++++;;;;;;;++++                                 \n"
-        "                        +++++;::;;:x:;+++                                 \n"
-        "                            ;;;;;;;;;;;                                    \n"
-        "                            ;;;;$$;;;;;                                    \n"
-        "                            +&&$$$$&&&&                                    \n"
-        "                          ++++xxxxxxx+++                 ;;               \n"
-        "                           ;;;;;++;;;+++                ;;;               \n"
-        "                           ;;;;;;;;;;;;;;;;;;;;;;;;;;  ;;;;               \n"
-        "                           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;                \n"
-        "                            ;;;;;;;;;;;;;;;;;;;;;;;;;;                    \n"
-        "                              ;;;;;;;;;;;;;;;;;;;;;;;                     \n"
-        "                                ;;;;       ;;;;;                          \n"
-        "                               ;;;;;      ;;;;;;                          \n"
-        "                                        ;;;;;;;             \n"
-    );
-}
-
-    print("\nWelcome to Goldspace and the Gash shell!\n");
+    net_interface_t iface;
+    unsigned char mac[6] = {0x00, 0x1A, 0x2B, 0x3C, 0x4D, 0x5E}; // Example MAC address
+    unsigned int ip = 0xC0A895E2; // IP address 192.168.149.226
+    unsigned int netmask = 0xFFFFFF00; // Example netmask (255.255.255.0)
+    init_net_interface(&iface, "eth0", mac, ip, netmask);    
+    
+    print("Welcome to Goldspace and the Gash shell!\n");
     print("Type 'help' for available commands.\n");
 
     while (1) {
