@@ -1,4 +1,5 @@
-# Welcome! This script exits the goldspace directory, deletes it, clones it back, and goes into it, resetting your environment to the stable branch!
+# Welcome! This script exits the goldspace directory, deletes it, clones it back, and goes into it, 
+# resetting your environment to the stable branch!
 
 #!/usr/bin/perl
 use strict;
