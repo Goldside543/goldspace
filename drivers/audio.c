@@ -1,4 +1,5 @@
 #include "audio.h"
+#include "../kernel/print.h"
 #include <stdint.h>
 
 #define AUDIO_DEVICE_BASE 0xC0000000   // Hypothetical base address for the audio device
@@ -15,6 +16,7 @@
 #define AUDIO_CHANNELS     1          // Mono
 
 void audio_init(void) {
+    print("Loading audio drivers...")
     // Step 1: Reset the audio device
     volatile uint32_t *audio_ctrl = (volatile uint32_t *)AUDIO_CTRL_REG;
     *audio_ctrl = AUDIO_CTRL_RESET; // Send reset command
@@ -40,6 +42,7 @@ void audio_init(void) {
 
     // Step 3: Enable the audio device
     *audio_ctrl = AUDIO_CTRL_ENABLE; // Enable the audio device
+    print("Audio drivers loaded.")
 }
 
 void audio_play(const unsigned char *data, size_t length) {
