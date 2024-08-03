@@ -1,3 +1,4 @@
+#include <stddef.h>
 #define MEMORY_POOL_SIZE 1024
 
 static unsigned char memory_pool[MEMORY_POOL_SIZE];
