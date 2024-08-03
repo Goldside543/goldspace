@@ -4,7 +4,6 @@
 #define BLOCK_SIZE 4096
 #define MAX_FILES 50
 #define MAX_FILE_NAME 256
-#define DISK_PATH "/dev/sdX" // to be replaced with real disk path
 #define DISK_BASE_ADDR 0x10000000 // Base address for the disk (example address)
 
 FileSystem fs;
