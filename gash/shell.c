@@ -15,6 +15,7 @@ void shell_help() {
     print("write <filename> <data> - Write data to a file\n");
     print("read <filename> - Read data from a file\n");
     print("delete <filename> - Delete a file\n");
+    print("clear - Clear the screen\n");
 }
 
 void shell_echo(const char *message) {
@@ -254,6 +255,8 @@ void shell_execute_command(const char *command) {
         } else {
             print("delete: missing filename\n");
         }
+    } else if (my_strcmp(command_name, "clear") == 0) {
+        shell_clear();
     } else {
         print("Command not found. Type 'help' for a list of commands.\n");
     }
