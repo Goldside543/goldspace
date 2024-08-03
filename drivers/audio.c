@@ -19,12 +19,18 @@ void audio_init(void) {
     print("Loading audio driver...\n");
     // Step 1: Reset the audio device
     volatile uint32_t *audio_ctrl = (volatile uint32_t *)AUDIO_CTRL_REG;
+    volatile uint32_t *audio_status = (volatile uint32_t *)AUDIO_STATUS_REG;
+    volatile uint32_t *audio_data = (volatile uint32_t *)AUDIO_DATA_REG;
+
     *audio_ctrl = AUDIO_CTRL_RESET; // Send reset command
 
-    // Wait for the reset to complete (polling status register)
-    volatile uint32_t *audio_status = (volatile uint32_t *)AUDIO_STATUS_REG;
-    while (*audio_status & 0x01) {
-        // Wait until reset bit is cleared (example status check)
+    // Wait for the reset to complete with a timeout
+    unsigned int timeout = 3000000; // Adjust timeout value as needed
+    while (*audio_status & 0x01) {  // Check if reset bit is set
+        if (--timeout == 0) {
+            print("Audio device not found. Continuing boot without audio driver.\n");
+            return; // Timeout occurred, exit the function
+        }
     }
 
     // Step 2: Configure the audio device
@@ -32,8 +38,6 @@ void audio_init(void) {
 
     // Set sample rate, bit depth, and channels (hypothetical settings)
     // Note: Actual register configuration will vary by hardware
-    // Example: Configure sample rate register
-    volatile uint32_t *audio_data = (volatile uint32_t *)AUDIO_DATA_REG;
     *audio_data = AUDIO_SAMPLE_RATE; // Set sample rate
 
     // Example: Configure bit depth and channels
@@ -43,12 +47,4 @@ void audio_init(void) {
     // Step 3: Enable the audio device
     *audio_ctrl = AUDIO_CTRL_ENABLE; // Enable the audio device
     print("Audio driver loaded.\n");
-}
-
-void audio_play(const unsigned char *data, size_t length) {
-    // Hypothetical implementation: Write PCM data to audio device
-    volatile unsigned char *audio_device = (volatile unsigned char *)AUDIO_DEVICE_BASE;
-    for (size_t i = 0; i < length; ++i) {
-        audio_device[i] = data[i];  // Write PCM data to audio device
-    }
 }
