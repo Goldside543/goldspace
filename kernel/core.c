@@ -150,6 +150,12 @@ char get_char() {
 }
 
 void kernel_main() {
+
+/* There is an issue with the way the kernel handles input that causes
+   some inputs to not register. Anyone who can help, please help ASAP.
+
+            Goldside543
+*/
     // Initialize cursor position
     cursor_x = 0;
     cursor_y = 0;
