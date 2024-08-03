@@ -1,16 +1,16 @@
 # Preface
-Welcome to the Goldspace Developer Manual. This manual is intended for wanna-be developers for the Goldspace OS/kernel. 
+Welcome to the Goldspace Developer Manual. This manual is intended for wanna-be developers for the Goldspace kernel. 
 The world of developing a new kernel like this is, forgive my vulgarity, absolute hell. You're navigating through the frontier of a new kernel, trying to set things up to be hospitable for the end user, the people who truly need it! It'll be cold, unforgiving, mind-numbing, and NOT beginner friendly. <br> <br>
 
 Still not discouraged? Great, welcome aboard.
 # Chapter I: Goldspace information
-Goldspace is a 32-bit command-line-interface operating system, with a monolithic kernel and built-in bootloader. As of July 12th, 2024, it's around 30 MB compiled.
+Goldspace is a 32-bit kernel. As of August 2nd, 2024, it's around 30 MB compiled.
 Packed with it is a custom shell that inherits commands from Bash, named "Gash" as a portmanteau of "Bash" and "Gold".
 # Chapter II: Where to begin
 The following chapters of the guide assume you are using Linux, have Git/GitHub CLI installed, `gcc` installed, and `nasm` installed. Further dependencies will be added to this list.
 
 <br> <br> You can begin anywhere you want. Write a driver, sort out bugs with Gash, upgrade the kernel with extra cool features. You do you, as long as it works.
-We request that you always test changes you make. To clone the repository using Git, use `git clone https://github.com/Goldside543/goldspace` To clone the repository using GitHub CLI, use `gh repo clone Goldside543/goldspace`. Optionally, if you're wanting to mess with a branch, add the `-- --branch` flags to that command.
+We request that you always test changes you make. To clone the repository using Git, use `git clone https://github.com/Goldside543/goldspace.git` To clone the repository using GitHub CLI, use `gh repo clone Goldside543/goldspace`. Optionally, if you're wanting to mess with a branch, add the `-- --branch` flags to that command.
 # Chapter III: How to submit a change
 Unlike Linux, there's no massive mailing list to sort through, no. Unlike Torvalds, I'm not too picky about the GitHub pull request system. Granted, he has his reasons because Linux is massive, but I'm cool with pull requests.
 Just make the change and submit a pull request explaining:
