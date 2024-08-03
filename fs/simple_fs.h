@@ -1,11 +1,6 @@
 #ifndef SIMPLE_FS_H
 #define SIMPLE_FS_H
 
-#define MAX_FILES 10
-#define MAX_FILE_NAME 20
-#define BLOCK_SIZE 512
-#define NUM_BLOCKS 100
-
 // Define a structure to represent a file.
 typedef struct {
     char name[MAX_FILE_NAME];
