@@ -46,7 +46,7 @@ int create_file(const char* name) {
         if (fs.files[i].name[0] == '\0') { // Find an empty slot in the file table
             fs.files[i].size = 0;
             fs.files[i].start_block = -1;
-            return 0; // Return the index of the new file
+            return 0; // Return code 0
         }
     }
     return -1; // No space left in the file table
