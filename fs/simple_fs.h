@@ -1,6 +1,13 @@
 #ifndef SIMPLE_FS_H
 #define SIMPLE_FS_H
 
+#define DISK_SIZE (NUM_BLOCKS * BLOCK_SIZE)
+#define NUM_BLOCKS 100
+#define BLOCK_SIZE 4096
+#define MAX_FILES 50
+#define MAX_FILE_NAME 256
+#define DISK_BASE_ADDR 0x10000000 // Base address for the disk (example address)
+
 // Define a structure to represent a file.
 typedef struct {
     char name[MAX_FILE_NAME];
