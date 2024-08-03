@@ -1,13 +1,21 @@
-/* The following file system can only use memory, not disks.
-This creates limitations, such as data being wiped upon shut down.
-Feel free to help out by assisting with transitioning the file system from memory to disk.
-
-            Goldside543
-*/
-
 #include "simple_fs.h"
 
 FileSystem fs;
+volatile char* disk = (volatile char*)DISK_BASE_ADDR;
+
+void disk_write(int block_index, const char* data, int size) {
+    volatile char* dst = disk + (block_index * BLOCK_SIZE);
+    for (int i = 0; i < size; i++) {
+        dst[i] = data[i];
+    }
+}
+
+void disk_read(int block_index, char* buffer, int size) {
+    const volatile char* src = disk + (block_index * BLOCK_SIZE);
+    for (int i = 0; i < size; i++) {
+        buffer[i] = src[i];
+    }
+}
 
 void fs_init() {
     // Initialize the free blocks array
@@ -17,7 +25,9 @@ void fs_init() {
 
     // Initialize the file table
     for (int i = 0; i < MAX_FILES; i++) {
-        fs.files[i].name[0] = '\0';
+        for (int j = 0; j < MAX_FILE_NAME; j++) {
+            fs.files[i].name[j] = '\0';
+        }
         fs.files[i].size = 0;
         fs.files[i].start_block = -1;
     }
@@ -27,9 +37,12 @@ int create_file(const char* name) {
     for (int i = 0; i < MAX_FILES; i++) {
         if (fs.files[i].name[0] == '\0') { // Find an empty slot in the file table
             // Copy the file name
-            for (int j = 0; j < MAX_FILE_NAME; j++) {
+            int j;
+            for (j = 0; j < MAX_FILE_NAME && name[j] != '\0'; j++) {
                 fs.files[i].name[j] = name[j];
-                if (name[j] == '\0') break;
+            }
+            if (j < MAX_FILE_NAME) {
+                fs.files[i].name[j] = '\0'; // Null-terminate the name
             }
 
             fs.files[i].size = 0;
@@ -38,7 +51,6 @@ int create_file(const char* name) {
             return i; // Return the index of the new file
         }
     }
-
     return -1; // No space left in the file table
 }
 
@@ -59,9 +71,7 @@ int write_file(int file_index, const char* data, int size) {
     if (block_index == -1) return -1; // No free blocks available
 
     // Write data to the block
-    for (int i = 0; i < size && i < BLOCK_SIZE; i++) {
-        fs.storage[BLOCK_SIZE * block_index + i] = data[i];
-    }
+    disk_write(block_index, data, size);
 
     fs.files[file_index].size = size;
     fs.files[file_index].start_block = block_index;
@@ -77,9 +87,7 @@ int read_file(int file_index, char* buffer, int size) {
     int block_index = fs.files[file_index].start_block;
 
     // Read data from the block
-    for (int i = 0; i < size && i < fs.files[file_index].size && i < BLOCK_SIZE; i++) {
-        buffer[i] = fs.storage[BLOCK_SIZE * block_index + i];
-    }
+    disk_read(block_index, buffer, size);
 
     return 0;
 }
@@ -94,7 +102,9 @@ int delete_file(int file_index) {
     }
 
     // Clear the file entry
-    fs.files[file_index].name[0] = '\0';
+    for (int i = 0; i < MAX_FILE_NAME; i++) {
+        fs.files[file_index].name[i] = '\0';
+    }
     fs.files[file_index].size = 0;
     fs.files[file_index].start_block = -1;
 
