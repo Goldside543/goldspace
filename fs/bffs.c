@@ -4,27 +4,40 @@
 #define BLOCK_SIZE 4096
 #define MAX_FILES 50
 #define MAX_FILE_NAME 256
+#define DISK_PATH "/dev/sdX" // to be replaced with real disk path
 
 FileSystem fs;
 
 char disk[DISK_SIZE]; // Simulated disk
 
-void disk_write(int block_index, const char* data, int size) {
-    int start = block_index * BLOCK_SIZE;
-    for (int i = 0; i < size; i++) {
-        if (start + i < DISK_SIZE) {
-            disk[start + i] = data[i];
-        }
+int disk_write(int block_index, const char* data, int size) {
+    int fd = open(DISK_PATH, O_RDWR); // Open disk file for read and write
+    if (fd < 0) return -1;
+
+    off_t offset = block_index * BLOCK_SIZE;
+    if (lseek(fd, offset, SEEK_SET) == (off_t)-1) {
+        close(fd);
+        return -1;
     }
+
+    ssize_t written = write(fd, data, size);
+    close(fd);
+    return (written == size) ? 0 : -1;
 }
 
-void disk_read(int block_index, char* buffer, int size) {
-    int start = block_index * BLOCK_SIZE;
-    for (int i = 0; i < size; i++) {
-        if (start + i < DISK_SIZE) {
-            buffer[i] = disk[start + i];
-        }
+int disk_read(int block_index, char* buffer, int size) {
+    int fd = open(DISK_PATH, O_RDONLY); // Open disk file for read only
+    if (fd < 0) return -1;
+
+    off_t offset = block_index * BLOCK_SIZE;
+    if (lseek(fd, offset, SEEK_SET) == (off_t)-1) {
+        close(fd);
+        return -1;
     }
+
+    ssize_t read_bytes = read(fd, buffer, size);
+    close(fd);
+    return (read_bytes == size) ? 0 : -1;
 }
 
 typedef struct {
@@ -92,7 +105,10 @@ int write_file(int file_index, const char* data, int size) {
     if (block_index == -1) return -1; // No free blocks available
 
     // Write data to the block
-    disk_write(block_index, data, size);
+    if (disk_write(block_index, data, size) != 0) {
+        fs.free_blocks[block_index] = 1; // Rollback if write fails
+        return -1;
+    }
 
     fs.files[file_index].size = size;
     fs.files[file_index].start_block = block_index;
@@ -108,7 +124,9 @@ int read_file(int file_index, char* buffer, int size) {
     int block_index = fs.files[file_index].start_block;
 
     // Read data from the block
-    disk_read(block_index, buffer, size);
+    if (disk_read(block_index, buffer, size) != 0) {
+        return -1;
+    }
 
     return 0;
 }
