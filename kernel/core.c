@@ -8,6 +8,7 @@ void kernel_main();  // Forward declaration
 #include "multiboot.h"
 #include "../fs/simple_fs.h"
 #include "../net/net_if.h"
+#include "../drivers/audio.h"
 
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
@@ -163,6 +164,8 @@ void kernel_main() {
     move_cursor();
 
     fs_init();
+
+    audio_init();
 
     net_interface_t iface;
     unsigned char mac[6] = {0x02, 0x1B, 0x34, 0xA5, 0xC6, 0xD7}; // Randomly generated MAC address
