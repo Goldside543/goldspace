@@ -40,6 +40,8 @@ FS contains BFFS (Baby's First File System), a little file system I made. Quite 
 MM contains memory management (mm is an abbreviation) files. Nothing much of interest.
 # Chapter VI; Subchapter VI: Net
 Net contains networking files. These guys are the magic that allows you to connect to other computers.
+# Chapter VI; Subchapter VII: Drivers
+Drivers contains various drivers. Duh!
 # Chapter VII: Makefile
 The Makefile is further instructions for the compiler. It allows the convenience of typing `make` and watching it work. When including source files, make sure to note the syntax and style, and imitate it. 
 # Chapter VIII: Documentation contributions
