@@ -14,5 +14,4 @@ void usb_init(void) {
             return;
         }
     }
-    print("USB controller is ready.\n");
 }
