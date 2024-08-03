@@ -8,6 +8,16 @@
 #define MAX_FILE_NAME 256
 #define DISK_BASE_ADDR 0x10000000 // Base address for the disk (example address)
 
+typedef struct {
+    char name[MAX_FILE_NAME];
+    int size;
+    int start_block;
+} File;
+
+typedef struct {
+    char free_blocks[NUM_BLOCKS]; // Use char array for free blocks
+    File files[MAX_FILES];
+} FileSystem;
 
 extern FileSystem fs;
 
