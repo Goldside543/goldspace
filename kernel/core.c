@@ -183,7 +183,9 @@ void kernel_main() {
     unsigned int ip = 0xC0A895E2; // IP address 192.168.149.226
     unsigned int netmask = 0xFFFFF000; // Example netmask (255.255.240.0)
     init_net_interface(&iface, "eth0", mac, ip, netmask);    
-    
+
+    shell_clear();
+
     print("Welcome to Goldspace and the Gash shell!\n");
     print("Type 'help' for available commands.\n");
 
