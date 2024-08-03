@@ -12,7 +12,7 @@ void usb_init(void) {
 
     // Enable USB controller
     *usb_ctrl = USB_CTRL_ENABLE;
-    print("USB controller enabled.\n");
+    print("Checking for USB controller...\n");
 
     // Wait for the USB controller to be ready
     unsigned int timeout = 3000000;  // Adjust timeout value if needed
