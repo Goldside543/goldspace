@@ -1,4 +1,5 @@
 void kernel_main();  // Forward declaration
+static bool use_keyboard_driver = false;  // This will be set in usb_init()
 
 #include <stddef.h>
 #include <stdint.h>
@@ -105,10 +106,16 @@ int input_len = 0;
 char get_char() {
     static bool extended = false;
     uint8_t scancode;
+    char ascii = 0;
 
-    // Read character from keyboard port (for simplicity, polling)
-    while (!(inb(0x64) & 0x01));  // Wait until input buffer is not empty
-    scancode = inb(0x60);  // Get the scan code
+    if (use_keyboard_driver) {
+        // Use keyboard driver
+        scancode = keyboard_read();
+    } else {
+        // Use direct I/O port access
+        while (!(inb(0x64) & 0x01));  // Wait until input buffer is not empty
+        scancode = inb(0x60);  // Get the scan code
+    }
 
     if (scancode == 0xE0) {  // If it's the first byte of a multi-byte scan code
         extended = true;  // Set a flag to indicate we're in the middle of a multi-byte scan code
@@ -131,8 +138,8 @@ char get_char() {
         }
     } else {
         // Convert scan code to ASCII
-        char ascii = scancode_to_ascii_table[scancode];
-        
+       char ascii = scancode_to_ascii_table[scancode];
+
         // Handle special characters
         if (ascii == '\b') {  // If backspace was pressed
             if (input_len > 0) {  // If there are characters in the buffer
@@ -148,7 +155,7 @@ char get_char() {
             input_len++;  // Increment the length
             input_buffer[input_len] = '\0';  // Null-terminate the string
         }
-        
+
         return ascii;
     }
 }
