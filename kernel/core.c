@@ -9,6 +9,8 @@ void kernel_main();  // Forward declaration
 #include "../fs/simple_fs.h"
 #include "../net/net_if.h"
 #include "../drivers/audio.h"
+#include "../drivers/usb.h"
+#include "../drivers/keyboard.h"
 
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
