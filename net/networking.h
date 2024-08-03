@@ -1,6 +1,8 @@
 #ifndef NETWORKING_H
 #define NETWORKING_H
 
+#include <stddef.h>
+
 // Define a structure for a network packet
 typedef struct {
     unsigned char *data;
