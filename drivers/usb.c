@@ -19,12 +19,12 @@ void usb_init(void) {
     while (!(*usb_status & USB_STATUS_READY)) {
         if (--timeout == 0) {
             use_keyboard_driver = false;  // Timeout occurred, set to use direct I/O
-            print("USB controller timeout.\n");
+            print("USB controller not found. Continuing boot without driver.\n");
             return;
         }
     }
 
     // USB controller is ready
     use_keyboard_driver = true;  // USB controller found, use keyboard driver
-    print("USB controller driver is ready.\n");
+    print("USB controller driver is loaded.\n");
 }
