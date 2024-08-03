@@ -17,17 +17,6 @@ void disk_read(int block_index, char* buffer, int size) {
     }
 }
 
-typedef struct {
-    char name[MAX_FILE_NAME];
-    int size;
-    int start_block;
-} File;
-
-typedef struct {
-    char free_blocks[NUM_BLOCKS]; // Use char array for free blocks
-    File files[MAX_FILES];
-} FileSystem;
-
 void fs_init() {
     // Initialize the free blocks array
     for (int i = 0; i < NUM_BLOCKS; i++) {
