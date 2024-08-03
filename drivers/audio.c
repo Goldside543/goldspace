@@ -16,7 +16,7 @@
 #define AUDIO_CHANNELS     1          // Mono
 
 void audio_init(void) {
-    print("Loading audio driver...");
+    print("Loading audio driver...\n");
     // Step 1: Reset the audio device
     volatile uint32_t *audio_ctrl = (volatile uint32_t *)AUDIO_CTRL_REG;
     *audio_ctrl = AUDIO_CTRL_RESET; // Send reset command
@@ -42,7 +42,7 @@ void audio_init(void) {
 
     // Step 3: Enable the audio device
     *audio_ctrl = AUDIO_CTRL_ENABLE; // Enable the audio device
-    print("Audio driver loaded.");
+    print("Audio driver loaded.\n");
 }
 
 void audio_play(const unsigned char *data, size_t length) {
