@@ -165,7 +165,7 @@ void kernel_main() {
     fs_init();
 
     net_interface_t iface;
-    unsigned char mac[6] = {0x00, 0x1A, 0x2B, 0x3C, 0x4D, 0x5E}; // Example MAC address
+    unsigned char mac[6] = {0x02, 0x1B, 0x34, 0xA5, 0xC6, 0xD7}; // Randomly generated MAC address
     unsigned int ip = 0xC0A895E2; // IP address 192.168.149.226
     unsigned int netmask = 0xFFFFFF00; // Example netmask (255.255.255.0)
     init_net_interface(&iface, "eth0", mac, ip, netmask);    
