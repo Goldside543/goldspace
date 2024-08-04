@@ -12,8 +12,8 @@ goldspace.iso: boot/boot.bin kernel/kernel.bin
 boot/boot.bin: boot/boot.asm
 	nasm -f bin boot/boot.asm -o boot/boot.bin
 
-kernel/kernel.bin: kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o net/net-io.o net/net_if.o net/sockets.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o kernel/cpudelay.o
-	ld -m elf_i386 -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o net/net-io.o net/net_if.o net/sockets.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o kernel/cpudelay.o
+kernel/kernel.bin: kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o net/net-io.o net/net_if.o net/sockets.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o kernel/window.o kernel/abs.o kernel/cpudelay.o
+	ld -m elf_i386 -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o net/net-io.o net/net_if.o net/sockets.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o kernel/window.o kernel/abs.o kernel/cpudelay.o
 
 # Below is the part of the Makefile you probably want to see.
 # To change it between 32-bit and 64-bit, simply change the -m32
@@ -52,6 +52,18 @@ drivers/keyboard.o: drivers/keyboard.c
 
 drivers/usb.o: drivers/usb.c
 	gcc -m32 -ffreestanding -fno-stack-protector -c drivers/usb.c -o drivers/usb.o
+
+drivers/graphics.o: drivers/graphics.c
+	gcc -m32 -ffreestanding -fno-stack-protector -c drivers/graphics.c -o drivers/graphics.o
+
+drivers/mouse.o: drivers/mouse.c
+	gcc -m32 -ffreestanding -fno-stack-protector -c drivers/mouse.c -o drivers/mouse.o
+
+kernel/window.o: kernel/window.c
+	gcc -m32 -ffreestanding -fno-stack-protector -c kernel/window.c -o kernel/window.o
+
+kernel/abs.o: kernel/abs.c
+	gcc -m32 -ffreestanding -fno-stack-protector -c kernel/abs.c -o kernel/abs.o
 
 kernel/cpudelay.o: kernel/cpudelay.c
 	gcc -m32 -ffreestanding -fno-stack-protector -c kernel/cpudelay.c -o kernel/cpudelay.o
