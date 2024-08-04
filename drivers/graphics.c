@@ -9,10 +9,10 @@
 void init_graphics() {
     print("Loading graphics driver...\n");
     uint16_t *framebuffer = (uint16_t *)FRAMEBUFFER_ADDR;
+    print("Graphics driver loaded.");
     for (int y = 0; y < SCREEN_HEIGHT; ++y) {
         for (int x = 0; x < SCREEN_WIDTH; ++x) {
             framebuffer[y * SCREEN_WIDTH + x] = (0x0F << 8) | ' ';
-            print("Graphics driver loaded.\n");
         }
     }
 }
