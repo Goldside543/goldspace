@@ -1,11 +1,5 @@
 #include "../drivers/graphics.h"
-
-// Define a simple window structure
-typedef struct {
-    int x, y, width, height;
-    uint16_t border_color;
-    uint16_t fill_color;
-} Window;
+#include "window.h"
 
 void draw_window(Window *win) {
     // Draw window border
