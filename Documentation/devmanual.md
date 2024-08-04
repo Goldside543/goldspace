@@ -4,7 +4,7 @@ The world of developing a new kernel like this is, forgive my vulgarity, absolut
 
 Still not discouraged? Great, welcome aboard.
 # Chapter I: Goldspace information
-Goldspace is a 32-bit kernel. As of August 2nd, 2024, it's around 30 MB compiled.
+Goldspace is a 32-bit (64-bit is in the works) kernel. As of August 2nd, 2024, it's around 30 MB compiled.
 Packed with it is a custom shell that inherits commands from Bash, named "Gash" as a portmanteau of "Bash" and "Gold".
 # Chapter II: Where to begin
 The following chapters of the guide assume you are using Linux, have Git/GitHub CLI installed, `gcc` installed, and `nasm` installed. Further dependencies will be added to this list.
