@@ -14,6 +14,18 @@ find "$SOURCE_DIR" -type f \( -name "*.c" -o -name "*.h" \) | while read -r file
     # Replace "unsigned long" with "uint64_t" in the temporary file
     sed -i 's/\bunsigned long\b/uint64_t/g' "$TEMP_FILE"
 
+    # Replace "unsigned int" with "uint64_t"
+    sed -i 's/\bunsigned int\b/uint64_t/g' "$TEMP_FILE"
+
+    # Replace "elf_i386" with "elf_x86_64" in linker scripts
+    sed -i 's/elf_i386/elf_x86_64/g' "$TEMP_FILE"
+
+    # Replace "boot.asm" with "boot64.asm" in linker scripts and build files
+    sed -i 's/boot.asm/boot64.asm/g' "$TEMP_FILE"
+
+    # Replace "print.h" with "print64.h"
+    sed -i 's/print.h/print64.h/g' "$TEMP_FILE"
+
     # Check if we need to add #include <stdint.h>
     if ! grep -q '^#include <stdint.h>' "$TEMP_FILE"; then
         # Add #include <stdint.h> at the top of the file
