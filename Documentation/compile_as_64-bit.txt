@@ -1,0 +1,6 @@
+To compile Goldspace as 64-bit, the following is required.
+
+1. Change the bootloader from boot.asm to boot64.asm in the Makefile.
+2. Change all -m32 flags to -m64 in the Makefile.
+3. Run 64-bitifier.sh, which will change unsigned long to uint64_t, to take 
+   full advantage of the 64-bit environment.
