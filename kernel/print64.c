@@ -1,8 +1,7 @@
 #include "print.h"
+#include "print64.h"
 #include "core.c"
 
-#define VGA_WIDTH 80
-#define VGA_HEIGHT 25
 #define VGA_ADDRESS 0xB8000
 #define VGA_ENTRY(c, color) ((color << 8) | (c & 0xFF))
 
