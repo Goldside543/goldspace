@@ -26,5 +26,5 @@ void usb_init(void) {
 
     // USB controller is ready
     use_keyboard_driver = true;  // USB controller found, use keyboard driver
-    print("USB controller driver is loaded.\n");
+    print("USB controller driver loaded.\n");
 }
