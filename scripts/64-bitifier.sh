@@ -7,7 +7,8 @@ MAKEFILE_PATH="$SOURCE_DIR/Makefile"
 # Temporary file for processing
 TEMP_FILE="tempfile"
 
-# Find and replace "unsigned long" with "uint64_t" and add #include <stdint.h>
+# Find and replace "unsigned long" with "uint64_t", "unsigned int" with "uint64_t",
+# and "uint32_t" with "uint64_t", and add #include <stdint.h>
 find "$SOURCE_DIR" -type f \( -name "*.c" -o -name "*.h" \) | while read -r file; do
     # Create a temporary file to store changes
     cp "$file" "$TEMP_FILE"
@@ -17,6 +18,9 @@ find "$SOURCE_DIR" -type f \( -name "*.c" -o -name "*.h" \) | while read -r file
 
     # Replace "unsigned int" with "uint64_t"
     sed -i 's/\bunsigned int\b/uint64_t/g' "$TEMP_FILE"
+
+    # Replace "uint32_t" with "uint64_t"
+    sed -i 's/\buint32_t\b/uint64_t/g' "$TEMP_FILE"
 
     # Replace "elf_i386" with "elf_x86_64" in linker scripts
     sed -i 's/elf_i386/elf_x86_64/g' "$TEMP_FILE"
@@ -50,6 +54,9 @@ if [ -f "$MAKEFILE_PATH" ]; then
 
     # Replace "print.h" with "print64.h"
     sed -i 's/print.h/print64.h/g' "$TEMP_FILE"
+
+    # Replace "-m32" with "-m64"
+    sed -i 's/-m32/-m64/g' "$TEMP_FILE"
 
     # Move the temporary file back to the original Makefile
     mv "$TEMP_FILE" "$MAKEFILE_PATH"
