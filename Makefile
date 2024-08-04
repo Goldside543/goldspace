@@ -7,6 +7,8 @@ goldspace.iso: boot/boot.bin kernel/kernel.bin
 	cp grub.cfg isodir/boot/grub/
 	grub-mkrescue -o goldspace.iso isodir
 
+# Change boot.asm to boot64.asm for the 64-bit mode.
+
 boot/boot.bin: boot/boot.asm
 	nasm -f bin boot/boot.asm -o boot/boot.bin
 
