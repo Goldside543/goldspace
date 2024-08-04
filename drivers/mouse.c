@@ -3,7 +3,7 @@
 
 #define MOUSE_DATA_PORT 0x60
 #define MOUSE_COMMAND_PORT 0x64
-#define TIMEOUT 1000000
+#define TIMEOUT 3000000
 
 // Function to read a byte from a hardware port
 static uint8_t inb(uint16_t port) {
