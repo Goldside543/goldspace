@@ -14,7 +14,7 @@ static bool use_keyboard_driver = false;  // This will be set in usb_init()
 #include "../drivers/keyboard.h"
 #include "cpudelay.h"
 #include "../drivers/graphics.h"
-#include "../drivers/mouse.h
+#include "../drivers/mouse.h"
 
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
