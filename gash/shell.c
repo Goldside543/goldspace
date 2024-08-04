@@ -8,6 +8,7 @@
 void print(const char *str);
 
 void shell_help() {
+    print("\n");
     print("Available commands:\n");
     print("help - Display this help message\n");
     print("echo <message> - Echo the message back to the screen\n");
@@ -19,6 +20,7 @@ void shell_help() {
 }
 
 void shell_echo(const char *message) {
+    print("\n");
     print(message);
     print("\n");
 }
@@ -33,8 +35,10 @@ void shell_clear() {
 void shell_create(const char *name) {
     int result = create_file(name);
     if (result >= 0) {
+        print("\n");
         print("File created successfully.\n");
     } else {
+        print("\n");
         print("Error: Could not create file.\n");
     }
 }
@@ -66,6 +70,7 @@ void shell_write(const char *args) {
     data[data_idx] = '\0'; // Null-terminate data
 
     if (filename[0] == '\0' || data[0] == '\0') {
+        print("\n");
         print("write: missing filename or data\n");
         return;
     }
@@ -87,6 +92,7 @@ void shell_write(const char *args) {
     }
 
     if (file_index == -1) {
+        print("\n");
         print("Error: File not found.\n");
         return;
     }
@@ -94,8 +100,10 @@ void shell_write(const char *args) {
     // Write data to file
     int result = write_file(file_index, data, my_strlen(data));
     if (result == 0) {
+        print("\n");
         print("Data written successfully.\n");
     } else {
+        print("\n");
         print("Error: Could not write data to file.\n");
     }
 }
@@ -116,6 +124,7 @@ void shell_read(const char *args) {
     }
 
     if (filename[0] == '\0') {
+        print("\n");
         print("read: missing filename\n");
         return;
     }
@@ -137,6 +146,7 @@ void shell_read(const char *args) {
     }
 
     if (file_index == -1) {
+        print("\n");
         print("Error: File not found.\n");
         return;
     }
@@ -145,6 +155,7 @@ void shell_read(const char *args) {
     char buffer[BLOCK_SIZE];
     int result = read_file(file_index, buffer, BLOCK_SIZE);
     if (result == 0) {
+        print("\n");
         print(buffer);
         print("\n");
     } else {
@@ -168,6 +179,7 @@ void shell_delete(const char *args) {
     }
 
     if (filename[0] == '\0') {
+        print("\n");
         print("delete: missing filename\n");
         return;
     }
@@ -189,6 +201,7 @@ void shell_delete(const char *args) {
     }
 
     if (file_index == -1) {
+        print("\n");
         print("Error: File not found.\n");
         return;
     }
@@ -196,8 +209,10 @@ void shell_delete(const char *args) {
     // Delete file
     int result = delete_file(file_index);
     if (result == 0) {
+        print("\n");
         print("File deleted successfully.\n");
     } else {
+        print("\n");
         print("Error: Could not delete file.\n");
     }
 }
@@ -229,35 +244,41 @@ void shell_execute_command(const char *command) {
         if (*args != '\0') {
             shell_echo(args);
         } else {
+            print("\n");
             print("echo: missing argument\n");
         }
     } else if (my_strcmp(command_name, "create") == 0) {
         if (*args != '\0') {
             shell_create(args);
         } else {
+            print("\n");
             print("create: missing filename\n");
         }
     } else if (my_strcmp(command_name, "write") == 0) {
         if (*args != '\0') {
             shell_write(args);
         } else {
+            print("\n");
             print("write: missing filename or data\n");
         }
     } else if (my_strcmp(command_name, "read") == 0) {
         if (*args != '\0') {
             shell_read(args);
         } else {
+            print("\n");
             print("read: missing filename\n");
         }
     } else if (my_strcmp(command_name, "delete") == 0) {
         if (*args != '\0') {
             shell_delete(args);
         } else {
+            print("\n");
             print("delete: missing filename\n");
         }
     } else if (my_strcmp(command_name, "clear") == 0) {
         shell_clear();
     } else {
+        print("\n");
         print("Command not found. Type 'help' for a list of commands.\n");
     }
 }
