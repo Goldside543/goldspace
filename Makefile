@@ -10,8 +10,8 @@ goldspace.iso: boot/boot.bin kernel/kernel.bin
 boot/boot.bin: boot/boot.asm
 	nasm -f bin boot/boot.asm -o boot/boot.bin
 
-kernel/kernel.bin: kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o net/net-io.o net/net_if.o net/sockets.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o kernel/window.o kernel/abs.o kernel/cpudelay.o io/inb_outb.o
-	ld -m elf_i386 -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o net/net-io.o net/net_if.o net/sockets.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o kernel/window.o kernel/abs.o kernel/cpudelay.o io/inb_outb.o
+kernel/kernel.bin: kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o net/net-io.o net/net_if.o net/sockets.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o kernel/window.o kernel/abs.o kernel/cpudelay.o
+	ld -m elf_i386 -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o net/net-io.o net/net_if.o net/sockets.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o kernel/window.o kernel/abs.o kernel/cpudelay.o
 
 kernel/kernel.o: kernel/core.c
 	gcc -m32 -ffreestanding -fno-stack-protector -c kernel/core.c -o kernel/kernel.o
@@ -60,9 +60,6 @@ kernel/abs.o: kernel/abs.c
 
 kernel/cpudelay.o: kernel/cpudelay.c
 	gcc -m32 -ffreestanding -fno-stack-protector -c kernel/cpudelay.c -o kernel/cpudelay.o
-
-io/inb_outb.o: io/inb_outb.c
-	gcc -m32 -ffreestanding -fno-stack-protector -c io/inb_outb.c -o io/inb_outb.o
 
 clean:
 	rm -rf *.bin *.o *.iso isodir
