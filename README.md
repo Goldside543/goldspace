@@ -1,3 +1,5 @@
+![Drawing](https://github.com/user-attachments/assets/341a14bd-a23a-4742-ac67-bb30a29c6892)
+
 # Goldspace
 Crappy kernel I'm making. We've got the bootloader, the kernel, the linker script, the Gash shell, the Makefile...
 It's practically better than Linux.
