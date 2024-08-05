@@ -7,13 +7,6 @@
 #define MAX_FILES 50
 #define MAX_FILE_NAME 256
 #define DISK_BASE_ADDR 0x10000000 // Base address for the disk (example address)
-#define SEEK_SET 0
-#define SEEK_CUR 1
-#define SEEK_END 2
-#define O_RDONLY  00
-#define O_WRONLY  01
-#define O_RDWR    02
-#define O_CREAT   0100
 
 typedef struct {
     char name[MAX_FILE_NAME];
