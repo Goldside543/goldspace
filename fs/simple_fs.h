@@ -21,6 +21,8 @@ typedef struct {
     FileEntry files[MAX_FILES];
 } FileSystem;
 
+extern FileSystem fs;
+
 // File system functions
 void fs_init(void);
 int create_file(const char* name);
