@@ -6,9 +6,16 @@ void ata_pio_select_drive(uint8_t drive) {
 }
 
 void ata_pio_wait_ready() {
-    while (inb(ATA_REG_STATUS) & ATA_STATUS_BUSY);
+    uint8_t status;
+    for (int i = 0; i < 15; i++) {
+        status = inb(ATA_REG_STATUS);
+    }
+    
+    // Ensure the drive is not busy and is ready
+    while (status & ATA_STATUS_BUSY) {
+        status = inb(ATA_REG_STATUS);
+    }
 }
-
 void ata_pio_read(uint32_t lba, void *buffer, size_t size) {
     uint8_t *buf = (uint8_t *)buffer;
     ata_pio_wait_ready();
