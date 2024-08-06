@@ -1,22 +1,14 @@
 #include "simple_fs.h"
 
-FileSystem fs;
-volatile char* disk = (volatile char*)DISK_BASE_ADDR;
-
 void disk_write(int block_index, const char* data, int size) {
-    volatile char* dst = disk + (block_index * BLOCK_SIZE);
-    for (int i = 0; i < size; i++) {
-        dst[i] = data[i];
-    }
+    ata_pio_write(block_index * BLOCK_SIZE, data, size);
 }
 
 void disk_read(int block_index, char* buffer, int size) {
-    const volatile char* src = disk + (block_index * BLOCK_SIZE);
-    for (int i = 0; i < size; i++) {
-        buffer[i] = src[i];
-    }
+    ata_pio_read(block_index * BLOCK_SIZE, buffer, size);
 }
 
+// Initialize the file system
 void fs_init() {
     // Initialize the free blocks array
     for (int i = 0; i < NUM_BLOCKS; i++) {
@@ -33,6 +25,7 @@ void fs_init() {
     }
 }
 
+// Create a file
 int create_file(const char* name) {
     for (int i = 0; i < MAX_FILES; i++) {
         if (fs.files[i].name[0] == '\0') { // Find an empty slot in the file table
@@ -54,6 +47,7 @@ int create_file(const char* name) {
     return -1; // No space left in the file table
 }
 
+// Write data to a file
 int write_file(int file_index, const char* data, int size) {
     if (file_index < 0 || file_index >= MAX_FILES) return -1;
     if (fs.files[file_index].name[0] == '\0') return -1; // File does not exist
@@ -70,7 +64,7 @@ int write_file(int file_index, const char* data, int size) {
 
     if (block_index == -1) return -1; // No free blocks available
 
-    // Write data to the block
+    // Write data to the block using ATA PIO
     disk_write(block_index, data, size);
 
     fs.files[file_index].size = size;
@@ -79,6 +73,7 @@ int write_file(int file_index, const char* data, int size) {
     return 0;
 }
 
+// Read data from a file
 int read_file(int file_index, char* buffer, int size) {
     if (file_index < 0 || file_index >= MAX_FILES) return -1;
     if (fs.files[file_index].name[0] == '\0') return -1; // File does not exist
@@ -86,12 +81,13 @@ int read_file(int file_index, char* buffer, int size) {
 
     int block_index = fs.files[file_index].start_block;
 
-    // Read data from the block
+    // Read data from the block using ATA PIO
     disk_read(block_index, buffer, size);
 
     return 0;
 }
 
+// Delete a file
 int delete_file(int file_index) {
     if (file_index < 0 || file_index >= MAX_FILES) return -1;
     if (fs.files[file_index].name[0] == '\0') return -1; // File does not exist
