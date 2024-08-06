@@ -1,6 +1,8 @@
 #include "simple_fs.h"
 #include "../drivers/disk.h"
 
+FileSystem fs;
+
 void disk_write(int block_index, const char* data, int size) {
     ata_pio_write(block_index * BLOCK_SIZE, data, size);
 }
