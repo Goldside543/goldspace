@@ -10,8 +10,8 @@ goldspace.iso: boot/boot.bin kernel/kernel.bin
 boot/boot.bin: boot/boot.asm
 	nasm -f bin boot/boot.asm -o boot/boot.bin
 
-kernel/kernel.bin: kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o net/net-io.o net/net_if.o net/sockets.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o kernel/window.o kernel/abs.o kernel/cpudelay.o
-	ld -m elf_i386 -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o net/net-io.o net/net_if.o net/sockets.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o kernel/window.o kernel/abs.o kernel/cpudelay.o
+kernel/kernel.bin: kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o net/net-io.o net/net_if.o net/sockets.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o fs/fs_syscalls.o
+	ld -m elf_i386 -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/bffs.o net/net-io.o net/net_if.o net/sockets.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o fs/fs_syscalls.o
 
 kernel/kernel.o: kernel/core.c
 	gcc -m32 -ffreestanding -fno-stack-protector -c kernel/core.c -o kernel/kernel.o
@@ -63,6 +63,15 @@ kernel/abs.o: kernel/abs.c
 
 kernel/cpudelay.o: kernel/cpudelay.c
 	gcc -m32 -ffreestanding -fno-stack-protector -c kernel/cpudelay.c -o kernel/cpudelay.o
+
+kernel/syscall_dispatcher.o: kernel/syscall_dispatcher.c
+	gcc -m32 -ffreestanding -fno-stack-protector -c kernel/syscall_dispatcher.c -o kernel/syscall_dispatcher.o
+
+kernel/syscall_table.o: kernel/syscall_table.c
+	gcc -m32 -ffreestanding -fno-stack-protector -c kernel/syscall_table.c -o kernel/syscall_table.o
+
+fs/fs_syscalls.o: fs/fs_syscalls.c
+	gcc -m32 -ffreestanding -fno-stack-protector -c fs/fs_syscalls.c -o fs/fs_syscalls.o
 
 clean:
 	rm -rf *.bin *.o *.iso isodir
