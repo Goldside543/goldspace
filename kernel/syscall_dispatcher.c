@@ -1,5 +1,7 @@
 #include "syscall_table.h"  // Ensure this header declares syscall_table
 #include "syscall_numbers.h"
+#include <stdint.h>
+#include <stddef.h>
 
 int syscall_handler(int syscall_number, void* arg1, void* arg2, void* arg3, void* arg4) {
     // Check if syscall_number is within valid range
