@@ -2,7 +2,7 @@
 #define SYSCALL_TABLE_H
 
 #include "syscall_numbers.h"
-#include "syscall_handlers.h"
+#include "../fs/fs_syscalls.h"
 
 // Define the syscall table
 extern int (*syscall_table[])(void);
