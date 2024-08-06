@@ -1,4 +1,5 @@
 #include "simple_fs.h"
+#include "../drivers/disk.h"
 
 void disk_write(int block_index, const char* data, int size) {
     ata_pio_write(block_index * BLOCK_SIZE, data, size);
@@ -10,6 +11,8 @@ void disk_read(int block_index, char* buffer, int size) {
 
 // Initialize the file system
 void fs_init() {
+    ata_pio_init();
+
     // Initialize the free blocks array
     for (int i = 0; i < NUM_BLOCKS; i++) {
         fs.free_blocks[i] = 1; // 1 indicates that the block is free
