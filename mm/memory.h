@@ -2,6 +2,7 @@
 #define MEMORY_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 // Allocate memory of a given size
 void* kmalloc(size_t size);
