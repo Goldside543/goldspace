@@ -15,4 +15,4 @@ Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is des
 * `delete <filename>` deletes a file!
 # For additional documentation...
 See the user manual or developer manual, conveniently located in the Documentation directory!
-# Version number: v2.0.1
+# Version number: v2.1.0
