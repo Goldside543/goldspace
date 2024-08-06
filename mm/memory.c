@@ -1,7 +1,15 @@
 #include <stddef.h>
 #include <stdint.h>
+#include "../kernel/print.h"
 
 #define MEMORY_POOL_SIZE 1024
+#define PAGE_SIZE 4096 // 4 KB pages
+#define NUM_PAGES (MEMORY_POOL_SIZE / PAGE_SIZE)
+#define PAGE_TABLE_SIZE (NUM_PAGES * sizeof(uint32_t))
+
+typedef struct {
+    uint32_t page_table[NUM_PAGES];
+} page_table_t;
 
 static unsigned char memory_pool[MEMORY_POOL_SIZE];
 static unsigned int memory_index = 0;
@@ -59,4 +67,37 @@ int kmemcmp(const void* ptr1, const void* ptr2, size_t num) {
         }
     }
     return 0;
+}
+
+static page_table_t* page_table;
+
+void page_table_init() {
+    page_table = (page_table_t*)kmalloc(sizeof(page_table_t));
+    if (page_table == NULL) {
+        print("Memory allocation failed during initialization.\n");
+    }
+
+    // Initialize page table entries to zero
+    for (int i = 0; i < NUM_PAGES; ++i) {
+        page_table->page_table[i] = 0;
+    }
+}
+
+void map_page(uint32_t virtual_address, uint32_t physical_address) {
+    uint32_t page_index = virtual_address / PAGE_SIZE;
+    page_table->page_table[page_index] = physical_address | 0x3; // Set present and writable bits
+}
+
+void kmempaging(void* virtual_address, size_t size) {
+    uint32_t start_page = (uint32_t)virtual_address / PAGE_SIZE;
+    uint32_t end_page = ((uint32_t)virtual_address + size - 1) / PAGE_SIZE;
+
+    for (uint32_t page = start_page; page <= end_page; ++page) {
+        uint32_t physical_address = (uint32_t)kmalloc(PAGE_SIZE);
+        if (physical_address == 0) {
+            print("Memory allocation failed during paging.\n");
+            return;
+        }
+        map_page(page * PAGE_SIZE, physical_address);
+    }
 }
