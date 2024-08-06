@@ -1,9 +1,9 @@
-#include "syscall_numbers.h"
-#include "../fs/fs_syscalls.h"
+#include "syscall_table.h"
 
-static int (*syscall_table[])(void) = {
-    [SYS_CREATE_FILE] = (int (*)(void))sys_create_file,
-    [SYS_WRITE_FILE]  = (int (*)(void))sys_write_file,
-    [SYS_READ_FILE]   = (int (*)(void))sys_read_file,
-    [SYS_DELETE_FILE] = (int (*)(void))sys_delete_file,
+// Define the syscall table
+int (*syscall_table[])(void*, void*, void*, void*) = {
+    [SYS_CREATE_FILE] = (int (*)(void*, void*, void*, void*))sys_create_file,
+    [SYS_WRITE_FILE]  = (int (*)(void*, void*, void*, void*))sys_write_file,
+    [SYS_READ_FILE]   = (int (*)(void*, void*, void*, void*))sys_read_file,
+    [SYS_DELETE_FILE] = (int (*)(void*, void*, void*, void*))sys_delete_file,
 };
