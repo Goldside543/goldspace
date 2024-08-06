@@ -74,7 +74,7 @@ static page_table_t* page_table;
 void page_table_init() {
     page_table = (page_table_t*)kmalloc(sizeof(page_table_t));
     if (page_table == NULL) {
-        print("Memory allocation failed during initialization.\n");
+        print("Memory allocation failed during page table initialization.\n");
     }
 
     // Initialize page table entries to zero
