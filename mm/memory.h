@@ -15,4 +15,7 @@ void* kmemset(void* ptr, int value, size_t num);
 // Copy a block of memory from source to destination
 void* kmemcpy(void* dest, const void* src, size_t num);
 
+// Compare two blocks of memory
+int kmemcmp(const void* ptr1, const void* ptr2, size_t num);
+
 #endif // MEMORY_H
