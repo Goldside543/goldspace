@@ -10,9 +10,9 @@ void* kmalloc(size_t size);
 void kfree(void* ptr);
 
 // Set a block of memory to a specific value
-void* memset(void* ptr, int value, size_t num);
+void* kmemset(void* ptr, int value, size_t num);
 
 // Copy a block of memory from source to destination
-void* memcpy(void* dest, const void* src, size_t num);
+void* kmemcpy(void* dest, const void* src, size_t num);
 
 #endif // MEMORY_H
