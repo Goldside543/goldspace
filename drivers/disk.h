@@ -17,6 +17,7 @@
 #define ATA_REG_STATUS        0x1F7
 
 // ATA Commands
+#define ATA_COMMAND_IDENTIFY   0xEC
 #define ATA_COMMAND_READ_SECTORS    0x20
 #define ATA_COMMAND_WRITE_SECTORS   0x30
 
