@@ -31,5 +31,6 @@ void ata_pio_select_drive(uint8_t drive);
 void ata_pio_wait_ready(void);
 void ata_pio_read(uint32_t lba, void *buffer, size_t size);
 void ata_pio_write(uint32_t lba, const void *buffer, size_t size);
+void ata_pio_init();
 
 #endif // DISK_H
