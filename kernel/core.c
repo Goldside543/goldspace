@@ -178,6 +178,8 @@ void kernel_main() {
 
     fs_init();
 
+    page_table_init();
+ 
     audio_init();
 
     usb_init();
@@ -185,8 +187,6 @@ void kernel_main() {
     init_keyboard();
 
     init_graphics();
-
-    page_table_init();
 
     net_interface_t iface;
     unsigned char mac[6] = {0x02, 0x1B, 0x34, 0xA5, 0xC6, 0xD7}; // Randomly generated MAC address
