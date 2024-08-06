@@ -1,6 +1,5 @@
 #include "../kernel/io.h"
-#include <stddef.h>
-#include <stdint.h>
+#include "disk.h"
 
 #define ATA_REG_DATA    0x1F0
 #define ATA_REG_ERROR   0x1F1
