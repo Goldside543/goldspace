@@ -5,8 +5,8 @@
 
 static unsigned char memory_pool[MEMORY_POOL_SIZE];
 static unsigned int memory_index = 0;
+static unsigned char memory_free_map[MEMORY_POOL_SIZE]; // To track free/used memory
 
-/* Allocate memory from the pool */
 void* kmalloc(size_t size) {
     if (memory_index + size > MEMORY_POOL_SIZE) {
         return NULL; // Out of memory
@@ -17,7 +17,20 @@ void* kmalloc(size_t size) {
 }
 
 void kfree(void* ptr) {
-    // Simple implementation: Do nothing, as we are not freeing individual blocks
+    if (ptr == NULL || (unsigned char*)ptr < memory_pool || (unsigned char*)ptr >= memory_pool + MEMORY_POOL_SIZE) {
+        return; // Pointer out of bounds or NULL
+    }
+    // Find the start of the allocated block
+    unsigned int index = (unsigned char*)ptr - memory_pool;
+    if (index >= MEMORY_POOL_SIZE || memory_free_map[index] == 0) {
+        return; // Block not allocated or already freed
+    }
+
+    // Mark the block as free
+    while (index < MEMORY_POOL_SIZE && memory_free_map[index] == 1) {
+        memory_free_map[index] = 0;
+        ++index;
+    }
 }
 
 void* kmemset(void* ptr, int value, size_t num) {
