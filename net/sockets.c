@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * net/sockets.c
+ *
+ * Socket related functions.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include "networking.h"
 #include "../mm/memory.h"
 #include "net_if.h"
