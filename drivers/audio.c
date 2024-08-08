@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * drivers/audio.c
+ *
+ * Audio driver.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include "audio.h"
 #include "../kernel/print.h"
 #include <stdint.h>

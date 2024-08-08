@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * kernel/print64.c
+ *
+ * 64-bit version of the print function.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include "print.h"
 #include "print64.h"
 #include "core.c"

@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * drivers/mouse.c
+ *
+ * PS/2 mouse driver.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include "mouse.h"
 #include <stdint.h>
 #include "../kernel/print.h"

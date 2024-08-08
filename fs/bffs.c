@@ -1,3 +1,14 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * fs/bffs.c
+ *
+ * Baby's First File System. A (hopefully) portable file system I
+ * made just for Goldspace.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include "simple_fs.h"
 
 FileSystem fs;

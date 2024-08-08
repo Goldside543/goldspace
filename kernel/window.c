@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * kernel/window.c
+ *
+ * Makes a window appear.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include "../drivers/graphics.h"
 #include "window.h"
 

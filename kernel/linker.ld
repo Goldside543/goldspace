@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-2.0-only */
+
 ENTRY(kernel_main)
 SECTIONS {
     . = 0x00100000;  /* Set kernel base address */
