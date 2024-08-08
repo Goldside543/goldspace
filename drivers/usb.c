@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * drivers/usb.c
+ *
+ * USB controller driver.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include <stdbool.h>
 #include "usb.h"
 #include "keyboard.h"  // Ensure this header file contains the declaration for keyboard_read

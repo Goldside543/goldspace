@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * drivers/graphics.c
+ *
+ * Graphics driver.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include <stdint.h>
 #include "../kernel/print.h"
 #include "../kernel/abs.h"

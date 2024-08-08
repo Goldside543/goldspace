@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * net/net_if.c
+ *
+ * Core networking utilities.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include "networking.h"
 #include "net-io.h"
 #include "../mm/memory.h"

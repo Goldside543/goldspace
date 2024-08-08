@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-2.0-only
+
 BITS 16
 org 0x7c00
 

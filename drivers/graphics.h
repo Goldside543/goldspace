@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-2.0-only */
+
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 

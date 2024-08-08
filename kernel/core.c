@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * kernel/core.c
+ *
+ * This file is the main part of the kernel, where it all comes together.
+ * 
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include <stdbool.h>
 void kernel_main();  // Forward declaration
 static bool use_keyboard_driver = false;  // This will be set in usb_init()

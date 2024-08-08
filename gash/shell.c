@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * gash/shell.c
+ *
+ * Main file of Gash, a shell for testing Goldspace.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include <stddef.h>
 #include <stdint.h>
 #include "shell.h"
