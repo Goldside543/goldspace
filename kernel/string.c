@@ -7,6 +7,7 @@
  * Copyright (C) 2024 Goldside543
  *
  */
+
 #include <stddef.h>
 #include <stdint.h>
 short my_strcspn(const char *s1, const char *s2);
