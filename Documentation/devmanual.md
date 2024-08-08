@@ -12,7 +12,7 @@ The following chapters of the guide assume you are using Linux, have Git/GitHub 
 <br> <br> You can begin anywhere you want. Write a driver, sort out bugs with Gash, upgrade the kernel with extra cool features. You do you, as long as it works.
 We request that you always test changes you make. To clone the repository using Git, use `git clone https://github.com/Goldside543/goldspace.git` To clone the repository using GitHub CLI, use `gh repo clone Goldside543/goldspace`. Optionally, if you're wanting to mess with a branch, add the `-- --branch` flags to that command.
 # Chapter III: How to submit a change
-Unlike Linux, there's no massive mailing list to sort through, no. Unlike Torvalds, I'm not too picky about the GitHub pull request system. Granted, he has his reasons because Linux is massive, but I'm cool with pull requests.
+Unlike Linux, there's no massive mailing list to sort through, no. Unlike Torvalds, I'm not too picky about the GitHub pull request system. Granted, he has his reasons because Linux is massive, but I'm cool with pull requests. Do remember that you will have to include licensing information (preferably under GPL-2.0-only, but any other GPL compatible license will do). <br> <br>
 Just make the change and submit a pull request explaining:
 * What you changed
 * Why you changed it
