@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * drivers/keyboard.c
+ *
+ * USB keyboard driver.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include "usb.h"
 #include "keyboard.h"
 #include "../kernel/print.h"
