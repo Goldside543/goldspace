@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-2.0-only */
+
 #ifndef SIMPLE_FS_H
 #define SIMPLE_FS_H
 
