@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * mm/memory.c
+ *
+ * Memory management functions.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include <stddef.h>
 #define MEMORY_POOL_SIZE 1024
 
