@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * net/net-io.c
+ *
+ * Networking I/O functions.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include "net-io.h"
 
 void outb(unsigned short port, unsigned char data) {
