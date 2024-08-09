@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * kernel/syscall_table.c
+ * 
+ * System call table definition.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include "syscall_table.h"
 
 // Define the syscall table
