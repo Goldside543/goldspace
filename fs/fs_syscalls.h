@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-2.0-only */
+
 #ifndef FS_SYSCALLS_H
 #define FS_SYSCALLS_H
 
