@@ -1,3 +1,5 @@
+/* SPDX-License-Identifer: GPL-2.0-only */
+
 #ifndef DISK_H
 #define DISK_H
 
