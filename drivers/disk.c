@@ -17,6 +17,7 @@ void ata_pio_select_drive(uint8_t drive) {
 
 void ata_pio_wait_ready() {
     uint8_t status;
+    // Read 15 times and pay attention to the last
     for (int i = 0; i < 15; i++) {
         status = inb(ATA_REG_STATUS);
     }
