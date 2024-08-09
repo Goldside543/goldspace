@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-2.0-only */
+
 #ifndef SYSCALL_DISPATCHER_H
 #define SYSCALL_DISPATCHER_H
 
