@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * kernel/syscall_dispatcher.c
+ * 
+ * System call handler.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include "syscall_table.h"
 #include "syscall_numbers.h"
 
