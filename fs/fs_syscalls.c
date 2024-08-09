@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * fs/syscalls.c
+ * 
+ * File system related system calls.
+ *
+ * Copyright (C) 2024 Goldside543
+ */
+
 #include "../kernel/syscall_numbers.h"
 #include "simple_fs.h" 
 
