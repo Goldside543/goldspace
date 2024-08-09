@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-2.0-only */
+
 #ifndef SYSCALL_NUMBERS_H
 #define SYSCALL_NUMBERS_H
 
