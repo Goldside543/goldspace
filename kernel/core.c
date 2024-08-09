@@ -25,6 +25,7 @@ static bool use_keyboard_driver = false;  // This will be set in usb_init()
 #include "cpudelay.h"
 #include "../drivers/graphics.h"
 #include "../drivers/mouse.h"
+#include "../mm/memory.h"
 
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
@@ -187,6 +188,8 @@ void kernel_main() {
 
     fs_init();
 
+    page_table_init();
+ 
     audio_init();
 
     usb_init();
