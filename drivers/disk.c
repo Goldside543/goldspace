@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * drivers/disk.c
+ * 
+ * ATA PIO driver. Not really functional.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include "../kernel/io.h"
 #include "disk.h"
 
