@@ -4,15 +4,15 @@
 #define WINDOW_H
 
 #include "../drivers/graphics.h"
+#include <stdint.h> 
 
-// Define a simple window structure
 typedef struct {
-    int x, y, width, height;
-    uint16_t border_color;
-    uint16_t fill_color;
+    int x, y;                
+    int width, height;       
+    uint16_t border_color;   
+    uint16_t fill_color;    
 } Window;
 
-// Function prototype for drawing a window
-void draw_window(Window *win);
+void draw_window(const Window *win);
 
 #endif // WINDOW_H

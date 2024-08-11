@@ -29,9 +29,12 @@ void init_graphics() {
 
 // Helper function to set a pixel
 static void set_pixel(int x, int y, uint16_t color) {
-    uint16_t *framebuffer = (uint16_t *)FRAMEBUFFER_ADDR;
-    framebuffer[y * SCREEN_WIDTH + x] = color;
+    if (x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT) {
+        uint16_t *framebuffer = (uint16_t *)FRAMEBUFFER_ADDR;
+        framebuffer[y * SCREEN_WIDTH + x] = color;
+    }
 }
+
 
 // Draw a rectangle
 void draw_rectangle(int x, int y, int width, int height, uint16_t color) {
@@ -253,23 +256,23 @@ static const uint8_t font[128][8] = {
 };
 
 // Draw a character at (x, y)
-void draw_char(int x, int y, char c, uint16_t color) {
-    if (c < 32 || c >= 128) return; // Only printable ASCII characters
-
-    const uint8_t *bitmap = font[c - 32];
+void draw_char(int x, int y, char ch, uint16_t color) {
+    if (ch < 32 || ch > 127) return; // Handle out-of-bounds characters
+    const uint8_t *bitmap = font[ch - 32];
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
-            if (bitmap[i] & (1 << j)) {
+            if (bitmap[i] & (1 << (7 - j))) {
                 set_pixel(x + j, y + i, color);
             }
         }
     }
 }
 
+
 // Draw a string at (x, y)
-void draw_string(int x, int y, const char *str, uint16_t color) {
-    while (*str) {
-        draw_char(x, y, *str++, color);
+void draw_text(int x, int y, const char *text, uint16_t color) {
+    while (*text) {
+        draw_char(x, y, *text++, color);
         x += 8; // Move to the next character position
     }
 }

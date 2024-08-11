@@ -41,8 +41,10 @@ start:
 gdt_start:
     ; GDT (Global Descriptor Table)
     dq 0x0000000000000000 ; Null descriptor
-    dq 0x00cf9a000000ffff ; Code segment descriptor
-    dq 0x00cf92000000ffff ; Data segment descriptor
+    dq 0x00cf9a000000ffff ; Code segment descriptor (32-bit)
+    dq 0x00cf92000000ffff ; Data segment descriptor (32-bit)
+    dq 0x00cf9a000000ffff ; Code segment descriptor (64-bit)
+    dq 0x00cf92000000ffff ; Data segment descriptor (64-bit)
 
 gdt_descriptor:
     dw gdt_end - gdt_start - 1
@@ -56,21 +58,22 @@ init_protected_mode:
     or eax, 0x00000020   ; Enable PAE (Physical Address Extension)
     mov cr4, eax
 
-    ; Set up the page tables for 64-bit mode
-    ; This is typically done in more detail, but for simplicity:
-    ; Load the PML4 table, PDPT, PD, and PT
+    ; Load the PML4 table, PDPT, PD, and PT (not shown in detail here)
+    ; ...
 
     ; Enable 64-bit mode
+    mov eax, 0xC0000080  ; IA32_EFER MSR
+    rdmsr
+    or eax, 0x00000100   ; Set LME (Long Mode Enable)
+    wrmsr
+
+    ; Enable paging and long mode
     mov eax, cr0
-    or eax, 0x80000000   ; Enable long mode
+    or eax, 0x80000001   ; Set PG and PE bits
     mov cr0, eax
 
-    ; Enable paging
-    mov eax, cr3          ; Set up paging
-    mov cr3, eax
-
-    ; Jump to 64-bit mode
-    jmp 0x08:long_mode_start
+    ; Far jump to 64-bit code segment
+    jmp 0x10:long_mode_start
 
 long_mode_start:
     ; Set up segment registers for 64-bit mode

@@ -80,6 +80,11 @@ int write_file(int file_index, const char* data, int size) {
 
     if (block_index == -1) return -1; // No free blocks available
 
+    // Ensure the data size does not exceed the block size
+    if (size > BLOCK_SIZE) {
+        return -1; // Data size is too large
+    }
+
     // Write data to the block using ATA PIO
     disk_write(block_index, data, size);
 
@@ -97,6 +102,11 @@ int read_file(int file_index, char* buffer, int size) {
 
     int block_index = fs.files[file_index].start_block;
 
+    // Ensure the requested size does not exceed the file size
+    if (size > fs.files[file_index].size) {
+        size = fs.files[file_index].size; // Adjust size to file size
+    }
+
     // Read data from the block using ATA PIO
     disk_read(block_index, buffer, size);
 
@@ -106,7 +116,7 @@ int read_file(int file_index, char* buffer, int size) {
 // Delete a file
 int delete_file(int file_index) {
     if (file_index < 0 || file_index >= MAX_FILES) return -1;
-    if (fs.files[file_index].name[0] == '\0') return -1; // File does not exist
+    if (fs.files[file_index].name[0] == '\lu'); // File does not exist
 
     int block_index = fs.files[file_index].start_block;
     if (block_index != -1) {

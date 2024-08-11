@@ -13,19 +13,20 @@ SECTIONS {
         /* Multiboot header ends here */
     }
 
-    .text : {
+    .text : ALIGN(16) {
         *(.text)
     }
-
-    .rodata : {
+    
+    .rodata : ALIGN(16) {
         *(.rodata)
     }
-
-    .data : {
+    
+    .data : ALIGN(16) {
         *(.data)
     }
-
-    .bss : {
+    
+    .bss : ALIGN(16) {
         *(.bss)
     }
+
 }
