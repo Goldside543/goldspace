@@ -9,6 +9,7 @@
  */
 
 #include "../kernel/syscall_numbers.h"
+#include "../kernel/print.h"
 #include "simple_fs.h" 
 
 // System call handler for creating a file
