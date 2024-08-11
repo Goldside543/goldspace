@@ -13,6 +13,6 @@ typedef struct {
     uint16_t fill_color;    
 } Window;
 
-void draw_window(const Window *win);
+void draw_window(Window *win); // Use const for making Window Features Read-only
 
 #endif // WINDOW_H
