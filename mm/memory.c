@@ -30,6 +30,12 @@ void* kmalloc(size_t size) {
         return NULL; // Out of memory
     }
     void* ptr = &memory_pool[memory_index];
+    
+    // Mark memory as used
+    for (size_t i = 0; i < size; i++) {
+        memory_free_map[memory_index + i] = 1;
+    }
+
     memory_index += size;
     return ptr;
 }
@@ -85,6 +91,7 @@ void page_table_init() {
     page_table = (page_table_t*)kmalloc(sizeof(page_table_t));
     if (page_table == NULL) {
         print("Memory allocation failed during page table initialization.\n");
+        return;
     }
 
     // Initialize page table entries to zero
