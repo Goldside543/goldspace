@@ -26,21 +26,21 @@ You will need to compile it without a file name, and as a 32-bit binary. For exa
 As for languages I support, the list is C, C++, C#, Java, and Rust. You will need to write your own libraries for most, if not all of these languages, as currently, *I* support them, yes. But the kernel? No.
 # Chapter V: Goldspace structure
 Back on topic, the kernel. If you're adding files, put bootloader things in boot, shell things in gash, and kernel things in kernel. This will allow the source code to be more organized and readable.
-# Notice
+# Chapter VI: Directory exploration
 The following chapter will go into detail on each directory. Skip to whichever one you need.
-# Chapter VI; Subchapter I: Boot
+## Chapter VI; Subchapter I: Boot
 Boot's purpose is bootloader files. Not really much to cover here, considering it's just one file.
-# Chapter VI; Subchapter II: Gash
+## Chapter VI; Subchapter II: Gash
 Gash's purpose is Gash source code files. In here, you'll mostly be working on shell.c, where commands are defined.
-# Chapter VI; Subchapter III: Kernel
+## Chapter VI; Subchapter III: Kernel
 Kernel... ooh, boy. Kernel contains core.c, the main part of the kernel, which includes the keyboard driver, the welcome message, command execution, etc. Then there's io.h, which is how the kernel sends info to devices. Then linker.ld, how the compiler links it all together. Then multiboot.h, which contains a part of the header file that core.c complained about having. Then print.h, a header other files can use to print text. Then string.c, where string functions from the standard C library are defined, and string.h, where they can be recognized by other files.
-# Chapter VI; Subchapter IV: FS
+## Chapter VI; Subchapter IV: FS
 FS contains BFFS (Baby's First File System), a little file system I made. Quite a simple file system. Not much to say.
-# Chapter VI; Subchapter V: MM
+## Chapter VI; Subchapter V: MM
 MM contains memory management (mm is an abbreviation) files. Nothing much of interest.
-# Chapter VI; Subchapter VI: Net
+## Chapter VI; Subchapter VI: Net
 Net contains networking files. These guys are the magic that allows you to connect to other computers.
-# Chapter VI; Subchapter VII: Drivers
+## Chapter VI; Subchapter VII: Drivers
 Drivers contains various drivers. Duh!
 # Chapter VII: Makefile
 The Makefile is further instructions for the compiler. It allows the convenience of typing `make` and watching it work. When including source files, make sure to note the syntax and style, and imitate it. 
