@@ -5,6 +5,14 @@ Crappy kernel I'm making. We've got the bootloader, the kernel, the linker scrip
 It's practically better than Linux.
 # Gash
 Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is designed specifically for Goldspace. How the hell do I give it input, you ask? Well, the core of the kernel has a keyboard driver inside of it!
+# Compilation instructions:
+* `git clone https://github.com/Goldside543/goldspace.git`
+* `cd goldspace`
+* `make` <br> <br>
+(for compiling as 64-bit, the following commands go between `cd goldspace` and `make`) <br> <br>
+* `chmod +x scripts/64-bitifier.sh`
+* `sed -i "s|path/to/kernel/source|$(pwd)|" scripts/64-bitifier.sh`
+* `scripts/64-bitifier.sh`
 # Command list:
 * `help` displays help.
 * `clear` clears the screen.
