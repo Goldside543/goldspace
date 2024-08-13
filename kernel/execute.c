@@ -32,12 +32,7 @@ void execute_program(const void *program_code, size_t size, void (*main_function
     kmemcpy(program_memory, program_code, size);
 
     // Set up paging for the allocated memory
-    if (!kmempaging(program_memory, size)) {
-        print("\n");
-        print("Failed to set up paging for program code\n");
-        kfree(program_memory);
-        return;
-    }
+    kmempaging(program_memory, size);
 
     // Execute the program's main function
     if (main_function) {
