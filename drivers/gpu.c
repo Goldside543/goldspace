@@ -34,7 +34,7 @@ int gpu_init() {
     
     // Check for initialization success (simplified)
     if (gpu_inb(GPU_STATUS_REG) != 0) {
-        print("GPU initialization failed.\n")
+        print("GPU initialization failed.\n");
         return -1;  // Initialization failed
     }
     
