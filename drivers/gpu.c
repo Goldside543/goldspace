@@ -1,3 +1,12 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * drivers/gpu.c
+ * 
+ * GPU driver.
+ *
+ * Copyright (C) 2024 Goldside543
+ */
+
 #include "../mm/memory.h"
 #include "../kernel/io.h"
 #include "../kernel/print.h"
