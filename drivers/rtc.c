@@ -1,4 +1,4 @@
-#include <stdint.h>
+#include "rtc.h"
 #include "../kernel/io.h"
 
 // Read a register from the RTC
