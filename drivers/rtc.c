@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * drivers/rtc.c
+ * 
+ * RTC driver for telling time.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include "rtc.h"
 #include "../kernel/io.h"
 
