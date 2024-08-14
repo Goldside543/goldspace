@@ -2,12 +2,6 @@
 #include "../kernel/io.h"
 #include "gpu.h"
 
-// Define a structure to represent GPU state
-typedef struct {
-    void *framebuffer;
-    size_t framebuffer_size;
-} gpu_state_t;
-
 // Global GPU state
 static gpu_state_t gpu_state;
 
