@@ -1,5 +1,6 @@
 #include "../mm/memory.h"
 #include "../kernel/io.h"
+#include "../kernel/print.h"
 #include "gpu.h"
 
 // Global GPU state
@@ -17,11 +18,13 @@ static uint8_t gpu_inb(uint16_t port) {
 
 // Initialize the GPU
 int gpu_init() {
+    print("Loading GPU driver...\n");
     // Send initialization command to GPU
     gpu_outb(GPU_COMMAND_REG, GPU_CMD_INIT);
     
     // Check for initialization success (simplified)
     if (gpu_inb(GPU_STATUS_REG) != 0) {
+        print("GPU initialization failed.\n")
         return -1;  // Initialization failed
     }
     
@@ -29,12 +32,14 @@ int gpu_init() {
     gpu_state.framebuffer_size = 1024 * 1024;  // 1MB
     gpu_state.framebuffer = kmalloc(gpu_state.framebuffer_size);
     if (!gpu_state.framebuffer) {
+        print("Memory allocation to GPU failed.\n");
         return -1;  // Memory allocation failed
     }
     
     // Set framebuffer address in GPU
     gpu_outb(GPU_MEMORY_REG, (uint8_t)((uintptr_t)gpu_state.framebuffer));
-    
+
+    print("GPU driver loaded.\n");
     return 0;  // Initialization succeeded
 }
 
