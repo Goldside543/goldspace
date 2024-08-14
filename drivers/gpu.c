@@ -17,12 +17,12 @@
 static gpu_state_t gpu_state;
 
 // Write a byte to an I/O port
-static void gpu_outb(uint16_t port, uint8_t value) {
+static void gpu_outb(uint32_t port, uint8_t value) {
     outb(port, value);
 }
 
 // Read a byte from an I/O port
-static uint8_t gpu_inb(uint16_t port) {
+static uint8_t gpu_inb(uint32_t port) {
     return inb(port);
 }
 
