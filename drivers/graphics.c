@@ -17,9 +17,9 @@
 #define SCREEN_HEIGHT 25
 
 void init_graphics() {
-    print("Loading graphics driver...\n");
+    print("Loading secondary graphics driver...\n");
     uint16_t *framebuffer = (uint16_t *)FRAMEBUFFER_ADDR;
-    print("Graphics driver loaded.");
+    print("Secondary graphics driver loaded.");
     for (int y = 0; y < SCREEN_HEIGHT; ++y) {
         for (int x = 0; x < SCREEN_WIDTH; ++x) {
             framebuffer[y * SCREEN_WIDTH + x] = (0x0F << 8) | ' ';
