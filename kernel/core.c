@@ -194,6 +194,8 @@ void kernel_main() {
     
     init_keyboard();
 
+    gpu_init();
+
     if (gpu_init() == -1) {
         init_graphics();
     }
