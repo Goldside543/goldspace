@@ -18,10 +18,10 @@ static uint8_t gpu_inb(uint16_t port) {
 // Initialize the GPU
 int gpu_init() {
     // Send initialization command to GPU
-    outb(GPU_COMMAND_REG, GPU_CMD_INIT);
+    gpu_outb(GPU_COMMAND_REG, GPU_CMD_INIT);
     
     // Check for initialization success (simplified)
-    if (inb(GPU_STATUS_REG) != 0) {
+    if (gpu_inb(GPU_STATUS_REG) != 0) {
         return -1;  // Initialization failed
     }
     
@@ -33,7 +33,7 @@ int gpu_init() {
     }
     
     // Set framebuffer address in GPU
-    outb(GPU_MEMORY_REG, (uint8_t)((uintptr_t)gpu_state.framebuffer));
+    gpu_outb(GPU_MEMORY_REG, (uint8_t)((uintptr_t)gpu_state.framebuffer));
     
     return 0;  // Initialization succeeded
 }
@@ -47,10 +47,10 @@ void gpu_render() {
                              (0xFF);        // Color
     
     // Send render command to GPU
-    outb(GPU_COMMAND_REG, render_command);
+    gpu_outb(GPU_COMMAND_REG, render_command);
     
     // Wait for rendering to complete (simplified)
-    while (inb(GPU_STATUS_REG) != 0) {
+    while (gpu_inb(GPU_STATUS_REG) != 0) {
         // Polling for completion
     }
 }
@@ -61,5 +61,5 @@ void gpu_cleanup() {
     kfree(gpu_state.framebuffer);
     
     // Send cleanup command to GPU (if necessary)
-    outb(GPU_COMMAND_REG, 0xFF);
+    gpu_outb(GPU_COMMAND_REG, 0xFF);
 }
