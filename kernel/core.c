@@ -194,7 +194,9 @@ void kernel_main() {
     
     init_keyboard();
 
-    init_graphics();
+    if (gpu_init() == -1) {
+        init_graphics();
+    }
 
     net_interface_t iface;
     unsigned char mac[6] = {0x02, 0x1B, 0x34, 0xA5, 0xC6, 0xD7}; // Randomly generated MAC address
