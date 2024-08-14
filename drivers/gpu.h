@@ -7,9 +7,9 @@
 
 // Define GPU registers and memory locations
 #define GPU_BASE_ADDR 0xC0000000
-#define GPU_COMMAND_REG (GPU_BASE_ADDR + 0x00)
-#define GPU_STATUS_REG (GPU_BASE_ADDR + 0x04)
-#define GPU_MEMORY_REG (GPU_BASE_ADDR + 0x08)
+#define GPU_COMMAND_REG ((uintptr_t)(GPU_BASE_ADDR + 0x00))
+#define GPU_STATUS_REG  ((uintptr_t)(GPU_BASE_ADDR + 0x04))
+#define GPU_MEMORY_REG  ((uintptr_t)(GPU_BASE_ADDR + 0x08))
 
 // Define GPU commands
 #define GPU_CMD_INIT 0x01
