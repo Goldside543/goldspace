@@ -5,6 +5,7 @@
  * GPU driver.
  *
  * Copyright (C) 2024 Goldside543
+ *
  */
 
 #include "../mm/memory.h"
