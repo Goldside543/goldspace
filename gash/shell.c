@@ -14,6 +14,7 @@
 #include "../kernel/io.h"
 #include "../kernel/string.h"
 #include "../fs/simple_fs.h"
+#include "../drivers/gpu.h"
 
 void print(const char *str);
 
@@ -27,6 +28,7 @@ void shell_help() {
     print("read <filename> - Read data from a file\n");
     print("delete <filename> - Delete a file\n");
     print("clear - Clear the screen\n");
+    print("render - Test GPU rendering - Do not run if the GPU driver failed to load.\n");
 }
 
 void shell_echo(const char *message) {
@@ -227,6 +229,12 @@ void shell_delete(const char *args) {
     }
 }
 
+void shell_render() {
+    gpu_render(); // Call the GPU render function
+    print("\n");
+    print("GPU render executed.\n");
+}
+
 void shell_execute_command(const char *command) {
     // Find the first space or end of string to determine the command
     int command_end_index = 0;
@@ -287,8 +295,12 @@ void shell_execute_command(const char *command) {
         }
     } else if (my_strcmp(command_name, "clear") == 0) {
         shell_clear();
+    } else if (my_strcmp(command_name, "render") == 0) {
+        shell_render(); // Execute the render command
     } else {
         print("\n");
-        print("Command not found. Type 'help' for a list of commands.\n");
+        print("Unknown command: ");
+        print(command_name);
+        print("\n");
     }
 }
