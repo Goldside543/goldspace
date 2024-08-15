@@ -2,7 +2,7 @@
 /*
  * drivers/graphics.c
  *
- * Fallback graphics driver. Uses framebuffers instead of graphics processor.
+ * Fallback graphics driver. Uses CPU framebuffers instead of graphics processor.
  * Largely useless in a modern computer with a GPU, but a crappy computer
  * is a crappy computer I guess.
  *
