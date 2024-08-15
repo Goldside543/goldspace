@@ -2,7 +2,9 @@
 /*
  * drivers/graphics.c
  *
- * Graphics driver.
+ * Fallback graphics driver. Uses framebuffers instead of graphics processor.
+ * Largely useless in a modern computer with a GPU, but a crappy computer
+ * is a crappy computer I guess.
  *
  * Copyright (C) 2024 Goldside543
  *
@@ -17,9 +19,9 @@
 #define SCREEN_HEIGHT 25
 
 void init_graphics() {
-    print("Loading secondary graphics driver...\n");
+    print("Loading auxiliary graphics driver...\n");
     uint16_t *framebuffer = (uint16_t *)FRAMEBUFFER_ADDR;
-    print("Secondary graphics driver loaded.");
+    print("Auxiliary graphics driver loaded.");
     for (int y = 0; y < SCREEN_HEIGHT; ++y) {
         for (int x = 0; x < SCREEN_WIDTH; ++x) {
             framebuffer[y * SCREEN_WIDTH + x] = (0x0F << 8) | ' ';
