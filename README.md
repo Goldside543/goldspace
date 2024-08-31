@@ -21,6 +21,7 @@ Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is des
 * `write <filename> <data>` writes data to a file!
 * `read <filename>` reads a file!
 * `delete <filename>` deletes a file!
+* `render` does a rendering test on the GPU.
 # For additional documentation...
 See the user manual or developer manual, conveniently located in the Documentation directory!
 # Version number: v2.6.0
