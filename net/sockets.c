@@ -43,7 +43,7 @@ int send_data(net_socket_t *sock, const unsigned char *data, size_t length) {
     // For simplicity, assuming interface index 0
     net_interface_t iface;
     send_packet(&iface, &packet);
-    
+
     return 0; // Success
 }
 
@@ -51,7 +51,7 @@ int receive_data(net_socket_t *sock, unsigned char *buffer, size_t buffer_size) 
     // Create a packet
     net_packet_t packet;
     receive_packet(NULL, &packet); // Placeholder for interface
-    
+
     if (packet.length > buffer_size) {
         return -1; // Buffer too small
     }

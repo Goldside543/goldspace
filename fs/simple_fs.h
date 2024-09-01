@@ -10,7 +10,7 @@
 #define BLOCK_SIZE 512                // Size for each block
 #define NUM_BLOCKS 1024               // Total block number
 #define MAX_FILES 100                 // Maximum supportable block number
-#define MAX_FILE_NAME 256             // Maximum length for File name 
+#define MAX_FILE_NAME 256             // Maximum length for File name
 
 // File system structure
 typedef struct {
