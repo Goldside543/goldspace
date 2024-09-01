@@ -7,7 +7,7 @@ Still not discouraged? Great, welcome aboard.
 Goldspace is both a 64-bit and 32-bit kernel, depending on which you compile it as. As of August 2nd, 2024, it's around 30 MB compiled.
 Packed with it is a custom shell that inherits commands from Bash, named "Gash" as a portmanteau of "Bash" and "Gold".
 # Chapter II: Where to begin
-The following chapters of the guide assume you are using Linux, have Git/GitHub CLI installed, `gcc` installed, and `nasm` installed. Further dependencies will be added to this list.
+The following chapters of the guide assume you are using Linux on an x86_64 PC, have Git/GitHub CLI installed, `gcc` installed, and `nasm` installed. Further dependencies will be added to this list.
 
 <br> <br> You can begin anywhere you want. Write a driver, sort out bugs with Gash, upgrade the kernel with extra cool features. You do you, as long as it works.
 We request that you always test changes you make. To clone the repository using Git, use `git clone https://github.com/Goldside543/goldspace.git` To clone the repository using GitHub CLI, use `gh repo clone Goldside543/goldspace`. Optionally, if you're wanting to mess with a branch, add the `-- --branch` flags to that command.
