@@ -72,7 +72,7 @@ short my_strspn(const char *s1, const char *s2)
     short ret=0;
     while(*s1 && my_strchr(s2,*s1++))
         ret++;
-    return ret;    
+    return ret;
 }
 
 char *my_strtok(char* str, const char* delim) {
