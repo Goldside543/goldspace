@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
 # Hello! This script generates a raw PCM file for testing audio!
 
 import numpy as np
