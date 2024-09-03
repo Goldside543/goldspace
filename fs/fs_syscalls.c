@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
- * fs/syscalls.c
+ * fs/fs_syscalls.c
  * 
  * File system related system calls.
  *
