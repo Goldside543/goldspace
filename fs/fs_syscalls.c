@@ -24,7 +24,7 @@ int sys_create_file(const char* name) {
 int sys_write_file(int file_index, const char* data, int size) {
     int result = write_file(file_index, data, size);
     if(result<0){
-        print("No free blocks available, data size is too large or File doesnt exists\n"); // i advice you to use error codes and make a markdown for that codes
+        print("No free blocks available, data size is too large or file doesn't exist\n"); // Error codes are planned in the future.
     }
 }
 
@@ -32,7 +32,7 @@ int sys_write_file(int file_index, const char* data, int size) {
 int sys_read_file(int file_index, char* buffer, int size) {
     int result = read_file(file_index, buffer, size);
     if(result<0){
-        print("File doesnt exists or No data written.\n");
+        print("File doesn't exist or no data written.\n");
     }
 }
 
@@ -40,6 +40,6 @@ int sys_read_file(int file_index, char* buffer, int size) {
 int sys_delete_file(int file_index) {
     int result = delete_file(file_index);
     if(result<0){
-        print("File doesnt exists.\n"); // idk lol im not good making error responses
+        print("File doesn't exist.\n");
     }
 }
