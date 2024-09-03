@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
 # Welcome! This script exits the goldspace directory, deletes it, clones it back, and goes into it, 
 # resetting your environment to the stable branch!
 
