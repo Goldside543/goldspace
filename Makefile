@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
 all: goldspace.iso
 
 goldspace.iso: boot/boot.bin kernel/kernel.bin
