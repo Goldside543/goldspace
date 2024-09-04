@@ -36,6 +36,7 @@ pub enum LogLevel {
     Error,
 }
 
+#[no_mangle]
 pub fn log_message(level: LogLevel, message: &str) {
     unsafe {
         let prefix: &[u8] = match level {
@@ -73,16 +74,19 @@ pub fn log_message(level: LogLevel, message: &str) {
     }
 }
 
+#[no_mangle]
 pub fn get_log_buffer() -> &'static [u8] {
     unsafe { &LOG_BUFFER[..LOG_INDEX] }
 }
 
 // Helper function to get the current time as a string (example implementation)
+#[no_mangle]
 fn get_current_time() -> &'static str {
     "2024-09-04 12:34:56" // Placeholder for actual time retrieval
 }
 
 // Add timestamp to log messages
+#[no_mangle]
 pub fn log_message_with_timestamp(level: LogLevel, message: &str) {
     unsafe {
         let time_stamp = get_current_time();
