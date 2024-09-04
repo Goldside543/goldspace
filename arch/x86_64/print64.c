@@ -1,7 +1,6 @@
-#include <stdint.h>
 // SPDX-License-Identifier: GPL-2.0-only
 /*
- * kernel/print64.c
+ * arch/x86_64/print64.c
  *
  * 64-bit version of the print function.
  *
