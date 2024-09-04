@@ -82,7 +82,7 @@ pub fn get_log_buffer() -> &'static [u8] {
 // Helper function to get the current time as a string (example implementation)
 #[no_mangle]
 fn get_current_time() -> &'static str {
-    "2024-09-04 12:34:56" // Placeholder for actual time retrieval
+    "????-???-??? ??:??" // Placeholder for actual time retrieval
 }
 
 // Add timestamp to log messages
