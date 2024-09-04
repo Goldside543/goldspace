@@ -29,7 +29,7 @@ find "$SOURCE_DIR" -type f \( -name "*.c" -o -name "*.h" \) | while read -r file
     sed -i 's/boot.asm/boot64.asm/g' "$TEMP_FILE"
 
     # Replace "print.h" with "print64.h"
-    sed -i 's/print.h/print64.h/g' "$TEMP_FILE"
+    sed -i 's|kernel/print.h|arch/x86_64/print64.h|g' "$TEMP_FILE"
 
     # Check if we need to add #include <stdint.h>
     if ! grep -q '^#include <stdint.h>' "$TEMP_FILE"; then
