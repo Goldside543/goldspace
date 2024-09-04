@@ -1,3 +1,15 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*!
+ * src/lib.rs
+ *
+ * Goldspace's Rust library, where Rust functions can
+ * be used in the kernel. Seeing as Rust usage in the
+ * OS world has been increasing, I decided "eh, why
+ * not" and slapped Rust in.
+ *
+ * Copyright (C) 2024 Goldside543
+ */
+
 #![no_std]
 #![no_main]
 
