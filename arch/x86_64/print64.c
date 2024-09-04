@@ -8,9 +8,9 @@
  *
  */
 
-#include "print.h"
+#include "../../kernel/print.h"
 #include "print64.h"
-#include "core.c"
+#include "../../kernel/core.c"
 
 #define VGA_ADDRESS 0xB8000 // 0xB8000 can be a Problem
 #define VGA_ENTRY(c, color) ((color << 8) | (c & 0xFF))
