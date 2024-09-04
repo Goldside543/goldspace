@@ -15,7 +15,6 @@
 
 use core::panic::PanicInfo;
 use core::arch::asm;
-use core::fmt::Write;
 
 static mut LOG_BUFFER: [u8; 1024] = [0; 1024];
 static mut LOG_INDEX: usize = 0;
@@ -39,7 +38,7 @@ pub enum LogLevel {
 
 pub fn log_message(level: LogLevel, message: &str) {
     unsafe {
-        let prefix = match level {
+        let prefix: &[u8] = match level {
             LogLevel::Info => b"[INFO] ",
             LogLevel::Warn => b"[WARN] ",
             LogLevel::Error => b"[ERROR] ",
@@ -80,14 +79,14 @@ pub fn get_log_buffer() -> &'static [u8] {
 
 // Helper function to get the current time as a string (example implementation)
 fn get_current_time() -> &'static str {
-    "???" // Placeholder for actual time retrieval
+    "2024-09-04 12:34:56" // Placeholder for actual time retrieval
 }
 
 // Add timestamp to log messages
 pub fn log_message_with_timestamp(level: LogLevel, message: &str) {
     unsafe {
         let time_stamp = get_current_time();
-        let prefix = match level {
+        let prefix: &[u8] = match level {
             LogLevel::Info => b"[INFO] ",
             LogLevel::Warn => b"[WARN] ",
             LogLevel::Error => b"[ERROR] ",
