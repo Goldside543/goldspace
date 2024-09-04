@@ -12,7 +12,7 @@
 #include "print64.h"
 #include "../../kernel/core.c"
 
-#define VGA_ADDRESS 0xB8000 // 0xB8000 can be a Problem
+#define VGA_ADDRESS 0xB8000
 #define VGA_ENTRY(c, color) ((color << 8) | (c & 0xFF))
 
 static uint16_t *const VGA_BUFFER = (uint16_t *)VGA_ADDRESS;
