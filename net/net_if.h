@@ -6,6 +6,7 @@
 #include "networking.h"
 
 // Initialize a network interface
+void rtl8139_init();
 void init_net_interface(net_interface_t *iface, const char *name, unsigned char *mac, unsigned int ip, unsigned int netmask);
 
 // Receive a packet from the network interface
