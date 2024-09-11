@@ -193,11 +193,7 @@ void kernel_main() {
 
     usb_init();
 
-/* USB keyboard driver currently causes crash in QEMU. Disabling
-   it until fixed.
-*/
-
-    // init_keyboard();
+    init_keyboard();
 
 /* GPU support is a little shifty. On one hand, it gives you
    better graphics. On the other, if a device doesn't have a
