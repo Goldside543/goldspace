@@ -2,7 +2,7 @@
 /*
  * drivers/rtl8139.c
  *
- * Core networking utilities.
+ * RTL8139 driver.
  *
  * Copyright (C) 2024 Goldside543
  *
