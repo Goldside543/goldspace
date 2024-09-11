@@ -11,6 +11,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Add Rust target for i686
+      run: rustup target add i686-unknown-linux-gnu
+
     - name: Set up dependencies
       run: sudo apt-get update && sudo apt-get install -y build-essential && sudo apt-get install -y nasm
 
