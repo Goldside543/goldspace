@@ -15,7 +15,7 @@ jobs:
       run: rustup target add i686-unknown-linux-gnu
 
     - name: Set up dependencies
-      run: sudo apt-get update && sudo apt-get install -y build-essential && sudo apt-get install -y nasm && sudo apt-get install -y mtools && sudo apt-get install grub-pc-bin
+      run: sudo apt-get update && sudo apt-get install -y build-essential && sudo apt-get install -y nasm && sudo apt-get install -y mtools && sudo apt-get install -y grub-pc-bin
 
     - name: Build ISO
       run: make
