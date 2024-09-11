@@ -3,7 +3,7 @@
 #ifndef NET_IF_H
 #define NET_IF_H
 
-#include "networking.h"
+#include "../net/networking.h"
 
 // Initialize a network interface
 void rtl8139_init();

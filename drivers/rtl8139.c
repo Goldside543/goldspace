@@ -8,8 +8,8 @@
  *
  */
 
-#include "networking.h"
-#include "net-io.h"
+#include "../net/networking.h"
+#include "../net/net-io.h"
 #include "../mm/memory.h"
 
 // RTL8139-specific defines
