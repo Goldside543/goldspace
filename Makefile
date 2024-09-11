@@ -29,7 +29,7 @@ fs/bffs.o: fs/bffs.c
 net/net-io.o: net/net-io.c
 	gcc -m32 -ffreestanding -fno-stack-protector -c net/net-io.c -o net/net-io.o
 
-net/net_if.o: drivers/rtl8139.c
+drivers/rtl8139.o: drivers/rtl8139.c
 	gcc -m32 -ffreestanding -fno-stack-protector -c drivers/rtl8139.c -o drivers/rtl8139.o
 
 net/sockets.o: net/sockets.c
