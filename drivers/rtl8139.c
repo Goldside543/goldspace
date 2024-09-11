@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
- * net/net_if.c
+ * drivers/rtl8139.c
  *
  * Core networking utilities.
  *
