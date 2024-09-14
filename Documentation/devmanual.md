@@ -19,7 +19,7 @@ Just make the change and submit a pull request explaining:
 * Why it's a good change <br> <br>
 
 If it passes all of those, chances are, it'll be merged.
-# Chapter IV: Application development (NEVER MIND THIS CHAPTER, DON'T MAKE A KERNEL SPACE APPLICATION)
+# Chapter IV: Application development (NEVER MIND THIS CHAPTER, DON'T MAKE A KERNEL SPACE APPLICATION, BUILD A GENERIC ELF TOOLCHAIN INSTEAD!)
 But what's that? What if you don't want to do kernel development and just want to make an app or two? Totally cool.
 In your fork, go to/make a directory named "applications". This is where I store applications built into Goldspace.
 You will need to compile it without a file name, and as a 32-bit binary. For example, if it's a C application and you're using GCC, `gcc -m32 source.c -o program_name`.
