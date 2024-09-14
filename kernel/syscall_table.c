@@ -16,4 +16,5 @@ int (*syscall_table[])(void*, void*, void*, void*) = {
     [SYS_WRITE_FILE]  = (int (*)(void*, void*, void*, void*))sys_write_file,
     [SYS_READ_FILE]   = (int (*)(void*, void*, void*, void*))sys_read_file,
     [SYS_DELETE_FILE] = (int (*)(void*, void*, void*, void*))sys_delete_file,
+    [SYS_EXECUTE_PROGRAM] = (int (*)(void*, void*, void*, void*))sys_execute_program,
 };

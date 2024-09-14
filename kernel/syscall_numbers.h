@@ -7,5 +7,6 @@
 #define SYS_WRITE_FILE   2
 #define SYS_READ_FILE    3
 #define SYS_DELETE_FILE  4
+#define SYS_EXECUTE_PROGRAM 5
 
 #endif // SYSCALL_NUMBERS_H
