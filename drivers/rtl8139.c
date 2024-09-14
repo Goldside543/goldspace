@@ -73,9 +73,6 @@ void init_net_interface(net_interface_t *iface, const char *name, unsigned char 
     }
     iface->ip_address = ip;
     iface->netmask = netmask;
-
-    // Initialize RTL8139 hardware
-    rtl8139_init();
 }
 
 // Receive packet from the RTL8139 card
