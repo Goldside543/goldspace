@@ -1,4 +1,5 @@
-/* SPDX-License-Identifier: GPL-2.0-only
+// SPDX-License-Identifier: GPL-2.0-only
+/*
  * kernel/execute.c
  *
  * System call interface for executing a program.
@@ -8,8 +9,8 @@
  */
 
 #include "../mm/memory.h"
-#include "../kernel/print.h"
-#include "../syscall_table.h"
+#include "print.h"
+#include "syscall_table.h"
 
 // Define a structure for holding program details
 typedef struct {
