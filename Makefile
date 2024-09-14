@@ -91,4 +91,4 @@ kernel/process.o: kernel/process.c
 	gcc -g -m32 -ffreestanding -fno-stack-protector -c kernel/process.c -o kernel/process.o
 
 clean:
-	rm -rf *.bin *.o *.iso isodir rust/target
+	rm -rf *.bin *.o *.iso isodir rust/target kernel/*.o drivers/*.o net/*.o kernel/kernel.bin boot/boot.bin fs/*.o
