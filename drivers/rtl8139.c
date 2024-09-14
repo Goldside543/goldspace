@@ -11,6 +11,7 @@
 #include "../net/networking.h"
 #include "../net/net-io.h"
 #include "../mm/memory.h"
+#include "../kernel/print.h"
 
 // RTL8139-specific defines
 #define RTL8139_CMD 0x37
@@ -20,19 +21,37 @@
 #define RTL8139_TX_BUFFER 0x20
 #define RTL8139_RX_CONFIG 0x44
 
+// Define a timeout value (in iterations)
+#define RESET_TIMEOUT 3000000  // Adjust the timeout value as needed
+
 // I/O base address for the RTL8139 card (to be set after PCI scan)
 static unsigned int io_base;
 
 // Function to initialize the RTL8139 card
 void rtl8139_init() {
     // Reset the card
-    outb(io_base + RTL8139_CMD, 0x10);
-    while (inb(io_base + RTL8139_CMD) & 0x10) {
-        // Wait for reset to complete
+    volatile uint8_t *cmd_reg = (volatile uint8_t *)(io_base + RTL8139_CMD);
+    *cmd_reg = 0x10;  // Send reset command
+
+    // Wait for the reset to complete with a timeout
+    unsigned int timeout = RESET_TIMEOUT;
+    while (*cmd_reg & 0x10) {  // Check if reset bit is still set
+        if (--timeout == 0) {
+            print("RTL8139 reset timeout\n");
+            return;  // Timeout occurred, exit the function
+        }
+        
+        // Optional: Add a small delay to avoid tight looping
+        for (volatile int i = 0; i < 100; i++);
     }
 
     // Allocate and set RX buffer
     unsigned char *rx_buffer = kmalloc(32768);  // 32 KB
+    if (!rx_buffer) {
+        print("Failed to allocate RX buffer\n");
+        return;
+    }
+
     outl(io_base + RTL8139_RX_BUFFER, (uint32_t)rx_buffer);
 
     // Configure RX buffer to accept all packets
