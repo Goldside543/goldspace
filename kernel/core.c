@@ -27,6 +27,7 @@ static bool use_keyboard_driver = false;  // This will be set in usb_init()
 #include "../drivers/mouse.h"
 #include "../mm/memory.h"
 #include "../drivers/gpu.h"
+#include "process.h"
 
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
@@ -196,6 +197,8 @@ void kernel_main() {
     init_keyboard();
 
     rtl8139_init();
+
+    initialize_process_system();
 
 /* GPU support is a little shifty. On one hand, it gives you
    better graphics. On the other, if a device doesn't have a

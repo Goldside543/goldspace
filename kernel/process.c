@@ -13,6 +13,8 @@
 #include "../mm/memory.h"
 #include "process.h"
 
+static uint32_t next_pid = 1;  // Static counter for PID generation
+
 pcb_t *current_process = NULL;
 pcb_t *process_queue = NULL;
 
@@ -52,6 +54,35 @@ void schedule() {
     context_switch(current_process);
 }
 
+int generate_pid() {
+    return next_pid++;
+}
+
+uint32_t* setup_page_directory() {
+    // Define PAGE_DIRECTORY_SIZE according to your needs
+    #define PAGE_DIRECTORY_SIZE 4096 // Example size
+
+    // Allocate and initialize a page directory
+    uint32_t *page_directory = (uint32_t *)kmalloc(PAGE_DIRECTORY_SIZE);
+    if (page_directory == NULL) {
+        return NULL; // Allocation failed
+    }
+    // Initialize page directory here
+    return page_directory;
+}
+
+uint32_t* setup_stack() {
+    // Define STACK_SIZE according to your needs
+    #define STACK_SIZE 8192 // Example size
+
+    // Allocate memory for the stack
+    uint32_t *stack = (uint32_t *)kmalloc(STACK_SIZE);
+    if (stack == NULL) {
+        return NULL; // Allocation failed
+    }
+    // Set up the stack pointer
+    return stack + STACK_SIZE / sizeof(uint32_t); // Return the top of the stack
+}
 
 pcb_t* create_process(void (*entry_point)()) {
     pcb_t *new_pcb = (pcb_t*)kmalloc(sizeof(pcb_t));
@@ -116,3 +147,9 @@ void terminate_process(pcb_t *pcb) {
         current = current->next;
     } while (current != process_queue);
 }
+
+void initialize_process_system() {
+    process_queue = NULL; // Initialize the process queue to be empty
+    current_process = NULL; // No current process initially
+}
+
