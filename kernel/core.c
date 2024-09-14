@@ -195,6 +195,8 @@ void kernel_main() {
 
     init_keyboard();
 
+    rtl8139_init();
+
 /* GPU support is a little shifty. On one hand, it gives you
    better graphics. On the other, if a device doesn't have a
    GPU, Goldspace crashes (afiak, the GPU driver is the cause
