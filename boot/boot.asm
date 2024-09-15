@@ -17,6 +17,10 @@ start:
     mov ss, ax
     mov sp, 0x7c00
 
+    ; Set up graphics mode
+    mov ax, 0x0013
+    int 0x10
+ 
     ; Load the kernel into memory
     mov bx, 0x1000     ; Address to load the kernel
     mov ah, 0x02       ; BIOS read sector function
