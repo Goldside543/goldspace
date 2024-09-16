@@ -213,6 +213,8 @@ void kernel_main() {
 
     init_graphics();
 
+    static unsigned int io_base;
+
     unsigned char mac_addr[6];
     for (int i = 0; i < 6; i++) {
     mac_addr[i] = inb(io_base + i);  // Read MAC address byte by byte
