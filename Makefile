@@ -25,7 +25,7 @@ kernel/string.o: kernel/string.c
 	gcc -g -m32 -ffreestanding -fno-stack-protector -c kernel/string.c -o kernel/string.o
 
 fs/bffs.o: fs/bffs.c
-	gcc -g -m32 -ffreestanding -fno-stack-protector -c fs/bffs.c -o fs/bffs.o
+	gcc -g -m32 -ffreestanding -fstack-protector-strong -c fs/bffs.c -o fs/bffs.o
 
 net/net-io.o: net/net-io.c
 	gcc -g -m32 -ffreestanding -fno-stack-protector -c net/net-io.c -o net/net-io.o
@@ -37,7 +37,7 @@ net/sockets.o: net/sockets.c
 	gcc -g -m32 -ffreestanding -fno-stack-protector -c net/sockets.c -o net/sockets.o
 
 mm/memory.o: mm/memory.c
-	gcc -g -m32 -ffreestanding -fno-stack-protector -c mm/memory.c -o mm/memory.o
+	gcc -g -m32 -ffreestanding -fstack-protector-strong -c mm/memory.c -o mm/memory.o
 
 drivers/audio.o: drivers/audio.c
 	gcc -g -m32 -ffreestanding -fno-stack-protector -c drivers/audio.c -o drivers/audio.o
@@ -82,13 +82,13 @@ fs/fs_syscalls.o: fs/fs_syscalls.c
 	gcc -g -m32 -ffreestanding -fno-stack-protector -c fs/fs_syscalls.c -o fs/fs_syscalls.o
 
 kernel/execute.o: kernel/execute.c
-	gcc -g -m32 -ffreestanding -fno-stack-protector -c kernel/execute.c -o kernel/execute.o
+	gcc -g -m32 -ffreestanding -fstack-protector-strong -c kernel/execute.c -o kernel/execute.o
 
 rust/target/i686-unknown-linux-gnu/release/libgoldspacerust.a: rust/src/lib.rs
 	cd rust && cargo build --target i686-unknown-linux-gnu --release
 
 kernel/process.o: kernel/process.c
-	gcc -g -m32 -ffreestanding -fno-stack-protector -c kernel/process.c -o kernel/process.o
+	gcc -g -m32 -ffreestanding -fstack-protector-strong -c kernel/process.c -o kernel/process.o
 
 clean:
 	rm -rf *.bin *.o *.iso isodir rust/target kernel/*.o drivers/*.o net/*.o kernel/kernel.bin boot/boot.bin fs/*.o
