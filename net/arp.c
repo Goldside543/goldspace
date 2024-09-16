@@ -137,7 +137,7 @@ void add_to_arp_cache(uint32_t ip_address, uint8_t *mac_address) {
     for (int i = 0; i < ARP_CACHE_SIZE; i++) {
         if (arp_cache[i].ip_address == 0) {
             arp_cache[i].ip_address = ip_address;
-            memcpy(arp_cache[i].mac_address, mac_address, 6);
+            kmemcpy(arp_cache[i].mac_address, mac_address, 6);
             return;
         }
     }
