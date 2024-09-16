@@ -11,6 +11,8 @@
 #include <stdint.h>
 #include "../mm/memory.h"
 #include "net-io.h"
+#include "../drivers/rtl8139.h"
+#include "../kernel/print.h"
 
 #define ARP_CACHE_SIZE 16
 
@@ -46,7 +48,6 @@ struct eth_header {
     uint16_t ethertype;  // E.g., 0x0800 for IPv4
 } __attribute__((packed));
 
-// Function to send an Ethernet frame
 void send_ethernet_frame(net_interface_t *iface, void *data, size_t len, const uint8_t *dest_mac) {
     // Ensure the length is within the acceptable range (for example, 1500 bytes for MTU)
     if (len > 1500) {
@@ -60,22 +61,26 @@ void send_ethernet_frame(net_interface_t *iface, void *data, size_t len, const u
     kmemcpy(header.src_mac, iface->mac_address, 6);
     header.ethertype = htons(0x0800);  // Set Ethertype to IPv4
 
-    unsigned char *tx_buffer = kmalloc(len + sizeof(header));
-    if (!tx_buffer) {
-        print("Failed to allocate TX buffer\n");
+    // Allocate buffer for the full frame (header + data)
+    unsigned char *frame = kmalloc(len + sizeof(header));
+    if (!frame) {
+        print("Failed to allocate frame buffer\n");
         return;
     }
     
-    // Copy header and data to TX buffer
-    kmemcpy(tx_buffer, &header, sizeof(header));
-    kmemcpy(tx_buffer + sizeof(header), data, len);
-    
-    // Write to hardware TX buffer (replace with your actual method)
-    for (size_t i = 0; i < len + sizeof(header); i++) {
-        outb(io_base + RTL8139_TX_BUFFER + i, tx_buffer[i]);
-    }
+    // Copy header and data to the frame buffer
+    kmemcpy(frame, &header, sizeof(header));
+    kmemcpy(frame + sizeof(header), data, len);
 
-    kfree(tx_buffer);  // Free the allocated buffer
+    // Create a net_packet_t structure to pass to send_packet
+    net_packet_t packet;
+    packet.data = frame;
+    packet.length = len + sizeof(header);
+
+    // Send the frame using send_packet
+    send_packet(iface, &packet);
+
+    kfree(frame);  // Free the allocated frame buffer
 }
 
 // Function to send an ARP request
