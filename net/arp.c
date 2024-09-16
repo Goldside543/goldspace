@@ -16,6 +16,8 @@
 
 #define ARP_CACHE_SIZE 16
 
+static const uint8_t broadcast_mac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+
 // Convert 16-bit value from host to network byte order
 uint16_t htons(uint16_t hostshort) {
     return (hostshort >> 8) | (hostshort << 8);
@@ -67,7 +69,7 @@ void send_ethernet_frame(net_interface_t *iface, void *data, size_t len, const u
         print("Failed to allocate frame buffer\n");
         return;
     }
-    
+
     // Copy header and data to the frame buffer
     kmemcpy(frame, &header, sizeof(header));
     kmemcpy(frame + sizeof(header), data, len);
@@ -111,13 +113,15 @@ void send_arp_request(net_interface_t *iface, uint32_t target_ip) {
     packet.target_ip = htonl(target_ip);
 
     // Send ARP packet in an Ethernet frame
-    send_ethernet_frame(iface, packet, sizeof(packet), broadcast_mac);
+    send_ethernet_frame(iface,(void *)&packet, sizeof(packet), broadcast_mac);
 }
 
 // Convert 16-bit value from network to host byte order
 uint16_t ntohs(uint16_t netshort) {
     return (netshort >> 8) | (netshort << 8);
 }
+
+void add_to_arp_cache(uint32_t ip_address, uint8_t *mac_address);
 
 // Function to handle incoming ARP packet
 void handle_arp_packet(net_interface_t *iface, struct arp_packet *packet) {
