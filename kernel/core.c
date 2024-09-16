@@ -213,11 +213,15 @@ void kernel_main() {
 
     init_graphics();
 
+    unsigned char mac_addr[6];
+    for (int i = 0; i < 6; i++) {
+    mac_addr[i] = inb(io_base + i);  // Read MAC address byte by byte
+    }
+
     net_interface_t iface;
-    unsigned char mac[6] = {0x02, 0x1B, 0x34, 0xA5, 0xC6, 0xD7}; // Randomly generated MAC address
     unsigned int ip = 0xC0A895E2; // IP address 192.168.149.226
     unsigned int netmask = 0xFFFFF000; // Example netmask (255.255.240.0)
-    init_net_interface(&iface, "eth0", mac, ip, netmask);
+    init_net_interface(&iface, "eth0", mac_addr, ip, netmask);
 
     cpu_delay(50000000);
 
