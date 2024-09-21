@@ -11,6 +11,7 @@
 #define NUM_BLOCKS 1024               // Total block number
 #define MAX_FILES 100                 // Maximum supportable block number
 #define MAX_FILE_NAME 256             // Maximum length for File name
+#define FILE_TABLE_BLOCK 2            // File table block number
 
 // File system structure
 typedef struct {
