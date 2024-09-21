@@ -26,4 +26,6 @@ static inline unsigned short inw(unsigned short port) {
     __asm__ __volatile__("inw %1, %0" : "=a"(data) : "Nd"(port));
     return data;
 
-}#endif // IO_H
+}
+
+#endif // IO_H
