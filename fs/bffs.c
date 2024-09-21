@@ -41,8 +41,8 @@ void fs_init() {
     }
 }
 
-// Create a file
 int create_file(const char* name) {
+    // Check if there's space in the file table
     for (int i = 0; i < MAX_FILES; i++) {
         if (fs.files[i].name[0] == '\0') { // Find an empty slot in the file table
             // Copy the file name
@@ -54,12 +54,31 @@ int create_file(const char* name) {
                 fs.files[i].name[j] = '\0'; // Null-terminate the name
             }
 
-            fs.files[i].size = 0;
-            fs.files[i].start_block = -1;
+            // Allocate a block for the new file
+            int block_index = -1;
+            for (int k = 0; k < NUM_BLOCKS; k++) {
+                if (fs.free_blocks[k] == 1) { // Find a free block
+                    block_index = k;
+                    fs.free_blocks[k] = 0;    // Mark the block as used
+                    break;
+                }
+            }
+
+            if (block_index == -1) {
+                return -1; // No free blocks available
+            }
+
+            // Initialize file metadata
+            fs.files[i].size = 0;            // File size is 0 at creation
+            fs.files[i].start_block = block_index;
+
+            // Persist the updated file table to disk
+            disk_write(FILE_TABLE_BLOCK, (void*)&fs, sizeof(fs));
 
             return i; // Return the index of the new file
         }
     }
+
     return -1; // No space left in the file table
 }
 
