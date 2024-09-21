@@ -25,7 +25,7 @@ kernel/string.o: kernel/string.c
 	gcc -g -m32 -ffreestanding -fno-stack-protector -c kernel/string.c -o kernel/string.o
 
 fs/bffs.o: fs/bffs.c
-	gcc -g -m32 -ffreestanding -fstack-protector-strong -c fs/bffs.c -o fs/bffs.o
+	gcc -g -m32 -ffreestanding -fno-stack-protector -c fs/bffs.c -o fs/bffs.o
 
 net/net-io.o: net/net-io.c
 	gcc -g -m32 -ffreestanding -fno-stack-protector -c net/net-io.c -o net/net-io.o
