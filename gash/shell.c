@@ -121,50 +121,45 @@ void shell_write(const char *args) {
 }
 
 void shell_read(const char *args) {
-    // Parse filename manually
-    char filename[100]; // Assuming maximum filename length
+    // Parse filename manually (assuming maximum filename length)
+    char filename[100] = {0}; // Initialize filename buffer
     int filename_idx = 0;
     char current_char;
 
-    // Iterate through the input arguments
-    while ((current_char = *args++) != '\0') {
-        if (current_char == ' ') {
-            filename[filename_idx] = '\0'; // Null-terminate filename
-            break;
-        }
+    // Skip leading spaces
+    while (*args == ' ') args++;
+
+    // Parse the filename
+    while ((current_char = *args++) != '\0' && current_char != ' ') {
         filename[filename_idx++] = current_char;
     }
+    filename[filename_idx] = '\0'; // Null-terminate filename
 
+    // Check if filename was provided
     if (filename[0] == '\0') {
         print("\n");
         print("read: missing filename\n");
         return;
     }
 
-    // Find file index by comparing filename
+    // Find file index by comparing filename using strcmp
     int file_index = -1;
     for (int i = 0; i < MAX_FILES; i++) {
-        int match = 1;
-        for (int j = 0; fs.files[i].name[j] != '\0' || filename[j] != '\0'; j++) {
-            if (fs.files[i].name[j] != filename[j]) {
-                match = 0;
-                break;
-            }
-        }
-        if (match) {
+        if (my_strcmp(fs.files[i].name, filename) == 0) {
             file_index = i;
             break;
         }
     }
 
+    // If file not found, print error message
     if (file_index == -1) {
         print("\n");
         print("Error: File not found.\n");
         return;
     }
 
-    // Read data from file
-    char buffer[BLOCK_SIZE];
+    // Read data from the file
+    char buffer[BLOCK_SIZE] = {0}; // Initialize the buffer
     int result = read_file(file_index, buffer, BLOCK_SIZE);
     if (result == 0) {
         print("\n");
