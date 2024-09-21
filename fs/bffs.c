@@ -155,11 +155,15 @@ int read_file(int file_index, char* buffer, size_t size) {
 
 // Delete a file
 int delete_file(int file_index) {
-    if (file_index < 0 || file_index >= MAX_FILES) return -1;
-    if (fs.files[file_index].name[0] == '\0'); // File does not exist
+    if (file_index < 0 || file_index >= MAX_FILES) return -1; // Invalid file index
+    if (fs.files[file_index].name[0] == '\0') return -1; // File does not exist
 
     int block_index = fs.files[file_index].start_block;
     if (block_index != -1) {
+        // Optionally, clear the data in the block (for security reasons)
+        char empty_block[BLOCK_SIZE] = {0};
+        disk_write(block_index, empty_block, BLOCK_SIZE); // Clear block on disk
+
         fs.free_blocks[block_index] = 1; // Mark block as free
     }
 
@@ -170,5 +174,5 @@ int delete_file(int file_index) {
     fs.files[file_index].size = 0;
     fs.files[file_index].start_block = -1;
 
-    return 0;
+    return 0; // Success
 }
