@@ -22,6 +22,7 @@
 #define ATA_COMMAND_IDENTIFY   0xEC
 #define ATA_COMMAND_READ_SECTORS    0x20
 #define ATA_COMMAND_WRITE_SECTORS   0x30
+#define ATA_COMMAND_CACHE_FLUSH    0xE7
 
 // ATA Status Register Bits
 #define ATA_STATUS_BUSY       0x80
