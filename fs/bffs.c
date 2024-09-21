@@ -11,6 +11,7 @@
 
 #include "simple_fs.h"
 #include "../drivers/disk.h"
+#include "../mm/memory.h"
 
 FileSystem fs;
 
@@ -115,21 +116,41 @@ int write_file(int file_index, const char* data, size_t size) {
 
 // Read data from a file
 int read_file(int file_index, char* buffer, size_t size) {
-    if (file_index < 0 || file_index >= MAX_FILES) return -1;
+    if (file_index < 0 || file_index >= MAX_FILES) return -1; // Invalid file index
     if (fs.files[file_index].name[0] == '\0') return -1; // File does not exist
     if (fs.files[file_index].start_block == -1) return -1; // No data written to file
 
+    // Get the starting block and file size
     int block_index = fs.files[file_index].start_block;
+    size_t file_size = fs.files[file_index].size;
 
-    // Ensure the requested size does not exceed the file size
-    if (size > fs.files[file_index].size) {
-        size = fs.files[file_index].size; // Adjust size to file size
+    // Ensure the requested size does not exceed the actual file size
+    if (size > file_size) {
+        size = file_size;
     }
 
-    // Read data from the block using ATA PIO
-    disk_read(block_index, buffer, size);
+    // Read data block-by-block if the file spans multiple blocks
+    size_t bytes_read = 0;
+    size_t bytes_to_read;
+    char temp_buffer[BLOCK_SIZE];
 
-    return 0;
+    while (size > 0) {
+        // Read the whole block if more than a block remains, or only the remainder
+        bytes_to_read = (size > BLOCK_SIZE) ? BLOCK_SIZE : size;
+
+        // Read data from the current block using ATA PIO
+        disk_read(block_index, temp_buffer, BLOCK_SIZE);
+
+        // Copy the relevant part of the block to the buffer
+        kmemcpy(buffer + bytes_read, temp_buffer, bytes_to_read);
+
+        // Update counters and indexes
+        bytes_read += bytes_to_read;
+        size -= bytes_to_read;
+        block_index++; // Move to the next block
+    }
+
+    return 0; // Return 0 on success
 }
 
 // Delete a file
