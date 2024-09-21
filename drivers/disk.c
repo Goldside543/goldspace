@@ -64,21 +64,28 @@ void ata_pio_read(uint32_t lba, void *buffer, size_t size) {
 }
 
 void ata_pio_write(uint32_t lba, const void *buffer, size_t size) {
-    const uint8_t *buf = (const uint8_t *)buffer;
+    const uint16_t *buf = (const uint16_t *)buffer;
     ata_pio_wait_ready();
     ata_pio_select_drive(0); // Select primary master drive
 
     // Setup LBA address
-    outb(ATA_REG_SECTOR_COUNT, 1);
+    outb(ATA_REG_SECTOR_COUNT, 1); // Writing one sector at a time (512 bytes)
     outb(ATA_REG_LBA_LOW, (lba & 0xFF));
     outb(ATA_REG_LBA_MID, (lba >> 8) & 0xFF);
     outb(ATA_REG_LBA_HIGH, (lba >> 16) & 0xFF);
     outb(ATA_REG_COMMAND, ATA_COMMAND_WRITE_SECTORS);
 
+    // Wait until the drive is ready for data transfer
     ata_pio_wait_ready();
-    while (size--) {
+
+    // Write the data sector (512 bytes)
+    for (size_t i = 0; i < 256; i++) { // 256 words (512 bytes per sector)
         if (inb(ATA_REG_STATUS) & ATA_STATUS_DRQ) {
-            outb(ATA_REG_DATA, *buf++);
+            outw(ATA_REG_DATA, *buf++); // Write 16 bits (2 bytes) at a time
         }
     }
+
+    // Send the flush command to ensure the data is written
+    outb(ATA_REG_COMMAND, ATA_COMMAND_CACHE_FLUSH);
+    ata_pio_wait_ready();
 }
