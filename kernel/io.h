@@ -20,4 +20,10 @@ static inline void outb(uint16_t port, uint8_t data) {
 static inline void outw(unsigned short port, unsigned short data) {
     __asm__ __volatile__("outw %0, %1" : : "a"(data), "Nd"(port));
 }
-#endif // IO_H
+
+static inline unsigned short inw(unsigned short port) {
+    unsigned short data;
+    __asm__ __volatile__("inw %1, %0" : "=a"(data) : "Nd"(port));
+    return data;
+
+}#endif // IO_H
