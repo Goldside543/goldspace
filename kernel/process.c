@@ -153,3 +153,6 @@ void initialize_process_system() {
     current_process = NULL; // No current process initially
 }
 
+void sys_yield() {
+    schedule(); // Call the scheduler to switch to the next process
+}
