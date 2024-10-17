@@ -13,6 +13,7 @@
 // Process Control Block (PCB)
 typedef struct process_control_block {
     int pid;                     // Process ID
+    void *code;                  // Pointer to the program code
     uint32_t *page_directory;    // Pointer to the page directory for virtual memory
     uint32_t *stack;             // Pointer to the process's stack
     uint32_t state;              // Process state (running, waiting, terminated)
