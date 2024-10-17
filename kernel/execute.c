@@ -11,13 +11,7 @@
 #include "../mm/memory.h"
 #include "print.h"
 #include "syscall_table.h"
-
-// Define a structure for holding program details
-typedef struct {
-    void *code;  // Pointer to the program code
-    size_t size; // Size of the program code
-    void (*main_function)(void);  // Entry point of the program
-} Program;
+#include "process.h" // Include process header for create_process
 
 // Function to execute a program
 void execute_program(const void *program_code, size_t size, void (*main_function)(void)) {
@@ -35,15 +29,22 @@ void execute_program(const void *program_code, size_t size, void (*main_function
     // Set up paging for the allocated memory
     kmempaging(program_memory, size);
 
-    // Execute the program's main function
-    if (main_function) {
-        main_function();
-    } else {
+    // Create a new process for the program
+    pcb_t *new_process = create_process(main_function);
+    if (!new_process) {
         print("\n");
-        print("Program main function is null!\n");
+        print("Failed to create a new process for execution\n");
+        kfree(program_memory);
+        return;
     }
 
-    // Clean up after execution
+    // Set the code memory for the new process
+    new_process->code = program_memory;
+
+    // Context switch to the new process
+    context_switch(new_process); // Switch to the new process's context
+
+    // Clean up after execution (this won't be reached if context_switch is done correctly)
     kfree(program_memory);
 }
 
