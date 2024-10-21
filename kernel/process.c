@@ -156,3 +156,16 @@ void initialize_process_system() {
 void sys_yield() {
     schedule(); // Call the scheduler to switch to the next process
 }
+
+void sys_exit() {
+    // Check if current_process is valid
+    if (current_process == NULL) {
+        return;
+    }
+
+    // Terminate the current process
+    terminate_process(current_process);
+
+    // Schedule the next process in the queue
+    schedule();
+}
