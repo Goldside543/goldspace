@@ -9,5 +9,6 @@
 #define SYS_DELETE_FILE      3
 #define SYS_EXECUTE_PROGRAM  4
 #define SYS_YIELD            5
+#define SYS_EXIT             6
 
 #endif // SYSCALL_NUMBERS_H
