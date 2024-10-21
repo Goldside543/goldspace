@@ -18,4 +18,5 @@ int (*syscall_table[])(void*, void*, void*, void*) = {
     [SYS_DELETE_FILE]    = (int (*)(void*, void*, void*, void*))sys_delete_file,
     [SYS_EXECUTE_PROGRAM] = (int (*)(void*, void*, void*, void*))sys_execute_program,
     [SYS_YIELD]          = (int (*)(void*, void*, void*, void*))sys_yield,
+    [SYS_EXIT]          = (int (*)(void*, void*, void*, void*))sys_exit,
 };
