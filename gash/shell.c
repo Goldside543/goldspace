@@ -166,12 +166,29 @@ void shell_read(const char *args) {
     // Read data from file
     char buffer[BLOCK_SIZE];
     int result = read_file(file_index, buffer, BLOCK_SIZE);
-    if (result == 0) {
-        print("\n");
-        print(buffer);
-        print("\n");
-    } else {
-        print("Error: Could not read file.\n");
+    
+    // Handle read_file errors based on the returned result
+    switch (result) {
+        case 0: // Success
+            print("\n");
+            print(buffer);
+            print("\n");
+            break;
+        case -1:
+            print("Error: Invalid file index.\n");
+            break;
+        case -2:
+            print("Error: File does not exist.\n");
+            break;
+        case -3:
+            print("Error: No data written to file.\n");
+            break;
+        case -4:
+            print("Error: Disk read failed.\n");
+            break;
+        default:
+            print("Error: Unknown error occurred while reading the file.\n");
+            break;
     }
 }
 
