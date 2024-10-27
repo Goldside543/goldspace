@@ -114,11 +114,10 @@ int write_file(int file_index, const char* data, size_t size) {
     return 0;
 }
 
-// Read data from a file
 int read_file(int file_index, char* buffer, size_t size) {
     if (file_index < 0 || file_index >= MAX_FILES) return -1; // Invalid file index
-    if (fs.files[file_index].name[0] == '\0') return -1; // File does not exist
-    if (fs.files[file_index].start_block == -1) return -1; // No data written to file
+    if (fs.files[file_index].name[0] == '\0') return -2; // File does not exist
+    if (fs.files[file_index].start_block == -1) return -3; // No data written to file
 
     // Get the starting block and file size
     int block_index = fs.files[file_index].start_block;
@@ -139,7 +138,9 @@ int read_file(int file_index, char* buffer, size_t size) {
         bytes_to_read = (size > BLOCK_SIZE) ? BLOCK_SIZE : size;
 
         // Read data from the current block using ATA PIO
-        disk_read(block_index, temp_buffer, BLOCK_SIZE);
+        if (disk_read(block_index, temp_buffer, BLOCK_SIZE) != 0) {
+            return -4; // Disk read failed
+        }
 
         // Copy the relevant part of the block to the buffer
         kmemcpy(buffer + bytes_read, temp_buffer, bytes_to_read);
@@ -148,6 +149,11 @@ int read_file(int file_index, char* buffer, size_t size) {
         bytes_read += bytes_to_read;
         size -= bytes_to_read;
         block_index++; // Move to the next block
+
+        // If you've reached the end of the allocated blocks, break
+        if (block_index >= NUM_BLOCKS || fs.free_blocks[block_index] == 1) {
+            break; // Stop if no more data is available
+        }
     }
 
     return 0; // Return 0 on success
