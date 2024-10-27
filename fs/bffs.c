@@ -15,12 +15,16 @@
 
 FileSystem fs;
 
-void disk_write(int block_index, const char* data, int size) {
-    ata_pio_write(block_index * BLOCK_SIZE, data, size);
+int disk_write(int block_index, const char* data, int size) {
+    // Call ata_pio_write and pass along the returned error code
+    int write_result = ata_pio_write(block_index * BLOCK_SIZE, data, size);
+    return write_result; // 0 for success, or error code from ata_pio_write
 }
 
-void disk_read(int block_index, char* buffer, int size) {
-    ata_pio_read(block_index * BLOCK_SIZE, buffer, size);
+int disk_read(int block_index, char* buffer, int size) {
+    // Call ata_pio_read and pass along the returned error code
+    int read_result = ata_pio_read(block_index * BLOCK_SIZE, buffer, size);
+    return read_result; // 0 for success, or error code from ata_pio_read
 }
 
 // Initialize the file system
