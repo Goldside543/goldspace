@@ -163,24 +163,30 @@ void shell_read(const char *args) {
     // Find file index by comparing filename
     int file_index = -1;
     for (int i = 0; i < MAX_FILES; i++) {
-        int match = 1;
-        for (int j = 0; fs.files[i].name[j] != '\0' || filename[j] != '\0'; j++) {
+      // Only compare if the filename is not empty
+      if (fs.files[i].name[0] != '\0') {
+        int j = 0;
+        // Compare characters until a null terminator is reached in either string
+        while (fs.files[i].name[j] != '\0' && filename[j] != '\0') {
             if (fs.files[i].name[j] != filename[j]) {
-                match = 0;
-                break;
+                break; // Mismatch found
             }
+            j++;
         }
-        if (match) {
+        
+        // If we reached the end of both strings, they match
+        if (fs.files[i].name[j] == '\0' && filename[j] == '\0') {
             file_index = i;
-            break;
+            break; // Found the file, break out of the loop
         }
     }
+}
 
     if (file_index == -1) {
         print("\n");
         print("Error: File not found.\n");
-        return;
-    }
+       return;
+}
 
     // Read data from file
     char buffer[BLOCK_SIZE];
