@@ -111,12 +111,31 @@ void shell_write(const char *args) {
 
     // Write data to file
     int result = write_file(file_index, data, my_strlen(data));
-    if (result == 0) {
-        print("\n");
-        print("Data written successfully.\n");
-    } else {
-        print("\n");
-        print("Error: Could not write data to file.\n");
+
+    // Handle write_file errors based on the returned result
+    switch (result) {
+        case 0: // Success
+            print("\n");
+            print("Data written successfully.\n");
+            break;
+        case -1:
+            print("Error: Maximum number of files reached.\n");
+            break;
+        case -2:
+            print("Error: File does not exist.\n");
+            break;
+        case -3:
+            print("Error: No free blocks available.\n");
+            break;
+        case -4:
+            print("Error: Data size is too large.\n");
+            break;
+        case -5:
+            print("Error: Disk write failed.\n");
+            break;
+        default:
+            print("Error: Unknown error occurred while writing to the file.\n");
+            break;
     }
 }
 
