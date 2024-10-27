@@ -86,7 +86,7 @@ int create_file(const char* name) {
 // Write data to a file
 int write_file(int file_index, const char* data, size_t size) {
     if (file_index < 0 || file_index >= MAX_FILES) return -1;
-    if (fs.files[file_index].name[0] == '\0') return -1; // File does not exist
+    if (fs.files[file_index].name[0] == '\0') return -2; // File does not exist
 
     // Find a free block
     int block_index = -1;
@@ -98,20 +98,24 @@ int write_file(int file_index, const char* data, size_t size) {
         }
     }
 
-    if (block_index == -1) return -1; // No free blocks available
+    if (block_index == -1) return -3; // No free blocks available
 
     // Ensure the data size does not exceed the block size
     if (size > BLOCK_SIZE) {
-        return -1; // Data size is too large
+        fs.free_blocks[block_index] = 1; // Rollback block allocation
+        return -4; // Data size is too large
     }
 
     // Write data to the block using ATA PIO
-    disk_write(block_index, data, size);
+    if (disk_write(block_index, data, size) != 0) {
+        fs.free_blocks[block_index] = 1; // Rollback block allocation
+        return -5; // Disk write failed
+    }
 
     fs.files[file_index].size = size;
     fs.files[file_index].start_block = block_index;
 
-    return 0;
+    return 0; // Success
 }
 
 int read_file(int file_index, char* buffer, size_t size) {
