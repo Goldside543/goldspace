@@ -1,7 +1,7 @@
 ![Drawing](https://github.com/user-attachments/assets/341a14bd-a23a-4742-ac67-bb30a29c6892)
 
 # Goldspace
-Crappy kernel I'm making. We've got the bootloader, the kernel, the linker script, the Gash shell, the Makefile...
+Crappy Unix-like kernel I'm making. We've got the bootloader, the kernel, the linker script, the Gash shell, the Makefile...
 It's practically better than Linux.
 # Gash
 Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is designed specifically for Goldspace. How the hell do I give it input, you ask? Well, the core of the kernel has a keyboard driver inside of it!
