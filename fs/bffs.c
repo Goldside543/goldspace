@@ -89,37 +89,39 @@ int create_file(const char* name) {
 
 // Write data to a file
 int write_file(int file_index, const char* data, size_t size) {
+    // Validate file index to ensure it's within bounds
     if (file_index < 0 || file_index >= MAX_FILES) return -1;
-    if (fs.files[file_index].name[0] == '\0') return -2; // File does not exist
 
-    // Find a free block
+    // Check if file exists by looking at the file's name
+    if (fs.files[file_index].name[0] == '\0') return -2;
+
+    // Ensure the data size does not exceed the block size
+    if (size > BLOCK_SIZE) return -3; // No need to allocate block if size is too large
+
+    // Locate a free block to store data
     int block_index = -1;
     for (int i = 0; i < NUM_BLOCKS; i++) {
-        if (fs.free_blocks[i] == 1) { // Block is free
+        if (fs.free_blocks[i]) { // Block is free if marked 1
             block_index = i;
             fs.free_blocks[i] = 0; // Mark block as used
             break;
         }
     }
 
-    if (block_index == -1) return -3; // No free blocks available
+    // Handle case where no free blocks are available
+    if (block_index == -1) return -4;
 
-    // Ensure the data size does not exceed the block size
-    if (size > BLOCK_SIZE) {
-        fs.free_blocks[block_index] = 1; // Rollback block allocation
-        return -4; // Data size is too large
-    }
-
-    // Write data to the block using ATA PIO
+    // Perform the disk write operation with proper error handling
     if (disk_write(block_index, data, size) != 0) {
-        fs.free_blocks[block_index] = 1; // Rollback block allocation
+        fs.free_blocks[block_index] = 1; // Roll back block allocation
         return -5; // Disk write failed
     }
 
+    // Update file metadata only after successful write
     fs.files[file_index].size = size;
     fs.files[file_index].start_block = block_index;
 
-    return 0; // Success
+    return 0; // Indicate success
 }
 
 int read_file(int file_index, char* buffer, size_t size) {
