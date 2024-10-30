@@ -177,24 +177,34 @@ int read_file(int file_index, char* buffer, size_t size) {
 
 // Delete a file
 int delete_file(int file_index) {
+    // Validate file index range
     if (file_index < 0 || file_index >= MAX_FILES) return -1; // Invalid file index
-    if (fs.files[file_index].name[0] == '\0') return -1; // File does not exist
 
+    // Check if file exists
+    if (fs.files[file_index].name[0] == '\0') return -2; // File does not exist
+
+    // Free all blocks allocated to this file
     int block_index = fs.files[file_index].start_block;
-    if (block_index != -1) {
-        // Optionally, clear the data in the block (for security reasons)
+    while (block_index != -1 && block_index < NUM_BLOCKS) {
+        // Optionally, clear the data in each block for security
         char empty_block[BLOCK_SIZE] = {0};
-        disk_write(block_index, empty_block, BLOCK_SIZE); // Clear block on disk
+        if (disk_write(block_index, empty_block, BLOCK_SIZE) != 0) return -3; // Disk write error
 
-        fs.free_blocks[block_index] = 1; // Mark block as free
+        // Mark the block as free
+        fs.free_blocks[block_index] = 1;
+
+        // Move to the next block (if file spans multiple blocks)
+        block_index++; 
+        if (fs.free_blocks[block_index] == 1) break; // Stop if unallocated
     }
 
-    // Clear the file entry
-    for (int i = 0; i < MAX_FILE_NAME; i++) {
-        fs.files[file_index].name[i] = '\0';
-    }
+    // Clear file metadata
+    kmemset(fs.files[file_index].name, '\0', MAX_FILE_NAME); // Clear name
     fs.files[file_index].size = 0;
     fs.files[file_index].start_block = -1;
+
+    // Update file system table on disk
+    disk_write(FILE_TABLE_BLOCK, (void*)&fs, sizeof(fs));
 
     return 0; // Success
 }
