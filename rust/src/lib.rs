@@ -20,6 +20,7 @@ static mut LOG_BUFFER: [u8; 1024] = [0; 1024];
 static mut LOG_INDEX: usize = 0;
 
 #[no_mangle]
+#[panic_handler]
 pub extern "C" fn rust_panic(_info: *const PanicInfo) -> ! {
     // Halt the CPU
     loop {
