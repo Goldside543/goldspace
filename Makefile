@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: GPL-2.0-only
 
-LD = ld
-CC = gcc
-AS = nasm
-ARCH = -m32
-DEBUG = "-g" # Just remove -g and debug symbols will be disabled, making a smaller kernel binary
+LD = ld 	# Edit this to change the linker
+CC = gcc	# Edit this to change the C compiler
+AS = nasm	# For now, nasm is the only option
+ARCH = -m32	# 64-bit support is lackluster, so only -m32 is gonna work
+DEBUG = "-g" 	# Just remove -g and debug symbols will be disabled, making a smaller kernel binary
 
 .PHONY: clean
 
