@@ -119,21 +119,27 @@ void shell_write(const char *args) {
             print("Data written successfully.\n");
             break;
         case -1:
+            print("\n");
             print("Error: Maximum number of files reached.\n");
             break;
         case -2:
+            print("\n");
             print("Error: File does not exist.\n");
             break;
         case -3:
+            print("\n");
             print("Error: No free blocks available.\n");
             break;
         case -4:
+            print("\n");
             print("Error: Data size is too large.\n");
             break;
         case -5:
+            print("\n");
             print("Error: Disk write failed.\n");
             break;
         default:
+            print("\n");
             print("Error: Unknown error occurred while writing to the file.\n");
             break;
     }
@@ -200,18 +206,23 @@ void shell_read(const char *args) {
             print("\n");
             break;
         case -1:
+            print("\n");
             print("Error: Invalid file index.\n");
             break;
         case -2:
+            print("\n");
             print("Error: File does not exist.\n");
             break;
         case -3:
+            print("\n");
             print("Error: No data written to file.\n");
             break;
         case -4:
+            print("\n");
             print("Error: Disk read failed.\n");
             break;
         default:
+            print("\n");
             print("Error: Unknown error occurred while reading the file.\n");
             break;
     }
