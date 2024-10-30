@@ -16,8 +16,6 @@
 #include "../fs/simple_fs.h"
 #include "../drivers/gpu.h"
 
-extern void rust_panic(const void *info);
-
 void print(const char *str);
 
 void shell_help() {
@@ -47,10 +45,12 @@ void shell_clear() {
 }
 
 void shell_panic() {
-    // This causes a kernel panic, defined in rust/src/lib.rs
     print("\n");
     print("Triggering kernel panic.\n");
-    rust_panic(NULL);
+    // Halt the CPU with an infinite loop
+    while (1) {
+        __asm__ volatile ("nop");
+    }
 }
 
 void shell_create(const char *name) {
