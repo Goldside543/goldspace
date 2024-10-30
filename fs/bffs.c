@@ -12,6 +12,7 @@
 #include "simple_fs.h"
 #include "../drivers/disk.h"
 #include "../mm/memory.h"
+#include "../kernel/string.h"
 
 FileSystem fs;
 
@@ -47,44 +48,51 @@ void fs_init() {
 }
 
 int create_file(const char* name) {
-    // Check if there's space in the file table
+    // Validate filename length
+    int name_len = 0;
+    while (name[name_len] != '\0') name_len++;
+    if (name_len >= MAX_FILE_NAME) return -2; // Name is too long
+
+    // Check for duplicate file names to prevent overwrites
     for (int i = 0; i < MAX_FILES; i++) {
-        if (fs.files[i].name[0] == '\0') { // Find an empty slot in the file table
-            // Copy the file name
-            int j;
-            for (j = 0; j < MAX_FILE_NAME && name[j] != '\0'; j++) {
-                fs.files[i].name[j] = name[j];
-            }
-            if (j < MAX_FILE_NAME) {
-                fs.files[i].name[j] = '\0'; // Null-terminate the name
-            }
-
-            // Allocate a block for the new file
-            int block_index = -1;
-            for (int k = 0; k < NUM_BLOCKS; k++) {
-                if (fs.free_blocks[k] == 1) { // Find a free block
-                    block_index = k;
-                    fs.free_blocks[k] = 0;    // Mark the block as used
-                    break;
-                }
-            }
-
-            if (block_index == -1) {
-                return -1; // No free blocks available
-            }
-
-            // Initialize file metadata
-            fs.files[i].size = 0;            // File size is 0 at creation
-            fs.files[i].start_block = block_index;
-
-            // Persist the updated file table to disk
-            disk_write(FILE_TABLE_BLOCK, (void*)&fs, sizeof(fs));
-
-            return i; // Return the index of the new file
-        }
+        if (my_strcmp(fs.files[i].name, name) == 0) return -3; // File already exists
     }
 
-    return -1; // No space left in the file table
+    // Find a free slot in the file table
+    int file_index = -1;
+    for (int i = 0; i < MAX_FILES; i++) {
+        if (fs.files[i].name[0] == '\0') { // Empty slot found
+            file_index = i;
+            break;
+        }
+    }
+    if (file_index == -1) return -1; // No space in file table
+
+    // Allocate a block for the new file
+    int block_index = -1;
+    for (int i = 0; i < NUM_BLOCKS; i++) {
+        if (fs.free_blocks[i]) { // Block is free if marked 1
+            block_index = i;
+            fs.free_blocks[i] = 0; // Mark block as used
+            break;
+        }
+    }
+    if (block_index == -1) return -4; // No free blocks available
+
+    // Initialize file metadata
+    my_strncpy(fs.files[file_index].name, name, MAX_FILE_NAME - 1); // Safely copy name
+    fs.files[file_index].name[MAX_FILE_NAME - 1] = '\0'; // Ensure null-termination
+    fs.files[file_index].size = 0; // New file starts empty
+    fs.files[file_index].start_block = block_index;
+
+    // Persist the updated file table to disk
+    if (disk_write(FILE_TABLE_BLOCK, (void*)&fs, sizeof(fs)) != 0) {
+        fs.free_blocks[block_index] = 1; // Roll back block allocation
+        fs.files[file_index].name[0] = '\0'; // Roll back file table entry
+        return -5; // Failed to write file table to disk
+    }
+
+    return file_index; // Return index of new file
 }
 
 // Write data to a file
