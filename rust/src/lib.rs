@@ -19,13 +19,12 @@ use core::arch::asm;
 static mut LOG_BUFFER: [u8; 1024] = [0; 1024];
 static mut LOG_INDEX: usize = 0;
 
-#[panic_handler]
 #[no_mangle]
-fn panic(_info: &PanicInfo) -> ! {
+pub extern "C" fn rust_panic(_info: *const PanicInfo) -> ! {
     // Halt the CPU
     loop {
         unsafe {
-            asm!("hlt");
+            core::arch::asm!("hlt");
         }
     }
 }
