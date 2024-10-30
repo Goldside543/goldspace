@@ -5,6 +5,8 @@ CC = gcc
 AS = nasm
 ARCH = -m32
 
+.PHONY: clean
+
 all: goldspace.iso
 
 goldspace.iso: boot/boot.bin kernel/kernel.bin
