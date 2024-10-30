@@ -53,12 +53,30 @@ void shell_panic() {
     
 void shell_create(const char *name) {
     int result = create_file(name);
+    print("\n");
+
+    // Check result for success or specific error codes
     if (result >= 0) {
-        print("\n");
         print("File created successfully.\n");
     } else {
-        print("\n");
-        print("Error: Could not create file.\n");
+        // Handle specific errors based on returned result code
+        switch (result) {
+            case -2:
+                print("Error: File name is too long.\n");
+                break;
+            case -3:
+                print("Error: File already exists.\n");
+                break;
+            case -4:
+                print("Error: No free blocks available.\n");
+                break;
+            case -5:
+                print("Error: Failed to write file table to disk.\n");
+                break;
+            default:
+                print("Error: Could not create file.\n");
+                break;
+        }
     }
 }
 
