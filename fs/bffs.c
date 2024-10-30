@@ -133,49 +133,47 @@ int write_file(int file_index, const char* data, size_t size) {
 }
 
 int read_file(int file_index, char* buffer, size_t size) {
+    // Validate file index range
     if (file_index < 0 || file_index >= MAX_FILES) return -1; // Invalid file index
+    
+    // Check if file exists
     if (fs.files[file_index].name[0] == '\0') return -2; // File does not exist
-    if (fs.files[file_index].start_block == -1) return -3; // No data written to file
 
-    // Get the starting block and file size
+    // Verify that the file has data
     int block_index = fs.files[file_index].start_block;
+    if (block_index == -1) return -3; // No data written to file
+
+    // Limit read size to the file's actual size
     size_t file_size = fs.files[file_index].size;
+    size = (size > file_size) ? file_size : size;
 
-    // Ensure the requested size does not exceed the actual file size
-    if (size > file_size) {
-        size = file_size;
-    }
-
-    // Read data block-by-block if the file spans multiple blocks
+    // Variables for reading data
     size_t bytes_read = 0;
-    size_t bytes_to_read;
     char temp_buffer[BLOCK_SIZE];
 
+    // Read the data block-by-block
     while (size > 0) {
-        // Read the whole block if more than a block remains, or only the remainder
-        bytes_to_read = (size > BLOCK_SIZE) ? BLOCK_SIZE : size;
+        // Determine how much of the block to read
+        size_t bytes_to_read = (size > BLOCK_SIZE) ? BLOCK_SIZE : size;
 
-        // Read data from the current block using ATA PIO
-        if (disk_read(block_index, temp_buffer, BLOCK_SIZE) != 0) {
-            return -4; // Disk read failed
-        }
+        // Read from disk into temp buffer
+        if (disk_read(block_index, temp_buffer, BLOCK_SIZE) != 0) return -4; // Disk read error
 
-        // Copy the relevant part of the block to the buffer
+        // Copy only the relevant part of temp_buffer to the output buffer
         kmemcpy(buffer + bytes_read, temp_buffer, bytes_to_read);
 
-        // Update counters and indexes
+        // Update counters
         bytes_read += bytes_to_read;
         size -= bytes_to_read;
         block_index++; // Move to the next block
 
-        // If you've reached the end of the allocated blocks, break
-        if (block_index >= NUM_BLOCKS || fs.free_blocks[block_index] == 1) {
-            break; // Stop if no more data is available
-        }
+        // Stop if we run out of allocated blocks
+        if (block_index >= NUM_BLOCKS || fs.free_blocks[block_index] == 1) break;
     }
 
-    return 0; // Return 0 on success
+    return 0; 
 }
+
 
 // Delete a file
 int delete_file(int file_index) {
