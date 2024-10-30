@@ -228,6 +228,15 @@ void kernel_main() {
     cpu_delay(50000000);
 
     shell_clear();
+    
+/* The following code is to be removed if you are
+   building Goldspace without Gash, including the
+   copyright notice, as you are intended to include
+   that in your OS. To remove the commands, you should
+   remove the gash/ directory, and remove the include
+   line, #include "../gash/gash.h" from the top of
+   this file.
+*/
 
     print("Welcome to Goldspace and the Gash shell!\n");
     print("Type 'help' for available commands.\n");
