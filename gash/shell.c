@@ -259,7 +259,7 @@ void shell_delete(const char *args) {
     int filename_idx = 0;
     char current_char;
 
-    // Iterate through the input arguments
+    // Iterate through the input arguments to extract the filename
     while ((current_char = *args++) != '\0') {
         if (current_char == ' ') {
             filename[filename_idx] = '\0'; // Null-terminate filename
@@ -296,14 +296,26 @@ void shell_delete(const char *args) {
         return;
     }
 
-    // Delete file
+    // Attempt to delete file and handle specific error codes
     int result = delete_file(file_index);
-    if (result == 0) {
-        print("\n");
-        print("File deleted successfully.\n");
-    } else {
-        print("\n");
-        print("Error: Could not delete file.\n");
+    print("\n");
+
+    switch (result) {
+        case 0:
+            print("File deleted successfully.\n");
+            break;
+        case -1:
+            print("Error: Invalid file index.\n");
+            break;
+        case -2:
+            print("Error: File does not exist.\n");
+            break;
+        case -3:
+            print("Error: Disk write error.\n");
+            break;
+        default:
+            print("Error: Could not delete file.\n");
+            break;
     }
 }
 
