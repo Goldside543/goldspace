@@ -231,6 +231,13 @@ void kernel_main() {
 
     print("Welcome to Goldspace and the Gash shell!\n");
     print("Type 'help' for available commands.\n");
+    print("\n");
+
+    print("Goldspace v2.9.6, Copyright (C) 2024 Goldside543\n");
+    print("Goldspace comes with ABSOLUTELY NO WARRANTY.\n");
+    print("This is free software, and you are welcome to redistribute it\n");
+    print("under certain conditions. See the GPL-2.0 license for details.\n");
+    print("\n");
 
     while (1) {
         char command[256];
