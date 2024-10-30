@@ -200,15 +200,6 @@ void kernel_main() {
 
     initialize_process_system();
 
-/* GPU support is a little shifty. On one hand, it gives you
-   better graphics. On the other, if a device doesn't have a
-   GPU, Goldspace crashes (afiak, the GPU driver is the cause
-   of it).
-
-   If you're building an OS and using Goldspace, I'd probably
-   leave it off if I were you.
-*/
-
     // gpu_init();
 
     init_graphics();
