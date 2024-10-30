@@ -16,6 +16,8 @@
 #include "../fs/simple_fs.h"
 #include "../drivers/gpu.h"
 
+extern void rust_panic(const void *info);
+
 void print(const char *str);
 
 void shell_help() {
@@ -42,6 +44,13 @@ void shell_clear() {
     for (int i = 0; i < 25; ++i) {
         print("\n");
     }
+}
+
+void shell_panic() {
+    // This causes a kernel panic, defined in rust/src/lib.rs
+    print("\n");
+    print("Triggering kernel panic.\n");
+    rust_panic(NULL);
 }
 
 void shell_create(const char *name) {
@@ -350,6 +359,8 @@ void shell_execute_command(const char *command) {
         shell_clear();
     } else if (my_strcmp(command_name, "render") == 0) {
         shell_render(); // Execute the render command
+    } else if (my_strcmp(command_name, "panic") == 0) { // Handle the panic command
+        shell_panic(); // Trigger kernel panic
     } else {
         print("\n");
         print("Unknown command: ");
