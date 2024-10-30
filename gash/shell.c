@@ -15,6 +15,7 @@
 #include "../kernel/string.h"
 #include "../fs/simple_fs.h"
 #include "../drivers/gpu.h"
+#include "../kernel/panic.h"
 
 void print(const char *str);
 
@@ -47,12 +48,9 @@ void shell_clear() {
 void shell_panic() {
     print("\n");
     print("Triggering kernel panic.\n");
-    // Halt the CPU with an infinite loop
-    while (1) {
-        __asm__ volatile ("nop");
-    }
+    panic();
 }
-
+    
 void shell_create(const char *name) {
     int result = create_file(name);
     if (result >= 0) {
