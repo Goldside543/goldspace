@@ -227,6 +227,9 @@ void kernel_main() {
    remove the gash/ directory, and remove the include
    line, #include "../gash/gash.h" from the top of
    this file.
+
+   In addition, you will need to remove gash/shell.c
+   from the top-level Makefile.
 */
 
     print("Welcome to Goldspace and the Gash shell!\n");
