@@ -1,0 +1,29 @@
+name: Build and Upload Goldspace from macOS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Add Rust target for i686
+      run: rustup target add i686-unknown-linux-gnu
+
+    - name: Set up dependencies
+      run: |
+        brew update
+        brew install nasm mtools
+
+    - name: Build ISO
+      run: make
+
+    - name: Upload ISO
+      uses: actions/upload-artifact@v4
+      with:
+        name: goldspace
+        path: goldspace.iso
