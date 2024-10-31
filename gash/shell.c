@@ -403,7 +403,7 @@ void shell_execute_command(const char *command) {
         shell_render(); // Execute the render command
     } else if (my_strcmp(command_name, "panic") == 0) { // Handle the panic command
         shell_panic(); // Trigger kernel panic
-    } else if (my_strcmp(command_name, "build-date") == 0 {
+    } else if (my_strcmp(command_name, "build-date") == 0) {
         shell_date();
     } else {
         print("\n");
