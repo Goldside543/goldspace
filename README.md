@@ -23,6 +23,7 @@ Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is des
 * `delete <filename>` deletes a file!
 * `render` does a rendering test on the GPU.
 * `panic` causes a kernel panic.
+* `builddate` prints build date and time.
 # For additional documentation...
 See the user manual or developer manual, conveniently located in the Documentation directory!
-# Version number: v2.9.7
+# Version number: v2.9.8
