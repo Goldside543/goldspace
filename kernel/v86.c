@@ -33,7 +33,7 @@ void enter_v86_mode() {
         // Code to run in V86 mode
         "v86_code:\n\t"
         "movb $0x03, %%al\n\t"      // Example V86-mode code
-        "out %%al, $0x3F8\n\t"      // Example I/O instruction
+        "out %%al, $0xF8\n\t"      // Example I/O instruction
 
         // Exit V86 mode (jump back to 32-bit protected mode)
         "cli\n\t"                   // Disable interrupts again in 32-bit mode
