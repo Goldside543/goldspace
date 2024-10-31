@@ -53,7 +53,7 @@ void shell_clear() {
 void shell_panic() {
     print("\n");
     print("Triggering kernel panic.\n");
-    panic();
+    panic(0x01);
 }
 
 void shell_date() {
