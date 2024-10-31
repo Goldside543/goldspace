@@ -30,6 +30,7 @@
 
 // ELF Machine Types
 #define EM_386          3    // Intel 80386
+#define EM_686          6    // Intel 80686
 
 // Program Header Types
 #define PT_NULL         0    // Program header table entry unused
