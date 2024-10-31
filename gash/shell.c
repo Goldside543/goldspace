@@ -60,7 +60,7 @@ void shell_date() {
     print("\n");
     print("This kernel was compiled on ");
     print(build_date);
-    print(" at");
+    print(" at ");
     print(build_time);
     print(".\n");
 }
