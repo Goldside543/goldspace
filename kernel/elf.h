@@ -1,12 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
-/*
- * elf.h
- *
- * Defines for parsing ELF executables (32-bit).
- *
- * Copyright (C) 2024 Goldside543
- *
- */
+/* SPDX-License-Identifier: GPL-2.0-only */
 
 #ifndef ELF_H
 #define ELF_H
