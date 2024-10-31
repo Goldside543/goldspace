@@ -9,8 +9,6 @@
  *
  */
 
-#include <stdio.h>
-
 void enter_v86_mode() {
     asm volatile (
         "pushfl\n\t"                // Save original EFLAGS to stack
