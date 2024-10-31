@@ -1,3 +1,14 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * kernel/v86.c
+ * 
+ * Switches the CPU to Virtual 8086 mode
+ * to execute 16-bit code.
+ *
+ * Copyright (C) 2024 Goldside543
+ *
+ */
+
 #include <stdio.h>
 
 void enter_v86_mode() {
