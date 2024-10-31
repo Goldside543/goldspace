@@ -3,6 +3,6 @@
 #ifndef PANIC_H
 #define PANIC_H
 
-void panic();
+void panic(const char *error_message);
 
 #endif // PANIC_H
