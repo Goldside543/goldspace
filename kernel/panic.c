@@ -10,14 +10,16 @@
 
 #include "print.h"
 
-void panic() {
+void panic(const char *error_message) {
     // Print error message
     print("\n");
-    print("ERROR!!! KERNEL HAS ENCOUNTERED SEVERE,\n");
+    print("KERNEL HAS ENCOUNTERED SEVERE,\n");
     print("IRRECOVERABLE ERROR!!! PLEASE REPORT THIS\n");
-    print("ERROR TO EITHER AN OS MAINTAINER OR KERNEL\n");
-    print("MAINTAINER, THE LATTER AT\n");
-    print("goldside000@outlook.com");
+    print("ERROR TO A KERNEL MAINTAINER, AT\n");
+    print("goldside000@outlook.com\n");
+    print("\n");
+    print("Cause of error: ");
+    print(error_message);
     // Halt the CPU with an infinite loop
     while (1) {
         __asm__ volatile ("nop");
