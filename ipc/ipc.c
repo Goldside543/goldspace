@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 /*
- * kernel/ipc.c
+ * ipc/ipc.c
  * 
  * Inter-Process Communication (IPC) implementation.
  *
