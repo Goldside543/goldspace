@@ -63,6 +63,7 @@ void shell_date() {
     print(" at");
     print(build_time);
     print(".\n");
+}
     
 void shell_create(const char *name) {
     int result = create_file(name);
