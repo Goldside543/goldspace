@@ -17,6 +17,9 @@
 #include "../drivers/gpu.h"
 #include "../kernel/panic.h"
 
+const char *build_date = __DATE__;    // Compile date
+const char *build_time = __TIME__;    // Compile time
+
 void print(const char *str);
 
 void shell_help() {
@@ -30,6 +33,8 @@ void shell_help() {
     print("delete <filename> - Delete a file\n");
     print("clear - Clear the screen\n");
     print("render - Test GPU rendering - Do not run if the GPU driver failed to load.\n");
+    print("panic - Trigger a kernel panic\n");
+    print("build-date - Print build date and time\n");
 }
 
 void shell_echo(const char *message) {
@@ -50,6 +55,14 @@ void shell_panic() {
     print("Triggering kernel panic.\n");
     panic();
 }
+
+void shell_date() {
+    print("\n");
+    print("This kernel was compiled on ");
+    print(build_date);
+    print(" at");
+    print(build_time);
+    print(".\n");
     
 void shell_create(const char *name) {
     int result = create_file(name);
@@ -389,6 +402,8 @@ void shell_execute_command(const char *command) {
         shell_render(); // Execute the render command
     } else if (my_strcmp(command_name, "panic") == 0) { // Handle the panic command
         shell_panic(); // Trigger kernel panic
+    } else if my_strcmp(command_name, "build-date") == 0 {
+        shell_date();
     } else {
         print("\n");
         print("Unknown command: ");
