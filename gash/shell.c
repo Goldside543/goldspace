@@ -16,6 +16,7 @@
 #include "../fs/simple_fs.h"
 #include "../drivers/graphics.h"
 #include "../kernel/panic.h"
+#include "../kernel/v86.h"
 
 const char *build_date = __DATE__;    // Compile date
 const char *build_time = __TIME__;    // Compile time
@@ -64,6 +65,12 @@ void shell_date() {
     print(build_time);
     print(".\n");
 }
+
+void shell_switch_to_vga_graphics_mode() {
+    print("\n");
+    print("Switching to VGA graphics mode.\n");
+    enter_vga_graphics_mode();
+    print("Switched to VGA graphics mode.\n");
     
 void shell_create(const char *name) {
     int result = create_file(name);
@@ -405,6 +412,8 @@ void shell_execute_command(const char *command) {
         shell_panic(); // Trigger kernel panic
     } else if (my_strcmp(command_name, "builddate") == 0) {
         shell_date();
+    } else if (my_strcmp(command_name, "switchvgamode") == 0) {
+        shell_switch_to_vga_graphics_mode();
     } else {
         print("\n");
         print("Unknown command: ");
