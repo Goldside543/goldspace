@@ -12,7 +12,7 @@
 #include "../kernel/print.h"
 #include "../kernel/abs.h"
 
-#define FRAMEBUFFER_ADDR 0xA0000
+#define FRAMEBUFFER_ADDR 0xA000
 #define SCREEN_WIDTH  320
 #define SCREEN_HEIGHT 200
 
