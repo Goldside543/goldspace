@@ -414,7 +414,7 @@ void shell_execute_command(const char *command) {
         shell_panic(); // Trigger kernel panic
     } else if (my_strcmp(command_name, "builddate") == 0) {
         shell_date();
-    } else if (my_strcmp(command_name, "switchvgamode") == 0) {
+    } else if (my_strcmp(command_name, "graphics") == 0) {
         shell_switch_to_vga_graphics_mode();
     } else {
         print("\n");
