@@ -13,8 +13,8 @@
 #include "../kernel/abs.h"
 
 #define FRAMEBUFFER_ADDR 0xA0000
-#define SCREEN_WIDTH  80
-#define SCREEN_HEIGHT 25
+#define SCREEN_WIDTH  320
+#define SCREEN_HEIGHT 200
 
 void init_graphics() {
     print("Loading advanced framebuffer driver...\n");
