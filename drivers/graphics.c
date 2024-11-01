@@ -22,7 +22,7 @@ void init_graphics() {
     print("Advanced framebuffer driver loaded.");
     for (int y = 0; y < SCREEN_HEIGHT; ++y) {
         for (int x = 0; x < SCREEN_WIDTH; ++x) {
-            framebuffer[y * SCREEN_WIDTH + x] = 0x0F
+            framebuffer[y * SCREEN_WIDTH + x] = 0x0F;
         }
     }
 }
