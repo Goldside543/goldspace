@@ -33,9 +33,10 @@ void shell_help() {
     print("read <filename> - Read data from a file\n");
     print("delete <filename> - Delete a file\n");
     print("clear - Clear the screen\n");
-    print("render - Test GPU rendering - Do not run if the GPU driver failed to load.\n");
+    print("render - Test rendering\n");
     print("panic - Trigger a kernel panic\n");
-    print("build-date - Print build date and time\n");
+    print("builddate - Print build date and time\n");
+    print("switchvgamode - Switch VGA mode to 13h\n");
 }
 
 void shell_echo(const char *message) {
