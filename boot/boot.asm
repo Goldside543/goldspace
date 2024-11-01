@@ -79,6 +79,9 @@ gdt_start:
     dq 0x00cf9a000000ffff ; Code segment descriptor
     dq 0x00cf92000000ffff ; Data segment descriptor
 
+    dq 0x00009a000000ffff ; Code segment descriptor (V86)
+    dq 0x000092000000ffff ; Data segment descriptor (V86)
+
 gdt_descriptor:
     dw gdt_end - gdt_start - 1
     dd gdt_start
