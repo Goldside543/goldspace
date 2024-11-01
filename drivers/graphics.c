@@ -18,11 +18,11 @@
 
 void init_graphics() {
     print("Loading advanced framebuffer driver...\n");
-    uint16_t *framebuffer = (uint16_t *)FRAMEBUFFER_ADDR;
+    uint8_t *framebuffer = (uint8_t *)FRAMEBUFFER_ADDR;
     print("Advanced framebuffer driver loaded.");
     for (int y = 0; y < SCREEN_HEIGHT; ++y) {
         for (int x = 0; x < SCREEN_WIDTH; ++x) {
-            framebuffer[y * SCREEN_WIDTH + x] = (0x0F << 8) | ' ';
+            framebuffer[y * SCREEN_WIDTH + x] = 0x0F
         }
     }
 }
