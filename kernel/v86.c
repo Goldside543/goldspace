@@ -32,8 +32,9 @@ void enter_vga_graphics_mode() {
 
         // Code to run in V86 mode
         "v86_code:\n\t"
-        "movb $0x03, %%al\n\t"      // Example V86-mode code
-        "out %%al, $0xF8\n\t"      // Example I/O instruction
+        "movb $0x13, %%al\n\t"      // Set mode to 0x13
+        "movb $0x00, %%ah\n\t"      // Function 0x00 - set video mode
+        "int $0x10\n\t"             // Call BIOS interrupt to set mode
 
         // Exit V86 mode (jump back to 32-bit protected mode)
         "cli\n\t"                   // Disable interrupts again in 32-bit mode
