@@ -9,7 +9,7 @@
  *
  */
 
-void enter_v86_mode() {
+void enter_vga_graphics_mode() {
     asm volatile (
         "pushfl\n\t"                // Save original EFLAGS to stack
         "cli\n\t"                   // Clear interrupts
