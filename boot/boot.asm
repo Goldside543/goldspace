@@ -17,6 +17,10 @@ start:
     mov ss, ax
     mov sp, 0x7c00
 
+    mov ah, 0
+    mov al, 13h
+    int 10h
+
     ; Load the kernel into memory
     mov bx, 0x1000     ; Address to load the kernel
     mov ah, 0x02       ; BIOS read sector function
@@ -55,9 +59,9 @@ start:
 
 memory_error:
     ; Set video mode to 320x200 256-color (Mode 13h) for error display
-    mov ah, 0x00
-    mov al, 0x13
-    int 0x10
+    mov ah, 0
+    mov al, 13h
+    int 10h
 
     ; Load segment register ES with value 0xA000 (Video memory segment)
     mov ax, 0xA000    ; Load the segment value into AX
