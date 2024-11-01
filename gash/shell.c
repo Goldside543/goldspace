@@ -14,7 +14,7 @@
 #include "../kernel/io.h"
 #include "../kernel/string.h"
 #include "../fs/simple_fs.h"
-#include "../drivers/gpu.h"
+#include "../drivers/graphics.h"
 #include "../kernel/panic.h"
 
 const char *build_date = __DATE__;    // Compile date
@@ -334,7 +334,7 @@ void shell_delete(const char *args) {
 }
 
 void shell_render() {
-    gpu_render(); // Call the GPU render function
+    draw_rectangle(50, 75, 100, 50, 1);    
     print("\n");
     print("GPU render executed.\n");
 }
