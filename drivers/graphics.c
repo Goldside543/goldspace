@@ -12,13 +12,13 @@
 #include "../kernel/print.h"
 #include "../kernel/abs.h"
 
-#define FRAMEBUFFER_ADDR 0xB8000
+#define FRAMEBUFFER_ADDR 0xA0000
 #define SCREEN_WIDTH  80
 #define SCREEN_HEIGHT 25
 
 void init_graphics() {
     print("Loading advanced framebuffer driver...\n");
-    uint16_t *framebuffer = (uint16_t *)FRAMEBUFFER_ADDR;
+    uint8_t *framebuffer = (uint8_t *)FRAMEBUFFER_ADDR;
     print("Advanced framebuffer driver loaded.");
     for (int y = 0; y < SCREEN_HEIGHT; ++y) {
         for (int x = 0; x < SCREEN_WIDTH; ++x) {
@@ -28,16 +28,16 @@ void init_graphics() {
 }
 
 // Helper function to set a pixel
-static void set_pixel(int x, int y, uint16_t color) {
+static void set_pixel(int x, int y, uint8_t color) {
     if (x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT) {
-        uint16_t *framebuffer = (uint16_t *)FRAMEBUFFER_ADDR;
+        uint8_t *framebuffer = (uint8_t *)FRAMEBUFFER_ADDR;
         framebuffer[y * SCREEN_WIDTH + x] = color;
     }
 }
 
 
 // Draw a rectangle
-void draw_rectangle(int x, int y, int width, int height, uint16_t color) {
+void draw_rectangle(int x, int y, int width, int height, uint8_t color) {
     for (int i = y; i < y + height; ++i) {
         for (int j = x; j < x + width; ++j) {
             set_pixel(j, i, color);
@@ -46,7 +46,7 @@ void draw_rectangle(int x, int y, int width, int height, uint16_t color) {
 }
 
 // Draw a line (Bresenham's line algorithm)
-void draw_line(int x1, int y1, int x2, int y2, uint16_t color) {
+void draw_line(int x1, int y1, int x2, int y2, uint8_t color) {
     int dx = abs(x2 - x1);
     int dy = abs(y2 - y1);
     int sx = x1 < x2 ? 1 : -1;
@@ -256,7 +256,7 @@ static const uint8_t font[128][8] = {
 };
 
 // Draw a character at (x, y)
-void draw_char(int x, int y, char ch, uint16_t color) {
+void draw_char(int x, int y, char ch, uint8_t color) {
     if (ch < 32 || ch > 127) return; // Handle out-of-bounds characters
     const uint8_t *bitmap = font[ch - 32];
     for (int i = 0; i < 8; ++i) {
@@ -270,7 +270,7 @@ void draw_char(int x, int y, char ch, uint16_t color) {
 
 
 // Draw a string at (x, y)
-void draw_text(int x, int y, const char *text, uint16_t color) {
+void draw_text(int x, int y, const char *text, uint8_t color) {
     while (*text) {
         draw_char(x, y, *text++, color);
         x += 8; // Move to the next character position
