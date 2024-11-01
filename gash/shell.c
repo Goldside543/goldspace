@@ -72,6 +72,7 @@ void shell_switch_to_vga_graphics_mode() {
     print("Switching to VGA graphics mode.\n");
     enter_vga_graphics_mode();
     print("Switched to VGA graphics mode.\n");
+}
     
 void shell_create(const char *name) {
     int result = create_file(name);
