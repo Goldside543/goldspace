@@ -36,7 +36,7 @@ void shell_help() {
     print("render - Test rendering\n");
     print("panic - Trigger a kernel panic\n");
     print("builddate - Print build date and time\n");
-    print("switchvgamode - Switch VGA mode to 13h\n");
+    print("graphics - Switch VGA mode to 13h\n");
 }
 
 void shell_echo(const char *message) {
