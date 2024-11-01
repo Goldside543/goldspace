@@ -15,7 +15,7 @@ void enter_vga_graphics_mode() {
         "cli\n\t"                   // Clear interrupts
 
         // Prepare stack for V86 mode
-        "pushl $0x23\n\t"           // SS (stack segment) for V86 mode
+        "pushl $0x23\n\t"           // SS (stack segment) for V86 mode (32-bit data segment)
         "pushl $0x2000\n\t"         // ESP (stack pointer) for V86 mode
 
         // Set up EFLAGS with VM flag set
@@ -25,7 +25,7 @@ void enter_vga_graphics_mode() {
         "pushl %%eax\n\t"           // Push modified EFLAGS
 
         // Set up CS and IP for V86 mode
-        "pushl $0x8\n\t"            // CS for V86 mode
+        "pushl $0x18\n\t"           // CS for V86 mode (index for V86 code segment descriptor)
         "pushl $v86_code\n\t"       // IP (instruction pointer) in V86 mode
 
         "iret\n"                    // Enter V86 mode with IRET
