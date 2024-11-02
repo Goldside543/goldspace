@@ -1,8 +1,8 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 
-#ifndef PANIC_H
-#define PANIC_H
+#ifndef INTERRUPT_H
+#define INTERRUPT_H
 
 void software_interrupt_handler();
 
-#endif // PANIC_H
+#endif // INTERRUPT_H
