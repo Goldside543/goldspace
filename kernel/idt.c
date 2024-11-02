@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include "interrupt.h"
+#include "panic.h"
 
 #define IDT_ENTRIES 256
 
