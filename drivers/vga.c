@@ -20,7 +20,7 @@
 #define VGA_GC_DATA    0x3CF
 #define VGA_AC_INDEX   0x3C0
 #define VGA_AC_DATA    0x3C1
-#define VGA_MEMORY     0xA0000
+#define VGA_MEMORY     0xA000
 
 // Mode 13h constants
 #define MODE_13H_WIDTH  320
