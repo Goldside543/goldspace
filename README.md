@@ -24,7 +24,6 @@ Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is des
 * `render` does a rendering test on the GPU.
 * `panic` causes a kernel panic.
 * `builddate` prints build date and time.
-* `graphics` switches the VGA mode to 13h.
 # For additional documentation...
 See the user manual or developer manual, conveniently located in the Documentation directory!
 # Version number: v2.9.9
