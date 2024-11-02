@@ -36,26 +36,27 @@ void clear_screen() {
 
 // Function to set VGA mode 13h
 void set_mode_13h() {
-    // Set the VGA to mode 13h (320x200, 256 colors)
-    
-    // Set the sequence registers
-    outb(VGA_SEQ_INDEX, 0x01); // Unlock
-    outb(VGA_SEQ_DATA, 0x01);  // Set to mode 13h
+    // Unlock CRTC registers
+    outb(VGA_CRTC_INDEX, 0x03);  // Disable screen
+    outb(VGA_CRTC_DATA, 0x80);   // Protect registers
+
+    // Set Mode 13h in the sequencer
     outb(VGA_SEQ_INDEX, 0x00);
-    outb(VGA_SEQ_DATA, 0x03); // Set to 256 colors
+    outb(VGA_SEQ_DATA, 0x03); // Unlock
+    outb(VGA_SEQ_INDEX, 0x01);
+    outb(VGA_SEQ_DATA, 0x01); // Mode 13h initialization
 
-    // Set the CRTC registers
-    outb(VGA_CRTC_INDEX, 0x11); // Set vertical total
-    outb(VGA_CRTC_DATA, 0xD3);  // 200 lines
+    // Set CRTC registers for 320x200 resolution
+    outb(VGA_CRTC_INDEX, 0x11);
+    outb(VGA_CRTC_DATA, 0xE3);
 
-    // Set the graphics controller registers
-    outb(VGA_GC_INDEX, 0x05); // Set to graphics mode
-    outb(VGA_GC_DATA, 0x00);  // Disable all features
+    // Graphics controller settings for mode 13h
+    outb(VGA_GC_INDEX, 0x06);
+    outb(VGA_GC_DATA, 0x05); // Select plane
 
-    // Set the attribute controller
+    // Attribute controller settings
     outb(VGA_AC_INDEX, 0x20); // Set mode
-    outb(VGA_AC_DATA, 0x00);  // Enable color palette
+    outb(VGA_AC_DATA, 0x00);
 
-    // Clear the screen
     clear_screen();
 }
