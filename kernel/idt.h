@@ -1,8 +1,8 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 
-#ifndef PANIC_H
-#define PANIC_H
+#ifndef IDT_H
+#define IDT_H
 
 void init_idt();
 
-#endif // PANIC_H
+#endif // IDT_H
