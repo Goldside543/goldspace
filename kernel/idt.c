@@ -9,8 +9,11 @@
  */
 
 #include <stdint.h>
+#include "interrupt.h"
 
 #define IDT_ENTRIES 256
+
+extern void software_interrupt_handler();
 
 // Define the structure for an IDT entry
 struct idt_entry {
@@ -29,6 +32,10 @@ struct idt_pointer {
 
 // The IDT itself
 struct idt_entry idt[IDT_ENTRIES];
+
+void default_handler(void) {
+   panic("Unknown interrupt.");
+}
 
 // Function to set an IDT entry
 void set_idt_entry(int interrupt_number, void (*handler)()) {
