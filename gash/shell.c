@@ -36,7 +36,6 @@ void shell_help() {
     print("render - Test rendering\n");
     print("panic - Trigger a kernel panic\n");
     print("builddate - Print build date and time\n");
-    print("graphics - Switch VGA mode to 13h\n");
 }
 
 void shell_echo(const char *message) {
@@ -65,13 +64,6 @@ void shell_date() {
     print(" at ");
     print(build_time);
     print(".\n");
-}
-
-void shell_switch_to_vga_graphics_mode() {
-    print("\n");
-    print("Switching to VGA graphics mode.\n");
-    enter_vga_graphics_mode();
-    print("Switched to VGA graphics mode.\n");
 }
     
 void shell_create(const char *name) {
@@ -414,8 +406,6 @@ void shell_execute_command(const char *command) {
         shell_panic(); // Trigger kernel panic
     } else if (my_strcmp(command_name, "builddate") == 0) {
         shell_date();
-    } else if (my_strcmp(command_name, "graphics") == 0) {
-        shell_switch_to_vga_graphics_mode();
     } else {
         print("\n");
         print("Unknown command: ");
