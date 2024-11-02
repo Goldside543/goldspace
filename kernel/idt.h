@@ -3,6 +3,6 @@
 #ifndef PANIC_H
 #define PANIC_H
 
-void init_idt(const char *error_message);
+void init_idt();
 
 #endif // PANIC_H
