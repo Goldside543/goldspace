@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
- * drivers/audio.c
+ * drivers/vga.c
  *
- * Audio driver.
+ * VGA driver.
  *
  * Copyright (C) 2024 Goldside543
  *
