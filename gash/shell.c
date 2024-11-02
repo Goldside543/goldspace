@@ -69,9 +69,10 @@ void shell_date() {
 }
 
 void shell_graphics() {
+    print("\n");
     print("Switching graphics mode...\n");
     set_mode_13h();
-    print("Mode switched.");
+    print("Mode switched.\n");
 }
     
 void shell_create(const char *name) {
