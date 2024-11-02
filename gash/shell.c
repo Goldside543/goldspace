@@ -17,6 +17,7 @@
 #include "../drivers/graphics.h"
 #include "../kernel/panic.h"
 #include "../kernel/v86.h"
+#include "../drivers/vga.h"
 
 const char *build_date = __DATE__;    // Compile date
 const char *build_time = __TIME__;    // Compile time
@@ -36,6 +37,7 @@ void shell_help() {
     print("render - Test rendering\n");
     print("panic - Trigger a kernel panic\n");
     print("builddate - Print build date and time\n");
+    print("mode13h - Switch to graphics mode 13h\n");
 }
 
 void shell_echo(const char *message) {
@@ -64,6 +66,12 @@ void shell_date() {
     print(" at ");
     print(build_time);
     print(".\n");
+}
+
+void shell_graphics() {
+    print("Switching graphics mode...\n");
+    set_mode_13h();
+    print("Mode switched.");
 }
     
 void shell_create(const char *name) {
@@ -406,6 +414,8 @@ void shell_execute_command(const char *command) {
         shell_panic(); // Trigger kernel panic
     } else if (my_strcmp(command_name, "builddate") == 0) {
         shell_date();
+    } else if (my_strcmp(command_name, "mode13h") == 0) {
+        shell_graphics();
     } else {
         print("\n");
         print("Unknown command: ");
