@@ -21,7 +21,7 @@
 #define VGA_AC_INDEX   0x3C0
 #define VGA_AC_DATA    0x3C1
 #define VGA_MISC_WRITE 0x3C2
-#define VGA_MEMORY     0xA0000  // Full address in protected mode
+#define VGA_MEMORY     0xA000
 
 // Mode 13h constants
 #define MODE_13H_WIDTH  320
