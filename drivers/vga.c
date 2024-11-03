@@ -21,7 +21,7 @@
 #define VGA_AC_INDEX   0x3C0
 #define VGA_AC_DATA    0x3C1
 #define VGA_MISC_WRITE 0x3C2
-#define VGA_MEMORY     0xA000
+#define VGA_MEMORY     0xA0000  // Full address in protected mode
 
 // Mode 13h constants
 #define MODE_13H_WIDTH  320
@@ -42,36 +42,34 @@ void set_mode_13h() {
 
     // Set sequencer registers
     outb(VGA_SEQ_INDEX, 0x00);  // Reset sequencer
-    outb(VGA_SEQ_DATA, 0x03);   
+    outb(VGA_SEQ_DATA, 0x03);
     outb(VGA_SEQ_INDEX, 0x01);  // Clocking mode
-    outb(VGA_SEQ_DATA, 0x01);   
+    outb(VGA_SEQ_DATA, 0x01);
     outb(VGA_SEQ_INDEX, 0x02);  // Map mask
     outb(VGA_SEQ_DATA, 0x0F);   // Enable all planes
     outb(VGA_SEQ_INDEX, 0x04);  // Memory mode
     outb(VGA_SEQ_DATA, 0x0E);   // Enable plane A, color 256-color mode
 
     // Unlock CRTC registers
-    outb(VGA_CRTC_INDEX, 0x03);  // Unlock CRTC
-    outb(VGA_CRTC_DATA, 0x80);   
+    outb(VGA_CRTC_INDEX, 0x11); // Unlock vertical retrace end
+    outb(VGA_CRTC_DATA, 0x0E);  // Mode 13h vertical retrace end value
 
     // Set CRTC registers for 320x200 resolution
-    outb(VGA_CRTC_INDEX, 0x11);  // Unlock vertical retrace end
-    outb(VGA_CRTC_DATA, 0x0C);   
-    outb(VGA_CRTC_INDEX, 0x13);  // Underline location
-    outb(VGA_CRTC_DATA, 0x20);   // Mode 13h value
+    outb(VGA_CRTC_INDEX, 0x13); // Underline location
+    outb(VGA_CRTC_DATA, 0x20);  // Mode 13h value
 
     // Graphics controller settings for mode 13h
-    outb(VGA_GC_INDEX, 0x05);    // Graphics mode register
-    outb(VGA_GC_DATA, 0x40);     // 256-color mode
-    outb(VGA_GC_INDEX, 0x06);    // Miscellaneous graphics
-    outb(VGA_GC_DATA, 0x05);     
+    outb(VGA_GC_INDEX, 0x05);   // Graphics mode register
+    outb(VGA_GC_DATA, 0x40);    // 256-color mode
+    outb(VGA_GC_INDEX, 0x06);   // Miscellaneous graphics
+    outb(VGA_GC_DATA, 0x05);    
 
     // Attribute controller settings
     for (int i = 0; i < 16; i++) {
         outb(VGA_AC_INDEX, i);
-        outb(VGA_AC_DATA, i); // Load default color palette
+        outb(VGA_AC_DATA, i);   // Load default color palette
     }
-    outb(VGA_AC_INDEX, 0x20);  // End attribute controller setup
+    outb(VGA_AC_INDEX, 0x20);   // End attribute controller setup
 
     // Clear screen to black
     clear_screen();
