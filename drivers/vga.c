@@ -55,29 +55,29 @@ void set_mode_13h() {
     outb(VGA_CRTC_DATA, 0x00);  // Reset CRTC register
 
     // Set CRTC registers for 320x200 resolution
-    outb(VGA_CRTC_INDEX, 0x00); // Reset counter
-    outb(VGA_CRTC_DATA, 0x5F);  // Total vertical lines (0x5F = 95 lines + 1 for retrace)
+    outb(VGA_CRTC_INDEX, 0x00); // Horizontal total
+    outb(VGA_CRTC_DATA, 0xFF);  // Set to 255 (adjust as needed)
 
-    outb(VGA_CRTC_INDEX, 0x01); // Vertical display enable
-    outb(VGA_CRTC_DATA, 0x00);  // Display end (0x00 for 320x200)
+    outb(VGA_CRTC_INDEX, 0x01); // Vertical total
+    outb(VGA_CRTC_DATA, 0x4F);  // Set to 79 (total vertical lines - 1)
 
     outb(VGA_CRTC_INDEX, 0x02); // Start address high
-    outb(VGA_CRTC_DATA, 0x00);  // Set start address
+    outb(VGA_CRTC_DATA, 0x00);  // Set start address (high byte)
 
-    outb(VGA_CRTC_INDEX, 0x03); // Reset counter
-    outb(VGA_CRTC_DATA, 0x00);  // Misc value
+    outb(VGA_CRTC_INDEX, 0x03); // Start address low
+    outb(VGA_CRTC_DATA, 0x00);  // Set start address (low byte)
 
     outb(VGA_CRTC_INDEX, 0x04); // Vertical compare
     outb(VGA_CRTC_DATA, 0x00);  // Reset
 
     outb(VGA_CRTC_INDEX, 0x05); // Mode control
-    outb(VGA_CRTC_DATA, 0x00);  // Set line width (0 = 320 pixels)
+    outb(VGA_CRTC_DATA, 0x00);  // Set line width
 
     outb(VGA_CRTC_INDEX, 0x06); // Offset
     outb(VGA_CRTC_DATA, 0x00);  // Reset
 
     outb(VGA_CRTC_INDEX, 0x07); // More CRTC settings
-    outb(VGA_CRTC_DATA, 0x0F);  // Set more values
+    outb(VGA_CRTC_DATA, 0x1E);  // Set more values for line comparison
 
     outb(VGA_CRTC_INDEX, 0x08); // More CRTC settings
     outb(VGA_CRTC_DATA, 0x00);  // Set more values
