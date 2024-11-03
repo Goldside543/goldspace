@@ -31,7 +31,7 @@
 void clear_screen() {
     uint8_t* screen = (uint8_t*)VGA_MEMORY;
     for (int i = 0; i < (MODE_13H_WIDTH * MODE_13H_HEIGHT); i++) {
-        screen[i] = 0; // Clear to color 0 (black)
+        screen[i] = 1; // Clear to color 1
     }
 }
 
