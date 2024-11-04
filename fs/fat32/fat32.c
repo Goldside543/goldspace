@@ -259,3 +259,58 @@ bool fat32_write_file(const char *filename, const void *buffer, size_t size) {
     update_directory_entry(filename, start_cluster, size); // Update the directory entry with file info
     return true;
 }
+
+bool fat32_delete_file(const char *filename) {
+    uint32_t cluster = boot_sector.root_cluster;
+    uint32_t entry_offset = 0;
+
+    while (true) {
+        uint32_t cluster_size = get_cluster_size();
+        uint8_t buffer[cluster_size];
+        read_clusters(cluster, buffer, cluster_size);
+
+        for (size_t i = 0; i < cluster_size; i += FAT32_ENTRY_SIZE) {
+            // Read the directory entry
+            if (buffer[i] == 0x00) { // End of directory entries
+                return false; // File not found
+            }
+            if (buffer[i] == 0xE5 || buffer[i] == 0x00) continue; // Deleted or empty entry
+
+            char entry_name[12];
+            kmemcpy(entry_name, buffer + i, 11);
+            entry_name[11] = '\0'; // Null-terminate the string
+
+            if (my_strcmp(entry_name, filename) == 0) {
+                // Mark the file as deleted
+                buffer[i] = 0xE5; // Set the first byte to 0xE5
+
+                // Clear the FAT entries for the file
+                uint32_t start_cluster = *((uint32_t *)(buffer + i + 26)); // Get starting cluster
+                while (start_cluster < 0x0FFFFFF8) { // Traverse the cluster chain
+                    uint32_t next_cluster = get_fat_entry(start_cluster); // Get the next cluster
+                    set_fat_entry(start_cluster, 0); // Mark this cluster as free
+                    start_cluster = next_cluster; // Move to the next cluster
+                }
+
+                // Write the updated directory entry back
+                ata_pio_write(cluster, buffer, cluster_size);
+                return true; // File deleted successfully
+            }
+        }
+
+        cluster = get_fat_entry(cluster); // Move to the next cluster
+        if (cluster >= 0x0FFFFFF8) break; // End of cluster chain
+    }
+    return false; // File not found
+}
+
+// Function to create a new file
+bool fat32_create_file(const char *filename, const void *buffer, size_t size) {
+    // Check if the file already exists
+    if (find_file(filename) != 0) {
+        return false; // File already exists
+    }
+
+    // Use the existing fat32_write_file function to create and write the new file
+    return fat32_write_file(filename, buffer, size);
+}
