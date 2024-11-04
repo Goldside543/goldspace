@@ -10,7 +10,7 @@
 
 #include "../kernel/syscall_numbers.h"
 #include "../kernel/print.h"
-#include "simple_fs.h" 
+#include "bffs/bffs.h" 
 
 // System call handler for creating a file
 int sys_create_file(const char* name) {
