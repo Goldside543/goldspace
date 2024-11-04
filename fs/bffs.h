@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 
-#ifndef SIMPLE_FS_H
-#define SIMPLE_FS_H
+#ifndef BFFS_H
+#define BFFS_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -34,4 +34,4 @@ int write_file(int file_index, const char* data, size_t size); // Writes to the 
 int read_file(int file_index, char* buffer, size_t size);      // Reads from file
 int delete_file(int file_index);      // Deletes file
 
-#endif // SIMPLE_FS_H
+#endif // BFFS_H
