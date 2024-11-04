@@ -303,14 +303,3 @@ bool fat32_delete_file(const char *filename) {
     }
     return false; // File not found
 }
-
-// Function to create a new file
-bool fat32_create_file(const char *filename, const void *buffer, size_t size) {
-    // Check if the file already exists
-    if (find_file(filename) != 0) {
-        return false; // File already exists
-    }
-
-    // Use the existing fat32_write_file function to create and write the new file
-    return fat32_write_file(filename, buffer, size);
-}
