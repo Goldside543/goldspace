@@ -17,5 +17,6 @@ static void read_clusters(uint32_t start_cluster, void *buffer, size_t size);
 static uint32_t allocate_clusters(size_t size);
 static void write_clusters(uint32_t start_cluster, const void *buffer, size_t size);
 static void update_directory_entry(const char *filename, uint32_t start_cluster, size_t size);
+bool fat32_delete_file(const char *filename);
 
 #endif FAT32_H
