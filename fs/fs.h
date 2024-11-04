@@ -3,6 +3,7 @@
 #ifndef FS_H
 #define FS_H
 
-#define BFFS 0
+#define BFFS     0
+#define FAT32    1
 
 #endif // FS_H
