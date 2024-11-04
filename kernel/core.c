@@ -17,7 +17,7 @@ static bool use_keyboard_driver = false;  // This will be set in usb_init()
 #include "../gash/shell.h"
 #include "io.h"
 #include "multiboot.h"
-#include "../fs/simple_fs.h"
+#include "../fs/bffs/bffs.h"
 #include "../drivers/rtl8139.h"
 #include "../drivers/audio.h"
 #include "../drivers/usb.h"
