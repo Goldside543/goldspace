@@ -35,7 +35,7 @@ kernel/string.o: kernel/string.c
 	$(CC) $(DEBUG) $(ARCH) -ffreestanding -fno-stack-protector -c kernel/string.c -o kernel/string.o
 
 fs/bffs/bffs.o: fs/bffs/bffs.c
-	$(CC) $(DEBUG) $(ARCH) -ffreestanding -fno-stack-protector -c fs/bffs.c -o fs/bffs.o
+	$(CC) $(DEBUG) $(ARCH) -ffreestanding -fno-stack-protector -c fs/bffs/bffs.c -o fs/bffs/bffs.o
 
 net/net-io.o: net/net-io.c
 	$(CC) $(DEBUG) $(ARCH) -ffreestanding -fno-stack-protector -c net/net-io.c -o net/net-io.o
