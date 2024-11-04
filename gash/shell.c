@@ -13,7 +13,7 @@
 #include "shell.h"
 #include "../kernel/io.h"
 #include "../kernel/string.h"
-#include "../fs/simple_fs.h"
+#include "../fs/bffs/bffs.h"
 #include "../drivers/graphics.h"
 #include "../kernel/panic.h"
 #include "../kernel/v86.h"
