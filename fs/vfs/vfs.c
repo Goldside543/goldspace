@@ -17,33 +17,53 @@
 */
 
 int vfs_create_file(const char* name) {
+    int result; // Declare result variable
+
 #if BFFS == 0
-    create_file(name); // Argument passed to vfs_create_file should be passed to create_file
-#if BFFS == 1
+    result = create_file(name); // Use assignment operator
+#elif BFFS == 1
     // Behavior not yet defined
+    result = -1; // Optional: Return an error code
 #endif
+
+    return result; // Return the result of the operation
 }
 
 int vfs_write_file(int file_index, const char* data, size_t size) {
+    int result; // Declare result variable
+
 #if BFFS == 0
-    write_file(file_index, data, size);
-#if BFFS == 1
+    result = write_file(file_index, data, size);
+#elif BFFS == 1
     // Behavior not yet defined
+    result = -1;
 #endif
+
+    return result; // Return the result of the operation
 }
 
 int vfs_read_file(int file_index, char* buffer, size_t size) {
+    int result; // Declare result variable
+
 #if BFFS == 0
-    read_file(file_index, buffer, size);
-#if BFFS == 1
+    result = read_file(file_index, buffer, size);
+#elif BFFS == 1
     // Behavior not yet defined
+    result = -10;
 #endif
+
+    return result; // Return the result of the operation
 }
 
 int vfs_delete_file(int file_index) {
+    int result; // Declare result variable
+
 #if BFFS == 0
-    delete_file(file_index);
-#if BFFS == 1
+    result = delete_file(file_index);
+#elif BFFS == 1
     // Behavior not yet defined
+    result = -10;
 #endif
+
+    return result; // Return the result of the operation
 }
