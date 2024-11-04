@@ -9,7 +9,7 @@
  *
  */
 
-#include "simple_fs.h"
+#include "bffs.h"
 #include "../drivers/disk.h"
 #include "../mm/memory.h"
 #include "../kernel/string.h"
