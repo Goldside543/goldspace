@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
- * fs/bffs.c
+ * fs/bffs/bffs.c
  *
  * Baby's First File System. A (hopefully) portable file system I
  * made just for Goldspace.
