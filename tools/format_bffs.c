@@ -15,7 +15,7 @@
 #include <string.h>
 #include <errno.h>
 
-#include "../fs/simple_fs.h"
+#include "../fs/bffs/bffs.h"
 
 #define BLOCK_SIZE 512  // Adjust this as per your implementation
 #define NUM_BLOCKS 1024 // Adjust this according to your file system design
