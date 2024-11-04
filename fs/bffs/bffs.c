@@ -10,9 +10,9 @@
  */
 
 #include "bffs.h"
-#include "../drivers/disk.h"
-#include "../mm/memory.h"
-#include "../kernel/string.h"
+#include "../../drivers/disk.h"
+#include "../../mm/memory.h"
+#include "../../kernel/string.h"
 
 FileSystem fs;
 
