@@ -75,6 +75,8 @@ static void set_fat_entry(uint32_t cluster, uint32_t value);
 static uint32_t find_file(const char *filename);
 static void read_clusters(uint32_t start_cluster, void *buffer, size_t size);
 static uint32_t allocate_clusters(size_t size);
+static void write_clusters(uint32_t start_cluster, const void *buffer, size_t size);
+static void update_directory_entry(const char *filename, uint32_t start_cluster, size_t size);
 
 // Mount the FAT32 file system
 bool fat32_mount() {
@@ -168,29 +170,106 @@ static void read_clusters(uint32_t start_cluster, void *buffer, size_t size) {
 
 // Allocate clusters for a new file
 static uint32_t allocate_clusters(size_t size) {
-    // TODO: Implement cluster allocation logic
-    // This function should allocate clusters based on the file size and return the starting cluster number.
-    // Make sure to update the FAT table accordingly.
+    uint32_t cluster_size = get_cluster_size();
+    uint32_t clusters_needed = (size + cluster_size - 1) / cluster_size; // Calculate needed clusters
+    uint32_t start_cluster = 0; // Starting cluster for the new file
+    uint32_t last_cluster = 0; // Last allocated cluster
 
-    return 0; // Placeholder
+    for (uint32_t i = 0; i < clusters_needed; i++) {
+        // Find the next free cluster in the FAT
+        uint32_t cluster = 2; // Start searching from cluster 2
+        while (cluster < 0x0FFFFFF8) { // End of cluster chain
+            if (get_fat_entry(cluster) == 0) { // Free cluster found
+                if (start_cluster == 0) {
+                    start_cluster = cluster; // First cluster allocated
+                }
+                if (last_cluster != 0) {
+                    set_fat_entry(last_cluster, cluster); // Link the previous cluster to this one
+                }
+                last_cluster = cluster; // Update last allocated cluster
+                set_fat_entry(cluster, 0x0FFFFFF8); // Mark cluster as end of chain
+                break;
+            }
+            cluster++;
+        }
+        if (cluster >= 0x0FFFFFF8) {
+            // No free clusters available
+            return 0;
+        }
+    }
+
+    return start_cluster; // Return the starting cluster
+}
+
+// Write clusters to the FAT32 filesystem
+static void write_clusters(uint32_t start_cluster, const void *buffer, size_t size) {
+    uint32_t cluster_size = get_cluster_size();
+    uint32_t clusters_to_write = (size + cluster_size - 1) / cluster_size; // Calculate how many clusters are needed
+
+    for (uint32_t i = 0; i < clusters_to_write; i++) {
+        uint32_t current_cluster = start_cluster;
+        for (uint32_t j = 0; j < i; j++) {
+            current_cluster = get_fat_entry(current_cluster);
+        }
+        uint32_t data_sector = data_start + ((current_cluster - 2) * boot_sector.sectors_per_cluster);
+        ata_pio_write(data_sector, (uint8_t *)buffer + (i * cluster_size), cluster_size);
+    }
+}
+
+// Update a directory entry for the specified filename
+static void update_directory_entry(const char *filename, uint32_t start_cluster, size_t size) {
+    uint32_t cluster = boot_sector.root_cluster;
+    uint32_t entry_offset = 0;
+
+    while (true) {
+        uint32_t cluster_size = get_cluster_size();
+        uint8_t buffer[cluster_size];
+        read_clusters(cluster, buffer, cluster_size);
+
+        for (size_t i = 0; i < cluster_size; i += FAT32_ENTRY_SIZE) {
+            // Read the directory entry
+            if (buffer[i] == 0x00) { // End of directory entries
+                return; // File not found
+            }
+            if (buffer[i] == 0xE5 || buffer[i] == 0x00) continue; // Deleted or empty entry
+
+            char entry_name[12];
+            kmemcpy(entry_name, buffer + i, 11);
+            entry_name[11] = '\0'; // Null-terminate the string
+
+            if (my_strcmp(entry_name, filename) == 0) {
+                // Update the directory entry with file information
+                *((uint32_t *)(buffer + i + 26)) = start_cluster; // Update starting cluster
+                *((uint32_t *)(buffer + i + 28)) = size; // Update file size
+                ata_pio_write(cluster, buffer, cluster_size); // Write back the updated directory entry
+                return;
+            }
+        }
+
+        cluster = get_fat_entry(cluster); // Move to the next cluster
+        if (cluster >= 0x0FFFFFF8) break; // End of cluster chain
+    }
 }
 
 // Read a file from the FAT32 filesystem
 bool fat32_read_file(const char *filename, void *buffer, size_t size) {
     uint32_t start_cluster = find_file(filename);
-    if (start_cluster == 0) return false; // File not found
+    if (start_cluster == 0) {
+        return false; // File not found
+    }
 
-    read_clusters(start_cluster, buffer, size);
+    read_clusters(start_cluster, buffer, size); // Read file data into the buffer
     return true;
 }
 
 // Write a file to the FAT32 filesystem
 bool fat32_write_file(const char *filename, const void *buffer, size_t size) {
-    uint32_t start_cluster = allocate_clusters(size);
-    if (start_cluster == 0) return false; // Failed to allocate clusters
+    uint32_t start_cluster = allocate_clusters(size); // Allocate clusters for the file
+    if (start_cluster == 0) {
+        return false; // No free clusters available
+    }
 
-    // TODO: Implement logic to write data to the allocated clusters.
-    // This includes updating the directory entry for the file with its name, size, and starting cluster.
-
-    return true; // Placeholder
+    write_clusters(start_cluster, buffer, size); // Write data to the allocated clusters
+    update_directory_entry(filename, start_cluster, size); // Update the directory entry with file info
+    return true;
 }
