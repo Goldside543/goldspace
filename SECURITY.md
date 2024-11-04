@@ -7,7 +7,7 @@ The following versions of Goldspace are receiving emergency security updates. Af
 | Version | Supported          |
 | ------- | ------------------ |
 | v3.x.x  |  :white_check_mark: |
-| v2.x.x   | :white_check_mark: |
+| v2.x.x   | :white_check_mark: (will end November 4th, 2025) |
 | v1.x.x   | :x:                |
 | pre-v1.x.x   | :x: |
 
