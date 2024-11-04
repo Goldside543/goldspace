@@ -20,10 +20,10 @@ int vfs_create_file(const char* name) {
     int result; // Declare result variable
 
 #if BFFS == 0
-    result = create_file(name); // Use assignment operator
+    result = create_file(name);
 #elif BFFS == 1
     // Behavior not yet defined
-    result = -1; // Optional: Return an error code
+    result = -10;
 #endif
 
     return result; // Return the result of the operation
