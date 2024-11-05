@@ -183,7 +183,7 @@ bool write_group_descriptors() {
 }
 
 // Function to write data to a file
-bool write_file(const char *path, const void *data, size_t size) {
+bool ext3_write_file(const char *path, const void *data, size_t size) {
     ext3_inode_t inode;
     // Retrieve inode for the file
     if (!lookup_inode(path, &inode)) {
@@ -230,4 +230,34 @@ bool ext3_init(uint32_t lba) {
     }
 
     return true; // Initialization successful
+}
+
+bool ext3_read_file(const char *path, void *buffer, size_t size, size_t *bytes_read) {
+    ext3_inode_t inode;
+
+    // Retrieve inode for the file
+    if (!lookup_inode(path, &inode)) {
+        return false; // File not found
+    }
+
+    // Check if the requested size is greater than the file size
+    if (size > inode.i_size) {
+        size = inode.i_size; // Limit to the actual file size
+    }
+
+    // Read the actual data
+    uint32_t block_size = 1024 << superblock->s_log_block_size; // Calculate block size
+    uint32_t block_index = inode.i_block[0]; // Assume single block for simplicity
+
+    // Read data from the block
+    if (ata_pio_read(block_index, buffer, size) != size) {
+        return false; // Reading data failed
+    }
+
+    // Set the number of bytes read
+    if (bytes_read) {
+        *bytes_read = size;
+    }
+
+    return true; // Successfully read file
 }
