@@ -250,7 +250,13 @@ bool fat32_read_file(const char *filename, void *buffer, size_t size) {
 
 // Write a file to the FAT32 filesystem
 bool fat32_write_file(const char *filename, const void *buffer, size_t size) {
-    uint32_t start_cluster = allocate_clusters(size); // Allocate clusters for the file
+    uint32_t start_cluster = find_file(filename); // Check if the file already exists
+
+    if (start_cluster != 0) {
+        return false; // File already exists, return false
+    }
+
+    start_cluster = allocate_clusters(size); // Allocate clusters for the new file
     if (start_cluster == 0) {
         return false; // No free clusters available
     }
