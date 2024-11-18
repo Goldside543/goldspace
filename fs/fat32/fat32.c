@@ -303,3 +303,174 @@ bool fat32_delete_file(const char *filename) {
     }
     return false; // File not found
 }
+
+// Directory Entry structure
+typedef struct {
+    uint8_t name[11];  // 8 characters for the filename, 3 for the extension
+    uint8_t attributes; // Directory or file attribute flags (0x10 for directories)
+    uint16_t time; // File creation time
+    uint16_t date; // File creation date
+    uint16_t start_cluster_low; // Lower 16 bits of the starting cluster number
+    uint16_t start_cluster_high; // Upper 16 bits of the starting cluster number
+    uint32_t file_size; // File size in bytes
+} __attribute__((packed)) DirectoryEntry;
+
+// Create a directory
+bool fat32_create_directory(const char *dirname) {
+    // Allocate space for the directory entry
+    uint32_t cluster = boot_sector.root_cluster;
+    uint32_t entry_offset = 0;
+
+    // Traverse the root directory (or subdirectory if necessary)
+    while (true) {
+        uint32_t cluster_size = get_cluster_size();
+        uint8_t buffer[cluster_size];
+        read_clusters(cluster, buffer, cluster_size);
+
+        for (size_t i = 0; i < cluster_size; i += FAT32_ENTRY_SIZE) {
+            // Find an empty slot in the directory for the new entry
+            if (buffer[i] == 0x00) { // Empty slot found
+                // Initialize the directory entry
+                DirectoryEntry *entry = (DirectoryEntry *)(buffer + i);
+                kmemcpy(entry->name, dirname, 11); // Copy the directory name
+                entry->attributes = 0x10; // Mark it as a directory
+                entry->start_cluster_low = 0; // Temporary, will assign cluster below
+                entry->start_cluster_high = 0;
+                entry->file_size = 0; // Directory size is always zero
+
+                // Allocate clusters for the directory
+                uint32_t dir_cluster = allocate_clusters(0);
+                if (dir_cluster == 0) {
+                    return false; // Failed to allocate clusters for the directory
+                }
+
+                // Set the start cluster of the directory
+                entry->start_cluster_low = dir_cluster & 0xFFFF;
+                entry->start_cluster_high = (dir_cluster >> 16) & 0xFFFF;
+
+                // Write the directory entry back to the directory
+                ata_pio_write(cluster, buffer, cluster_size);
+
+                // Now, we need to initialize the directory contents with "." and ".." entries
+                uint8_t dir_buffer[get_cluster_size()];
+                kmemset(dir_buffer, 0, get_cluster_size());
+
+                // Add "." (current directory) and ".." (parent directory) entries
+                DirectoryEntry *dot = (DirectoryEntry *)dir_buffer;
+                kmemcpy(dot->name, ".", 1);
+                dot->attributes = 0x10; // Directory attribute
+                dot->start_cluster_low = dir_cluster & 0xFFFF;
+                dot->start_cluster_high = (dir_cluster >> 16) & 0xFFFF;
+                dot->file_size = 0;
+
+                DirectoryEntry *dotdot = (DirectoryEntry *)(dir_buffer + sizeof(DirectoryEntry));
+                kmemcpy(dotdot->name, "..", 2);
+                dotdot->attributes = 0x10; // Directory attribute
+                dotdot->start_cluster_low = boot_sector.root_cluster & 0xFFFF; // Parent directory
+                dotdot->start_cluster_high = (boot_sector.root_cluster >> 16) & 0xFFFF;
+                dotdot->file_size = 0;
+
+                // Write the directory entries for "." and ".." to the new directory
+                write_clusters(dir_cluster, dir_buffer, get_cluster_size());
+                return true;
+            }
+        }
+
+        cluster = get_fat_entry(cluster); // Move to the next cluster in the chain
+        if (cluster >= 0x0FFFFFF8) break; // End of cluster chain
+    }
+    return false; // Directory entry not found
+}
+
+// List the contents of a directory
+bool fat32_list_directory(const char *dirname, char **file_list, size_t *file_count) {
+    uint32_t cluster = find_file(dirname); // Find the directory cluster
+    if (cluster == 0) {
+        return false; // Directory not found
+    }
+
+    uint32_t cluster_size = get_cluster_size();
+    uint8_t buffer[cluster_size];
+    read_clusters(cluster, buffer, cluster_size);
+
+    size_t count = 0;
+    for (size_t i = 0; i < cluster_size; i += FAT32_ENTRY_SIZE) {
+        DirectoryEntry *entry = (DirectoryEntry *)(buffer + i);
+
+        if (entry->name[0] == 0x00) {
+            break; // End of directory entries
+        }
+        if (entry->name[0] == 0xE5) {
+            continue; // Skip deleted entries
+        }
+
+        // Check if it's a directory (0x10 attribute)
+        if (entry->attributes == 0x10) {
+            // Add directory to the list (only save name for simplicity)
+            file_list[count] = kmalloc(12);
+            kmemcpy(file_list[count], entry->name, 11);
+            file_list[count][11] = '\0'; // Null-terminate the string
+            count++;
+
+            if (count >= FAT32_MAX_FILES) {
+                break; // Limit the number of files listed
+            }
+        }
+    }
+    *file_count = count;
+    return true;
+}
+
+// Remove a directory (empty)
+bool fat32_remove_directory(const char *dirname) {
+    uint32_t cluster = boot_sector.root_cluster;
+    uint32_t entry_offset = 0;
+
+    while (true) {
+        uint32_t cluster_size = get_cluster_size();
+        uint8_t buffer[cluster_size];
+        read_clusters(cluster, buffer, cluster_size);
+
+        for (size_t i = 0; i < cluster_size; i += FAT32_ENTRY_SIZE) {
+            // Read the directory entry
+            if (buffer[i] == 0x00) { // End of directory entries
+                return false; // Directory not found
+            }
+            if (buffer[i] == 0xE5 || buffer[i] == 0x00) continue; // Deleted or empty entry
+
+            char entry_name[12];
+            kmemcpy(entry_name, buffer + i, 11);
+            entry_name[11] = '\0'; // Null-terminate the string
+
+            if (my_strcmp(entry_name, dirname) == 0) {
+                DirectoryEntry *entry = (DirectoryEntry *)(buffer + i);
+                if (entry->attributes == 0x10) { // It's a directory
+                    // Make sure the directory is empty before removing
+                    uint8_t dir_buffer[get_cluster_size()];
+                    read_clusters(entry->start_cluster_low | (entry->start_cluster_high << 16), dir_buffer, get_cluster_size());
+
+                    // If the directory is empty (just "." and ".."), we can delete it
+                    if (dir_buffer[0] == 0x00) {
+                        // Mark the directory entry as deleted
+                        buffer[i] = 0xE5;
+                        ata_pio_write(cluster, buffer, cluster_size);
+
+                        // Free the clusters allocated for the directory
+                        uint32_t dir_cluster = entry->start_cluster_low | (entry->start_cluster_high << 16);
+                        while (dir_cluster < 0x0FFFFFF8) {
+                            uint32_t next_cluster = get_fat_entry(dir_cluster);
+                            set_fat_entry(dir_cluster, 0); // Free the cluster
+                            dir_cluster = next_cluster;
+                        }
+
+                        return true; // Directory removed
+                    }
+                }
+            }
+        }
+
+        cluster = get_fat_entry(cluster); // Move to the next cluster
+        if (cluster >= 0x0FFFFFF8) break; // End of cluster chain
+    }
+    return false; // Directory not found or not empty
+}
