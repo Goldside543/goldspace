@@ -5,5 +5,6 @@
 
 #define BFFS     0
 #define FAT32    1
+#define EXT3     1
 
 #endif // FS_H
