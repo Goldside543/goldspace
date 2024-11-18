@@ -558,13 +558,6 @@ void shell_execute_command(const char *command) {
         shell_date();
     } else if (my_strcmp(command_name, "mode13h") == 0) {
         shell_graphics();
-    } else if (my_strcmp(command_name, "fat32create") == 0) {
-        if (*args != '\0') {
-            fat32createfile(args);
-        } else {
-            print("\n");
-            print("fat32create: missing filename\n");
-        }
     } else if (my_strcmp(command_name, "fat32write") == 0) {
         if (*args != '\0') {
             fat32writefile(args);
