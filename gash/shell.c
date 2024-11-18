@@ -344,30 +344,6 @@ void shell_delete(const char *args) {
     }
 }
 
-void fat32createfile(const char *filename) {
-    int result = fat32_create_file(filename);
-    print("\n");
-
-    if (result >= 0) {
-        print("FAT32 File created successfully.\n");
-    } else {
-        switch (result) {
-            case -2:
-                print("Error: File name is too long.\n");
-                break;
-            case -3:
-                print("Error: File already exists.\n");
-                break;
-            case -4:
-                print("Error: No free clusters available.\n");
-                break;
-            default:
-                print("Error: Could not create FAT32 file.\n");
-                break;
-        }
-    }
-}
-
 void fat32writefile(const char *args) {
     char filename[100];
     char data[100];
