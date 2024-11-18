@@ -13,6 +13,7 @@
 #include "shell.h"
 #include "../kernel/io.h"
 #include "../kernel/string.h"
+#include "../fs/fat32/fat32.h"
 #include "../fs/bffs/bffs.h"
 #include "../drivers/graphics.h"
 #include "../kernel/panic.h"
@@ -343,6 +344,170 @@ void shell_delete(const char *args) {
     }
 }
 
+void fat32createfile(const char *filename) {
+    int result = fat32_create_file(filename);
+    print("\n");
+
+    if (result >= 0) {
+        print("FAT32 File created successfully.\n");
+    } else {
+        switch (result) {
+            case -2:
+                print("Error: File name is too long.\n");
+                break;
+            case -3:
+                print("Error: File already exists.\n");
+                break;
+            case -4:
+                print("Error: No free clusters available.\n");
+                break;
+            default:
+                print("Error: Could not create FAT32 file.\n");
+                break;
+        }
+    }
+}
+
+void fat32writefile(const char *args) {
+    char filename[100];
+    char data[100];
+    int filename_idx = 0, data_idx = 0;
+    int state = 0; // 0 for filename, 1 for data
+    char current_char;
+
+    while ((current_char = *args++) != '\0') {
+        switch (state) {
+            case 0: 
+                if (current_char == ' ') {
+                    filename[filename_idx] = '\0';
+                    state = 1;
+                } else {
+                    filename[filename_idx++] = current_char;
+                }
+                break;
+            case 1: 
+                data[data_idx++] = current_char;
+                break;
+        }
+    }
+    data[data_idx] = '\0';
+
+    if (filename[0] == '\0' || data[0] == '\0') {
+        print("\n");
+        print("fat32write: missing filename or data\n");
+        return;
+    }
+
+    int result = fat32_write_file(filename, data, my_strlen(data));
+
+    switch (result) {
+        case 0:
+            print("\n");
+            print("Data written successfully.\n");
+            break;
+        case -1:
+            print("\n");
+            print("Error: File does not exist.\n");
+            break;
+        case -2:
+            print("\n");
+            print("Error: Data size is too large.\n");
+            break;
+        case -3:
+            print("\n");
+            print("Error: No free clusters available.\n");
+            break;
+        default:
+            print("\n");
+            print("Error: Unknown error occurred while writing to the FAT32 file.\n");
+            break;
+    }
+}
+
+void fat32readfile(const char *args) {
+    char filename[100];
+    int filename_idx = 0;
+    char current_char;
+
+    while ((current_char = *args++) != '\0') {
+        if (current_char == ' ') {
+            filename[filename_idx] = '\0';
+            break;
+        }
+        filename[filename_idx++] = current_char;
+    }
+
+    if (filename[0] == '\0') {
+        print("\n");
+        print("fat32read: missing filename\n");
+        return;
+    }
+
+    char buffer[BLOCK_SIZE];
+    int result = fat32_read_file(filename, buffer, BLOCK_SIZE);
+
+    switch (result) {
+        case 0:
+            print("\n");
+            print(buffer);
+            print("\n");
+            break;
+        case -1:
+            print("\n");
+            print("Error: File does not exist.\n");
+            break;
+        case -2:
+            print("\n");
+            print("Error: Failed to read from FAT32 file.\n");
+            break;
+        default:
+            print("\n");
+            print("Error: Unknown error occurred while reading the FAT32 file.\n");
+            break;
+    }
+}
+
+void fat32deletefile(const char *args) {
+    char filename[100];
+    int filename_idx = 0;
+    char current_char;
+
+    while ((current_char = *args++) != '\0') {
+        if (current_char == ' ') {
+            filename[filename_idx] = '\0';
+            break;
+        }
+        filename[filename_idx++] = current_char;
+    }
+
+    if (filename[0] == '\0') {
+        print("\n");
+        print("fat32delete: missing filename\n");
+        return;
+    }
+
+    int result = fat32_delete_file(filename);
+
+    switch (result) {
+        case 0:
+            print("\n");
+            print("FAT32 File deleted successfully.\n");
+            break;
+        case -1:
+            print("\n");
+            print("Error: File does not exist.\n");
+            break;
+        case -2:
+            print("\n");
+            print("Error: Failed to delete FAT32 file.\n");
+            break;
+        default:
+            print("\n");
+            print("Error: Unknown error occurred while deleting the FAT32 file.\n");
+            break;
+    }
+}
+
 void shell_render() {
     draw_rectangle(50, 75, 100, 50, 1);    
     print("\n");
@@ -417,6 +582,34 @@ void shell_execute_command(const char *command) {
         shell_date();
     } else if (my_strcmp(command_name, "mode13h") == 0) {
         shell_graphics();
+    } else if (my_strcmp(command_name, "fat32create") == 0) {
+        if (*args != '\0') {
+            fat32createfile(args);
+        } else {
+            print("\n");
+            print("fat32create: missing filename\n");
+        }
+    } else if (my_strcmp(command_name, "fat32write") == 0) {
+        if (*args != '\0') {
+            fat32writefile(args);
+        } else {
+            print("\n");
+            print("fat32write: missing filename or data\n");
+        }
+    } else if (my_strcmp(command_name, "fat32read") == 0) {
+        if (*args != '\0') {
+            fat32readfile(args);
+        } else {
+            print("\n");
+            print("fat32read: missing filename\n");
+        }
+    } else if (my_strcmp(command_name, "fat32delete") == 0) {
+        if (*args != '\0') {
+            fat32deletefile(args);
+        } else {
+            print("\n");
+            print("fat32delete: missing filename\n");
+        }
     } else {
         print("\n");
         print("Unknown command: ");
