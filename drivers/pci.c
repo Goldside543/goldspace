@@ -15,6 +15,50 @@
 #define PCI_CONFIG_ADDRESS 0xCF8
 #define PCI_CONFIG_DATA    0xCFC
 
+// Helper function to convert an integer to a string
+void itoa(uint32_t num, char* str, int base) {
+    int i = 0;
+    int isNegative = 0;
+
+    // Handle 0 explicitly, otherwise empty string is printed
+    if (num == 0) {
+        str[i++] = '0';
+        str[i] = '\0';
+        return;
+    }
+
+    // Handle negative numbers only if base is 10
+    if (num < 0 && base == 10) {
+        isNegative = 1;
+        num = -num;
+    }
+
+    // Process individual digits
+    while (num != 0) {
+        int rem = num % base;
+        str[i++] = (rem > 9) ? (rem - 10) + 'a' : rem + '0';
+        num = num / base;
+    }
+
+    // Append negative sign for negative numbers
+    if (isNegative) {
+        str[i++] = '-';
+    }
+
+    str[i] = '\0'; // Null-terminate string
+
+    // Reverse the string
+    int start = 0;
+    int end = i - 1;
+    while (start < end) {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        start++;
+        end--;
+    }
+}
+
 // Helper function to create a PCI configuration address
 uint32_t pci_config_address(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset) {
     return (1U << 31) |        // Enable bit
@@ -46,23 +90,38 @@ void pci_scan_bus() {
                     uint8_t class_code = (class_subclass >> 24) & 0xFF;
                     uint8_t subclass_code = (class_subclass >> 16) & 0xFF;
 
-                    print("\n");
-                    print("Bus: ");
-                    print(bus);
+                    // Allocate string buffers to hold the values as strings
+                    char buffer[32];  // Sufficient for 32-bit integer
+
+                    // Print the values using the itoa function
+                    print("\nBus: ");
+                    itoa(bus, buffer, 10); // Convert bus to string
+                    print(buffer);
+
                     print("Device: ");
-                    print(device);
+                    itoa(device, buffer, 10); // Convert device to string
+                    print(buffer);
+
                     print("Vendor ID: ");
                     print("0x");
-                    print(vendor_id);
+                    itoa(vendor_id, buffer, 16); // Convert vendor_id to hex string
+                    print(buffer);
+
                     print("Device ID: ");
                     print("0x");
-                    print(device_id);
+                    itoa(device_id, buffer, 16); // Convert device_id to hex string
+                    print(buffer);
+
                     print("Class: ");
                     print("0x");
-                    print(class_code);
+                    itoa(class_code, buffer, 16); // Convert class_code to hex string
+                    print(buffer);
+
                     print("Subclass: ");
                     print("0x");
-                    print(subclass_code);
+                    itoa(subclass_code, buffer, 16); // Convert subclass_code to hex string
+                    print(buffer);
+
                     print("\n");
                 }
             }
