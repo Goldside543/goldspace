@@ -78,21 +78,22 @@ uint32_t pci_read_config(uint8_t bus, uint8_t device, uint8_t function, uint8_t 
 void pci_scan_bus() {
     for (uint8_t bus = 0; bus < 256; ++bus) {
         for (uint8_t device = 0; device < 32; ++device) {
+            // First check function 0 for the device presence
             uint32_t vendor_device = pci_read_config(bus, device, 0, 0x00);
 
-            // Check if a device is present (vendor_id != 0xFFFF means a device is present)
+            // If function 0 has no device (vendor_id == 0xFFFF), skip this device
             if ((vendor_device & 0xFFFF) == 0xFFFF) {
                 continue; // No device present on this device slot, skip to next device
             }
 
-            // Now check for all functions (0-7)
+            // Now check for all functions (0-7) for this device
             for (uint8_t function = 0; function < 8; ++function) {
                 // Read the vendor/device ID for the current function
                 vendor_device = pci_read_config(bus, device, function, 0x00);
 
                 // If vendor_id is 0xFFFF, it means no device in this function
                 if ((vendor_device & 0xFFFF) == 0xFFFF) {
-                    continue; // No device present on this function, skip to next function
+                    break; // No more functions for this device, exit the loop
                 }
 
                 // Device is present, proceed to fetch other details
