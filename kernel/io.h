@@ -28,4 +28,16 @@ static inline unsigned short inw(unsigned short port) {
 
 }
 
+// Function to write a double word (4 bytes) to an I/O port
+static inline void outl(uint16_t port, uint32_t data) {
+    __asm__ __volatile__ ("outl %0, %1" : : "a"(data), "Nd"(port));
+}
+
+// Function to read a double word (4 bytes) from an I/O port
+static inline uint32_t inl(uint16_t port) {
+    uint32_t data;
+    __asm__ __volatile__ ("inl %1, %0" : "=a"(data) : "Nd"(port));
+    return data;
+}
+
 #endif // IO_H
