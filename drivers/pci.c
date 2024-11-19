@@ -11,6 +11,7 @@
 #include "../kernel/print.h"
 #include "../kernel/io.h"
 #include <stdint.h>
+#include <stdbool.h>
 
 #define PCI_CONFIG_ADDRESS 0xCF8
 #define PCI_CONFIG_DATA    0xCFC
@@ -87,14 +88,17 @@ void pci_scan_bus() {
             }
 
             // Now check for all functions (0-7) for this device
+            bool found_device = false;  // Flag to check if at least one function is found
             for (uint8_t function = 0; function < 8; ++function) {
                 // Read the vendor/device ID for the current function
                 vendor_device = pci_read_config(bus, device, function, 0x00);
 
                 // If vendor_id is 0xFFFF, it means no device in this function
                 if ((vendor_device & 0xFFFF) == 0xFFFF) {
-                    break; // No more functions for this device, exit the loop
+                    continue; // This function does not exist, so skip to next function
                 }
+
+                found_device = true;  // Mark that a function was found for this device
 
                 // Device is present, proceed to fetch other details
                 uint16_t vendor_id = vendor_device & 0xFFFF;
@@ -137,6 +141,11 @@ void pci_scan_bus() {
                 print(buffer);
 
                 print("\n");
+            }
+
+            // If no valid functions were found for this device, skip to the next device
+            if (!found_device) {
+                continue;
             }
         }
     }
