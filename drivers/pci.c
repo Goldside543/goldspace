@@ -111,26 +111,26 @@ void pci_scan_bus() {
                 itoa(bus, buffer, 10); // Convert bus to string
                 print(buffer);
 
-                print("Device: ");
+                print(" Device: ");
                 itoa(device, buffer, 10); // Convert device to string
                 print(buffer);
 
-                print("Vendor ID: ");
+                print(" Vendor ID: ");
                 print("0x");
                 itoa(vendor_id, buffer, 16); // Convert vendor_id to hex string
                 print(buffer);
 
-                print("Device ID: ");
+                print(" Device ID: ");
                 print("0x");
                 itoa(device_id, buffer, 16); // Convert device_id to hex string
                 print(buffer);
 
-                print("Class: ");
+                print(" Class: ");
                 print("0x");
                 itoa(class_code, buffer, 16); // Convert class_code to hex string
                 print(buffer);
 
-                print("Subclass: ");
+                print(" Subclass: ");
                 print("0x");
                 itoa(subclass_code, buffer, 16); // Convert subclass_code to hex string
                 print(buffer);
