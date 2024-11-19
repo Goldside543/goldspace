@@ -558,21 +558,21 @@ void shell_execute_command(const char *command) {
         shell_date();
     } else if (my_strcmp(command_name, "mode13h") == 0) {
         shell_graphics();
-    } else if (my_strcmp(command_name, "fat32write") == 0) {
+    } else if (my_strcmp(command_name, "fatwrite") == 0) {
         if (*args != '\0') {
             fat32writefile(args);
         } else {
             print("\n");
             print("fat32write: missing filename or data\n");
         }
-    } else if (my_strcmp(command_name, "fat32read") == 0) {
+    } else if (my_strcmp(command_name, "fatread") == 0) {
         if (*args != '\0') {
             fat32readfile(args);
         } else {
             print("\n");
             print("fat32read: missing filename\n");
         }
-    } else if (my_strcmp(command_name, "fat32delete") == 0) {
+    } else if (my_strcmp(command_name, "fatdelete") == 0) {
         if (*args != '\0') {
             fat32deletefile(args);
         } else {
