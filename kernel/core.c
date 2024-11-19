@@ -28,6 +28,7 @@ static bool use_keyboard_driver = false;  // This will be set in usb_init()
 #include "../mm/memory.h"
 #include "../drivers/gpu.h"
 #include "process.h"
+#include "../fs/fat32/fat32.h"
 
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
@@ -185,6 +186,8 @@ void kernel_main() {
     cursor_x = 0;
     cursor_y = 0;
     move_cursor();
+
+    fat32_mount();
 
     fs_init();
 
