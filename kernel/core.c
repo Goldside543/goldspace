@@ -187,9 +187,9 @@ void kernel_main() {
     cursor_y = 0;
     move_cursor();
 
-    fat32_mount();
-
     fs_init();
+
+    fat32_mount();
 
     page_table_init();
 
