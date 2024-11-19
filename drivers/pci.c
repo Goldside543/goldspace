@@ -78,52 +78,64 @@ uint32_t pci_read_config(uint8_t bus, uint8_t device, uint8_t function, uint8_t 
 void pci_scan_bus() {
     for (uint8_t bus = 0; bus < 256; ++bus) {
         for (uint8_t device = 0; device < 32; ++device) {
+            uint32_t vendor_device = pci_read_config(bus, device, 0, 0x00);
+
+            // Check if a device is present (vendor_id != 0xFFFF means a device is present)
+            if ((vendor_device & 0xFFFF) == 0xFFFF) {
+                continue; // No device present on this device slot, skip to next device
+            }
+
+            // Now check for all functions (0-7)
             for (uint8_t function = 0; function < 8; ++function) {
-                uint32_t vendor_device = pci_read_config(bus, device, function, 0x00);
+                // Read the vendor/device ID for the current function
+                vendor_device = pci_read_config(bus, device, function, 0x00);
 
-                // Check if a device is present
-                if ((vendor_device & 0xFFFF) != 0xFFFF) {  // Vendor ID != 0xFFFF
-                    uint16_t vendor_id = vendor_device & 0xFFFF;
-                    uint16_t device_id = (vendor_device >> 16) & 0xFFFF;
-
-                    uint32_t class_subclass = pci_read_config(bus, device, function, 0x08);
-                    uint8_t class_code = (class_subclass >> 24) & 0xFF;
-                    uint8_t subclass_code = (class_subclass >> 16) & 0xFF;
-
-                    // Allocate string buffers to hold the values as strings
-                    char buffer[32];  // Sufficient for 32-bit integer
-
-                    // Print the values using the itoa function
-                    print("\nBus: ");
-                    itoa(bus, buffer, 10); // Convert bus to string
-                    print(buffer);
-
-                    print("Device: ");
-                    itoa(device, buffer, 10); // Convert device to string
-                    print(buffer);
-
-                    print("Vendor ID: ");
-                    print("0x");
-                    itoa(vendor_id, buffer, 16); // Convert vendor_id to hex string
-                    print(buffer);
-
-                    print("Device ID: ");
-                    print("0x");
-                    itoa(device_id, buffer, 16); // Convert device_id to hex string
-                    print(buffer);
-
-                    print("Class: ");
-                    print("0x");
-                    itoa(class_code, buffer, 16); // Convert class_code to hex string
-                    print(buffer);
-
-                    print("Subclass: ");
-                    print("0x");
-                    itoa(subclass_code, buffer, 16); // Convert subclass_code to hex string
-                    print(buffer);
-
-                    print("\n");
+                // If vendor_id is 0xFFFF, it means no device in this function
+                if ((vendor_device & 0xFFFF) == 0xFFFF) {
+                    continue; // No device present on this function, skip to next function
                 }
+
+                // Device is present, proceed to fetch other details
+                uint16_t vendor_id = vendor_device & 0xFFFF;
+                uint16_t device_id = (vendor_device >> 16) & 0xFFFF;
+
+                uint32_t class_subclass = pci_read_config(bus, device, function, 0x08);
+                uint8_t class_code = (class_subclass >> 24) & 0xFF;
+                uint8_t subclass_code = (class_subclass >> 16) & 0xFF;
+
+                // Allocate string buffers to hold the values as strings
+                char buffer[32];  // Sufficient for 32-bit integer
+
+                // Print the values using the itoa function
+                print("\nBus: ");
+                itoa(bus, buffer, 10); // Convert bus to string
+                print(buffer);
+
+                print("Device: ");
+                itoa(device, buffer, 10); // Convert device to string
+                print(buffer);
+
+                print("Vendor ID: ");
+                print("0x");
+                itoa(vendor_id, buffer, 16); // Convert vendor_id to hex string
+                print(buffer);
+
+                print("Device ID: ");
+                print("0x");
+                itoa(device_id, buffer, 16); // Convert device_id to hex string
+                print(buffer);
+
+                print("Class: ");
+                print("0x");
+                itoa(class_code, buffer, 16); // Convert class_code to hex string
+                print(buffer);
+
+                print("Subclass: ");
+                print("0x");
+                itoa(subclass_code, buffer, 16); // Convert subclass_code to hex string
+                print(buffer);
+
+                print("\n");
             }
         }
     }
