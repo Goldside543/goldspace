@@ -66,6 +66,7 @@ static uint32_t data_start;
 
 // Mount the FAT32 file system
 bool fat32_mount() {
+    ata_pio_init();
     // Read the boot sector
     ata_pio_read(0, &boot_sector, FAT32_BOOTSECTOR_SIZE);
     if (boot_sector.boot_sector_signature != FAT32_SIGNATURE) {
