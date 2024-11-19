@@ -31,7 +31,6 @@ uint32_t pci_read_config(uint8_t bus, uint8_t device, uint8_t function, uint8_t 
     return inl(PCI_CONFIG_DATA);       // Read from CONFIG_DATA
 }
 
-// Main PCI scanning function
 void pci_scan_bus() {
     for (uint8_t bus = 0; bus < 256; ++bus) {
         for (uint8_t device = 0; device < 32; ++device) {
@@ -47,10 +46,23 @@ void pci_scan_bus() {
                     uint8_t class_code = (class_subclass >> 24) & 0xFF;
                     uint8_t subclass_code = (class_subclass >> 16) & 0xFF;
 
-                    print("PCI Device Found:\n");
-                    print("  Bus: %d, Device: %d, Function: %d\n", bus, device, function);
-                    print("  Vendor ID: 0x%X, Device ID: 0x%X\n", vendor_id, device_id);
-                    print("  Class: 0x%X, Subclass: 0x%X\n", class_code, subclass_code);
+                    print("\n");
+                    print("Bus: ");
+                    print(bus);
+                    print("Device: ");
+                    print(device);
+                    print("Vendor ID: ");
+                    print("0x");
+                    print(vendor_id);
+                    print("Device ID: ");
+                    print("0x");
+                    print(device_id);
+                    print("Class: ");
+                    print("0x");
+                    print(class_code);
+                    print("Subclass: ");
+                    print("0x");
+                    print(subclass_code);
                     print("\n");
                 }
             }
