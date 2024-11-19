@@ -19,6 +19,7 @@
 #include "../kernel/panic.h"
 #include "../kernel/v86.h"
 #include "../drivers/vga.h"
+#include "../drivers/pci.h"
 
 const char *build_date = __DATE__;    // Compile date
 const char *build_time = __TIME__;    // Compile time
@@ -39,6 +40,7 @@ void shell_help() {
     print("panic - Trigger a kernel panic\n");
     print("builddate - Print build date and time\n");
     print("mode13h - Switch to graphics mode 13h\n");
+    print("scan - Scan PCI bus for devices\n");
 }
 
 void shell_echo(const char *message) {
@@ -74,6 +76,12 @@ void shell_graphics() {
     print("Switching graphics mode...\n");
     set_mode_13h();
     print("Mode switched.\n");
+}
+
+void shell_scan() {
+    print("\n");
+    print("Scanning PCI bus...\n");
+    pci_scan_bus();
 }
     
 void shell_create(const char *name) {
@@ -579,6 +587,8 @@ void shell_execute_command(const char *command) {
             print("\n");
             print("fat32delete: missing filename\n");
         }
+    } else if (my_strcmp(command_name, "scan") == 0) {
+        shell_scan();
     } else {
         print("\n");
         print("Unknown command: ");
