@@ -5,7 +5,6 @@
  * VGA driver.
  *
  * Copyright (C) 2024 Goldside543
- *
  */
 
 #include <stdint.h>
@@ -21,7 +20,7 @@
 #define VGA_AC_INDEX   0x3C0
 #define VGA_AC_DATA    0x3C1
 #define VGA_MISC_WRITE 0x3C2
-#define VGA_MEMORY     0xA000
+#define VGA_MEMORY     0xA0000  // Correct segment address
 
 // Mode 13h constants
 #define MODE_13H_WIDTH  320
@@ -35,69 +34,49 @@ void clear_screen() {
     }
 }
 
-// Function to set VGA mode 13h (320x200, 256 colors)
 void set_mode_13h() {
-    // Ensure that the VGA is ready for mode changes
-    outb(VGA_MISC_WRITE, 0x63); // Set the Miscellaneous Output Register
+    // Set miscellaneous output register for mode 13h
+    outb(VGA_MISC_WRITE, 0x63);
 
-    // Set sequencer registers
-    outb(VGA_SEQ_INDEX, 0x00);  // Reset sequencer
-    outb(VGA_SEQ_DATA, 0x03);
+    // Sequencer settings
+    outb(VGA_SEQ_INDEX, 0x00);  // Synchronous reset
+    outb(VGA_SEQ_DATA, 0x03);   // End reset
     outb(VGA_SEQ_INDEX, 0x01);  // Clocking mode
     outb(VGA_SEQ_DATA, 0x01);
     outb(VGA_SEQ_INDEX, 0x02);  // Map mask
     outb(VGA_SEQ_DATA, 0x0F);   // Enable all planes
     outb(VGA_SEQ_INDEX, 0x04);  // Memory mode
-    outb(VGA_SEQ_DATA, 0x0E);   // Enable plane A, 256-color mode
+    outb(VGA_SEQ_DATA, 0x06);   // Enable plane A, sequential access
 
-    // Unlock CRTC registers (requires bit 0 of MISC to be set)
-    outb(VGA_CRTC_INDEX, 0x11); // Unlock vertical retrace end
-    outb(VGA_CRTC_DATA, 0x00);  // Reset CRTC register
+    // Unlock CRTC registers
+    outb(VGA_CRTC_INDEX, 0x11);
+    outb(VGA_CRTC_DATA, 0x00);
 
-    // Set CRTC registers for 320x200 resolution
-    outb(VGA_CRTC_INDEX, 0x00); // Horizontal total
-    outb(VGA_CRTC_DATA, 0xFF);  // Set to 255 (adjust as needed)
+    // CRTC settings
+    static const uint8_t crtc_values[] = {
+        0x5F, 0x4F, 0x50, 0x82, 0x55, 0x81, 0xBF, 0x1F,
+        0x00, 0x4F, 0x0D, 0x0E, 0x00, 0x00, 0x00, 0x00,
+        0x9C, 0x0E, 0x8F, 0x28, 0x40, 0x96, 0xB9, 0xA3,
+        0xFF
+    };
+    for (int i = 0; i < 25; i++) {
+        outb(VGA_CRTC_INDEX, i);
+        outb(VGA_CRTC_DATA, crtc_values[i]);
+    }
 
-    outb(VGA_CRTC_INDEX, 0x01); // Vertical total
-    outb(VGA_CRTC_DATA, 0x4F);  // Set to 79 (total vertical lines - 1)
-
-    outb(VGA_CRTC_INDEX, 0x02); // Start address high
-    outb(VGA_CRTC_DATA, 0x00);  // Set start address (high byte)
-
-    outb(VGA_CRTC_INDEX, 0x03); // Start address low
-    outb(VGA_CRTC_DATA, 0x00);  // Set start address (low byte)
-
-    outb(VGA_CRTC_INDEX, 0x04); // Vertical compare
-    outb(VGA_CRTC_DATA, 0x00);  // Reset
-
-    outb(VGA_CRTC_INDEX, 0x05); // Mode control
-    outb(VGA_CRTC_DATA, 0x00);  // Set line width
-
-    outb(VGA_CRTC_INDEX, 0x06); // Offset
-    outb(VGA_CRTC_DATA, 0x00);  // Reset
-
-    outb(VGA_CRTC_INDEX, 0x07); // More CRTC settings
-    outb(VGA_CRTC_DATA, 0x1E);  // Set more values for line comparison
-
-    outb(VGA_CRTC_INDEX, 0x08); // More CRTC settings
-    outb(VGA_CRTC_DATA, 0x00);  // Set more values
-
-    // Graphics controller settings for mode 13h
-    outb(VGA_GC_INDEX, 0x05);   // Set Graphics mode
-    outb(VGA_GC_DATA, 0x40);    // Enable 256-color mode
-    outb(VGA_GC_INDEX, 0x06);   // Set Miscellaneous graphics
-    outb(VGA_GC_DATA, 0x05);    
-
-    // Initialize the DAC
-    outb(0x3C6, 0xFF);           // Set DAC mask to allow all colors
+    // Graphics controller settings
+    outb(VGA_GC_INDEX, 0x05);   // Mode register
+    outb(VGA_GC_DATA, 0x40);    // 256-color mode
+    outb(VGA_GC_INDEX, 0x06);   // Miscellaneous register
+    outb(VGA_GC_DATA, 0x05);
 
     // Attribute controller settings
-    outb(VGA_AC_INDEX, 0x00);    // Start at the first palette index
-    for (int i = 0; i < 256; i++) {
-        outb(VGA_AC_DATA, i);     // Load default color palette
+    for (int i = 0; i < 16; i++) {
+        outb(VGA_AC_INDEX, i);
+        outb(VGA_AC_DATA, i);
     }
-    outb(VGA_AC_INDEX, 0x20);     // End attribute controller setup
+    outb(VGA_AC_INDEX, 0x20);   // End attribute mode
 
-    // Clear screen to black
+    // Clear the screen
     clear_screen();
 }
