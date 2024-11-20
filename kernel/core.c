@@ -175,18 +175,6 @@ char get_char() {
     }
 }
 
-void set_vga_mode_13h() {
-    // Set video mode to 13h (320x200, 256 colors) using the 0x10 port.
-    __asm__ (
-        "movb $0x00, %%ah;"  // Function: Set video mode
-        "movb $0x13, %%al;"  // Mode 13h (320x200, 256 colors)
-        "outb %%al, $0x10;"  // Output to the video mode register (0x10)
-        :
-        :
-        : "%ax"
-    );
-}
-
 void kernel_main() {
 
 /* There is an issue with the way the kernel handles input that causes
@@ -216,8 +204,6 @@ void kernel_main() {
     rtl8139_init();
 
     initialize_process_system();
-
-    set_vga_mode_13h();
 
     // gpu_init();
 
