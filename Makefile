@@ -9,6 +9,7 @@ DEBUG = -g		# Just remove -g and debug symbols will be disabled, making a smalle
 WARNINGS = -Werror	# If you want to see warnings, use -Wall here, I guess
 
 .PHONY: clean
+.PHONY: all
 
 all: goldspace.iso
 
