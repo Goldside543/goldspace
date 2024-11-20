@@ -193,38 +193,6 @@ void kernel_main() {
         fat32_mount();
     #endif
 
-    __asm__ volatile (
-        // Save registers that we need to preserve
-        "pusha\n"                       // Push all registers to the stack
-
-        // 1. Switch to real mode
-        "cli\n"                         // Disable interrupts
-        "mov %%cr0, %%eax\n"            // Read the value of CR0 into eax
-        "and $0xFFFEFFFF, %%eax\n"      // Clear the PE bit (Protected Mode Enable)
-        "mov %%eax, %%cr0\n"            // Write the new value back to CR0
-        "jmp real_mode_start\n"         // Far jump to real mode code (16-bit code segment)
-
-        // Real mode entry point
-        "real_mode_start:\n"
-
-        // 2. Set VGA mode 0x13 (320x200 256-color mode)
-        "mov $0x13, %%ah\n"             // Function 0x13 (set video mode)
-        "int $0x10\n"                   // Call BIOS interrupt to switch to mode 0x13
-
-        // 3. Switch back to protected mode (set PE bit in CR0)
-        "mov %%cr0, %%eax\n"            // Read CR0 again
-        "or $0x1, %%eax\n"              // Set the PE bit (Protected Mode Enable)
-        "mov %%eax, %%cr0\n"            // Write back the modified value of CR0
-        "jmp protected_mode_entry\n"    // Far jump to the protected mode entry
-
-        // Protected mode entry point (GRUB handles the transition)
-        "protected_mode_entry:\n"
-        "popa\n"                        // Restore all registers from the stack
-        : // No outputs
-        : // No inputs
-        : "eax" // Clobbered register
-    );
-
     page_table_init();
 
     audio_init();
