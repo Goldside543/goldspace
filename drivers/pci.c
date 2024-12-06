@@ -77,7 +77,7 @@ uint32_t pci_read_config(uint8_t bus, uint8_t device, uint8_t function, uint8_t 
 }
 
 void pci_scan_bus() {
-    for (uint8_t bus = 0; bus < 256; ++bus) {
+    for (uint16_t bus = 0; bus < 256; ++bus) {
         for (uint8_t device = 0; device < 32; ++device) {
             // First check function 0 for the device presence
             uint32_t vendor_device = pci_read_config(bus, device, 0, 0x00);
