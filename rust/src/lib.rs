@@ -12,6 +12,7 @@
 
 #![no_std]
 #![no_main]
+#![allow(warnings)]
 
 use core::panic::PanicInfo;
 use core::arch::asm;
