@@ -196,7 +196,7 @@ void kernel_main() {
 
     page_table_init();
 
-    idt_init();
+    init_idt();
 
     audio_init();
 
