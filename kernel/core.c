@@ -30,6 +30,7 @@ static bool use_keyboard_driver = false;  // This will be set in usb_init()
 #include "process.h"
 #include "../fs/fat32/fat32.h"
 #include "../fs/fs.h"
+#include "idt.h"
 
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
@@ -194,6 +195,8 @@ void kernel_main() {
     #endif
 
     page_table_init();
+
+    idt_init();
 
     audio_init();
 
