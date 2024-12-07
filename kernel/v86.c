@@ -9,38 +9,31 @@
  *
  */
 
-void enter_vga_graphics_mode() {
+void enter_vm86_mode(void (*code_in_v86_mode)()) {
     asm volatile (
-        "pushfl\n\t"                // Save original EFLAGS to stack
-        "cli\n\t"                   // Clear interrupts
+        // Save the original EFLAGS (flags register) to the stack
+        "pushf\n\t"                  // Save original EFLAGS to stack
+        "cli\n\t"                    // Clear interrupts to prevent interruptions
 
         // Prepare stack for V86 mode
-        "pushl $0x23\n\t"           // SS (stack segment) for V86 mode (32-bit data segment)
-        "pushl $0x2000\n\t"         // ESP (stack pointer) for V86 mode
+        "pushl $0x23\n\t"            // SS (stack segment) for V86 mode (32-bit data segment)
+        "pushl $0x2000\n\t"          // ESP (stack pointer) for V86 mode (start of the V86 stack)
 
-        // Set up EFLAGS with VM flag set
-        "pushfl\n\t"                // Push original EFLAGS again
-        "popl %%eax\n\t"            // Pop into EAX to modify
-        "or $0x20000, %%eax\n\t"    // Set VM (bit 17) in EFLAGS (for V86)
-        "pushl %%eax\n\t"           // Push modified EFLAGS
+        // Set up EFLAGS with VM flag set (enter VM86 mode)
+        "pushf\n\t"                  // Push the current EFLAGS again to modify
+        "popl %%eax\n\t"             // Pop into EAX to modify the flags
+        "or $0x20000, %%eax\n\t"     // Set the VM flag (bit 17) in EFLAGS to enter VM86 mode
+        "pushl %%eax\n\t"            // Push modified EFLAGS back onto the stack
 
-        // Set up CS and IP for V86 mode
-        "pushl $0x18\n\t"           // CS for V86 mode (index for V86 code segment descriptor)
-        "pushl $v86_code\n\t"       // IP (instruction pointer) in V86 mode
+        // Set up CS (code segment) and IP (instruction pointer) for VM86 mode
+        "pushl $0x18\n\t"            // CS for V86 mode (index into V86 code segment descriptor)
+        "pushl %0\n\t"               // IP (instruction pointer) for the code to execute in V86 mode (function pointer)
 
-        "iret\n"                    // Enter V86 mode with IRET
+        // Perform IRET to switch into V86 mode and execute the code
+        "iret\n\t"
 
-        // Code to run in V86 mode
-        "v86_code:\n\t"
-        "movb $0x13, %%al\n\t"      // Set mode to 0x13
-        "movb $0x00, %%ah\n\t"      // Function 0x00 - set video mode
-        "int $0x10\n\t"             // Call BIOS interrupt to set mode
-
-        // Exit V86 mode (jump back to 32-bit protected mode)
-        "cli\n\t"                   // Disable interrupts again in 32-bit mode
-        "popfl\n\t"                 // Restore original EFLAGS
         :
-        :
+        : "r" (code_in_v86_mode)     // Pass the function pointer for the code to execute in V86 mode
         : "eax"
     );
 }
