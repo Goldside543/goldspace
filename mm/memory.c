@@ -99,9 +99,14 @@ void page_table_init() {
         page_table->page_table[i] = 0;
     }
 
+    print("Initializing CR3 register for paging...\n");
+
     // Initialize the CR3 register to point to the page table
     uint32_t cr3 = (uint32_t)page_table; // Set CR3 to point to the page table
     asm volatile("mov %0, %%cr3" : : "r"(cr3)); // Write new CR3
+    
+    print("CR3 register initialized.\n");
+    return;
 }
 
 void enable_paging() {
@@ -119,14 +124,14 @@ void enable_paging() {
     cr0 |= (1 << 31); // Set PG bit
     asm volatile("mov %0, %%cr0" : : "r"(cr0));
 
-    print("Paging enabled.");
+    print("Paging enabled.\n");
 
     // Flush the TLB by reloading CR3 with the new page table address
     uint32_t cr3;
     asm volatile("mov %%cr3, %0" : "=r"(cr3)); // Read current CR3
     asm volatile("mov %0, %%cr3" : : "r"(cr3)); // Write it back to flush the TLB
 
-    print("TLB flushed.");
+    print("TLB flushed.\n");
     return;
 }
 
