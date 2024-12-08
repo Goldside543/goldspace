@@ -98,6 +98,31 @@ void page_table_init() {
     for (int i = 0; i < NUM_PAGES; ++i) {
         page_table->page_table[i] = 0;
     }
+
+    // Initialize the CR3 register to point to the page table
+    uint32_t cr3;
+    asm volatile("mov %%cr3, %0" : "=r"(cr3)); // Read current CR3
+    cr3 = (uint32_t)page_table; // Set CR3 to point to the page table
+    asm volatile("mov %0, %%cr3" : : "r"(cr3)); // Write new CR3
+}
+
+void enable_paging() {
+    // Set the PG bit in CR0 to enable paging
+    uint32_t cr0;
+    asm volatile("mov %%cr0, %0" : "=r"(cr0));
+    cr0 |= (1 << 31); // Set bit 31 (PG) to enable paging
+    asm volatile("mov %0, %%cr0" : : "r"(cr0));
+    
+    // Load the new page table
+    page_table_init();
+    
+    // Enable paging in the CPU by setting the paging flag in CR0
+    asm volatile("mov %%cr0, %0" : "=r"(cr0));
+    cr0 |= (1 << 31); // Set PG bit
+    asm volatile("mov %0, %%cr0" : : "r"(cr0));
+
+    // Flush the TLB (Translation Lookaside Buffer)
+    asm volatile("mov %%cr3, %%eax; mov %%eax, %%cr3");
 }
 
 void map_page(uint32_t virtual_address, uint32_t physical_address) {
