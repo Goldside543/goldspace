@@ -119,10 +119,15 @@ void enable_paging() {
     cr0 |= (1 << 31); // Set PG bit
     asm volatile("mov %0, %%cr0" : : "r"(cr0));
 
+    print("Paging enabled.");
+
     // Flush the TLB by reloading CR3 with the new page table address
     uint32_t cr3;
     asm volatile("mov %%cr3, %0" : "=r"(cr3)); // Read current CR3
     asm volatile("mov %0, %%cr3" : : "r"(cr3)); // Write it back to flush the TLB
+
+    print("TLB flushed.");
+    return;
 }
 
 void map_page(uint32_t virtual_address, uint32_t physical_address) {
