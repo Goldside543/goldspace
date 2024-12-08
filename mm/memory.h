@@ -22,7 +22,7 @@ void* kmemcpy(void* dest, const void* src, size_t num);
 int kmemcmp(const void* ptr1, const void* ptr2, size_t num);
 
 // Initialize page tables and setup paging
-void page_table_init();
+void enable_paging();
 
 // Map a virtual address to a physical address
 void map_page(uint32_t virtual_address, uint32_t physical_address);
