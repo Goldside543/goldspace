@@ -114,7 +114,7 @@ void enable_paging() {
 
     // Set the PG bit in CR0 to enable paging
     uint32_t cr0;
-    print("Set cr0 as uint32_t.\n);
+    print("Set cr0 as uint32_t.\n");
     asm volatile("mov %%cr0, %0" : "=r"(cr0));
     print("First step of paging enabling complete.\n");
     cr0 |= (1 << 31); // Set bit 31 (PG) to enable paging
