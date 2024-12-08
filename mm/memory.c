@@ -111,7 +111,7 @@ void enable_paging() {
     cr0 |= (1 << 31); // Set bit 31 (PG) to enable paging
     asm volatile("mov %0, %%cr0" : : "r"(cr0));
     
-    // Load the new page table
+    // Initialize page table
     page_table_init();
 
     // Enable paging in the CPU by setting the paging flag in CR0
@@ -119,8 +119,10 @@ void enable_paging() {
     cr0 |= (1 << 31); // Set PG bit
     asm volatile("mov %0, %%cr0" : : "r"(cr0));
 
-    // Flush the TLB (Translation Lookaside Buffer)
-    asm volatile("mov %%cr3, %%eax; mov %%eax, %%cr3");
+    // Flush the TLB by reloading CR3 with the new page table address
+    uint32_t cr3;
+    asm volatile("mov %%cr3, %0" : "=r"(cr3)); // Read current CR3
+    asm volatile("mov %0, %%cr3" : : "r"(cr3)); // Write it back to flush the TLB
 }
 
 void map_page(uint32_t virtual_address, uint32_t physical_address) {
