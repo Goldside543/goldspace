@@ -100,9 +100,7 @@ void page_table_init() {
     }
 
     // Initialize the CR3 register to point to the page table
-    uint32_t cr3;
-    asm volatile("mov %%cr3, %0" : "=r"(cr3)); // Read current CR3
-    cr3 = (uint32_t)page_table; // Set CR3 to point to the page table
+    uint32_t cr3 = (uint32_t)page_table; // Set CR3 to point to the page table
     asm volatile("mov %0, %%cr3" : : "r"(cr3)); // Write new CR3
 }
 
@@ -115,7 +113,7 @@ void enable_paging() {
     
     // Load the new page table
     page_table_init();
-    
+
     // Enable paging in the CPU by setting the paging flag in CR0
     asm volatile("mov %%cr0, %0" : "=r"(cr0));
     cr0 |= (1 << 31); // Set PG bit
