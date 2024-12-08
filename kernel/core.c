@@ -225,8 +225,6 @@ void kernel_main() {
     cpu_delay(50000000);
 
     shell_clear();
-
-    asm volatile("sti");
     
 /* The following code is to be removed if you are
    building Goldspace without Gash, including the
