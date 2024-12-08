@@ -9,6 +9,7 @@
  */
 
 #include <stdint.h>
+#include "print.h"
 
 // GDT entries
 #define GDT_SIZE 6
@@ -47,27 +48,43 @@ void gdt_set_entry(int num, uint32_t base, uint32_t limit, uint8_t access, uint8
 
 // Function to set up the GDT and load it into the CPU
 void gdt_init() {
+    print("Setting up GDT...\n");
+
     // Null descriptor (entry 0)
     gdt_set_entry(0, 0, 0, 0, 0);
+
+    print("Set null descriptor.\n");
 
     // Kernel code segment (entry 1) - 0x08
     gdt_set_entry(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
 
+    print("Set kernel code segment.\n");
+
     // Kernel data segment (entry 2) - 0x10
     gdt_set_entry(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
+
+    print("Set kernel data segment.\n");
 
     // User code segment (entry 3) - 0x18
     gdt_set_entry(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
 
+    print("Set user code segment.\n");
+
     // User data segment (entry 4) - 0x20
     gdt_set_entry(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
+
+    print("Set user data segment.\n");
 
     // TSS descriptor (entry 5) - 0x28
     gdt_set_entry(5, 0, 0x67, 0x89, 0x40);  // Minimal example
 
+    print("Set TSS descriptor.\n");
+
     // Set up the GDT pointer
     gdtp.limit = (sizeof(gdt) - 1);
     gdtp.base = (uint32_t)&gdt;
+
+    print("Loading GDT...\n");
 
     // Load the GDT using inline assembly
     asm volatile(
@@ -81,7 +98,6 @@ void gdt_init() {
         "mov $0x08, %%ax\n"  // Load code segment (kernel)
         "mov %%ax, %%ss\n"   // Load stack segment (kernel)
         "jmp $0x08, $next\n" // Jump to flush old code selector
-        "sti\n"
         "next:\n"
         :
         : "r" (&gdtp)
