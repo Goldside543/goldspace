@@ -71,6 +71,7 @@ void gdt_init() {
 
     // Load the GDT using inline assembly
     asm volatile(
+        "cli\n"
         "lgdt (%0)\n"     // Load GDT register with address of GDT pointer
         "mov $0x10, %%ax\n"  // Load code segment selector (kernel)
         "mov %%ax, %%ds\n"   // Load data segment (kernel)
@@ -80,6 +81,7 @@ void gdt_init() {
         "mov $0x08, %%ax\n"  // Load code segment (kernel)
         "mov %%ax, %%ss\n"   // Load stack segment (kernel)
         "jmp $0x08, $next\n" // Jump to flush old code selector
+        "sti\n"
         "next:\n"
         :
         : "r" (&gdtp)
