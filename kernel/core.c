@@ -194,7 +194,7 @@ void kernel_main() {
         fat32_mount();
     #endif
 
-    page_table_init();
+    enable_paging();
 
     audio_init();
 
