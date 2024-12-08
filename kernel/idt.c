@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include "interrupt.h"
 #include "panic.h"
+#include "print.h"
 
 #define IDT_ENTRIES 256
 
@@ -49,21 +50,31 @@ void set_idt_entry(int interrupt_number, void (*handler)()) {
 
 // Function to initialize the IDT
 void init_idt() {
+    print("Preparing IDT...\n");
+    
     // Initialize all IDT entries to default handler
     for (int i = 0; i < IDT_ENTRIES; i++) {
         set_idt_entry(i, default_handler); // Set all to a default handler initially
     }
 
+    print("Set default handler.\n");
+
     // Set specific IDT entries (e.g., software interrupt)
     set_idt_entry(0x80, software_interrupt_handler); // Software interrupt for syscalls
+
+    print("Set system call handler.\n");
 
     // Prepare the IDT pointer
     struct idt_pointer idtp;
     idtp.limit = (sizeof(struct idt_entry) * IDT_ENTRIES) - 1; // Size of IDT - 1
     idtp.base = (uint32_t)&idt; // Base address of IDT
 
+    print("Loading IDT...\n");
+    
     // Load the IDT using the lidt instruction
     asm volatile("lidt %0" : : "m"(idtp));
+
+    print("Setting interrupt flag...\n");
 
     asm volatile("sti"); // Set interrupt flag
 }
