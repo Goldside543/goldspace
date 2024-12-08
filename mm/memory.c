@@ -110,6 +110,7 @@ void page_table_init() {
 }
 
 void enable_paging() {
+    asm volatile("cli");
     print("Enabling paging...\n");
 
     // Set the PG bit in CR0 to enable paging
@@ -133,6 +134,7 @@ void enable_paging() {
     asm volatile("mov %0, %%cr3" : : "r"(cr3)); // Write it back to flush the TLB
 
     print("TLB flushed.\n");
+    asm volatile("sti");
     return;
 }
 
