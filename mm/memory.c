@@ -134,7 +134,6 @@ void enable_paging() {
     asm volatile("mov %0, %%cr3" : : "r"(cr3)); // Write it back to flush the TLB
 
     print("TLB flushed.\n");
-    asm volatile("sti");
     return;
 }
 
