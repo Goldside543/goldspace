@@ -39,19 +39,19 @@ void clear_screen() {
 
 void set_mode_13h() {
     // Set miscellaneous output register for mode 13h
-    outb(VGA_MISC_WRITE, 0x63);
-
+    outb(VGA_MISC_WRITE, 0x63); // Select graphics mode and clock
+    
     // Sequencer settings
-    outb(VGA_SEQ_INDEX, 0x00);  // Asynchronous reset
+    outb(VGA_SEQ_INDEX, 0x00);  // Synchronous reset
     outb(VGA_SEQ_DATA, 0x01);
     outb(VGA_SEQ_INDEX, 0x01);  // Clocking mode
-    outb(VGA_SEQ_DATA, 0x01);
+    outb(VGA_SEQ_DATA, 0x01);   // 8 dots/char, VGA compatible
     outb(VGA_SEQ_INDEX, 0x02);  // Map mask
-    outb(VGA_SEQ_DATA, 0x0F);
-    outb(VGA_SEQ_INDEX, 0x03);  // Character map
+    outb(VGA_SEQ_DATA, 0x0F);   // Enable all planes
+    outb(VGA_SEQ_INDEX, 0x03);  // Character map select
     outb(VGA_SEQ_DATA, 0x00);
     outb(VGA_SEQ_INDEX, 0x04);  // Memory mode
-    outb(VGA_SEQ_DATA, 0x0E);
+    outb(VGA_SEQ_DATA, 0x0E);   // Enable chain-4 mode
     outb(VGA_SEQ_INDEX, 0x00);  // End reset
     outb(VGA_SEQ_DATA, 0x03);
 
@@ -59,9 +59,9 @@ void set_mode_13h() {
     outb(VGA_CRTC_INDEX, 0x11);
     outb(VGA_CRTC_DATA, inb(VGA_CRTC_DATA) & ~0x80);
 
-    // CRTC settings
+    // Configure CRTC registers
     static const uint8_t crtc_values[] = {
-        0x5F, 0x4F, 0x50, 0x82, 0x55, 0x81, 0xBF, 0x1F,
+        0x5F, 0x4F, 0x50, 0x82, 0x54, 0x80, 0xBF, 0x1F,
         0x00, 0x41, 0x0D, 0x0E, 0x00, 0x00, 0x00, 0x00,
         0x9C, 0x0E, 0x8F, 0x28, 0x40, 0x96, 0xB9, 0xA3,
         0xFF
@@ -83,7 +83,7 @@ void set_mode_13h() {
     outb(VGA_GC_INDEX, 0x04);  // Read map select
     outb(VGA_GC_DATA, 0x00);
     outb(VGA_GC_INDEX, 0x05);  // Graphics mode
-    outb(VGA_GC_DATA, 0x40);
+    outb(VGA_GC_DATA, 0x40);   // Chain-4 mode
     outb(VGA_GC_INDEX, 0x06);  // Miscellaneous
     outb(VGA_GC_DATA, 0x05);
     outb(VGA_GC_INDEX, 0x08);  // Bit mask
@@ -91,17 +91,14 @@ void set_mode_13h() {
 
     // Attribute controller settings
     for (int i = 0; i < 16; i++) {
-        inb(VGA_IS1_READ);      // Reset flip-flop
-        outb(VGA_AC_INDEX, i);  // Palette index
-        outb(VGA_AC_WRITE, i);  // Palette data
+        outb(VGA_AC_INDEX, i);
+        outb(VGA_AC_WRITE, i);  // Set palette index
     }
     for (int i = 16; i < 32; i++) {
-        inb(VGA_IS1_READ);      // Reset flip-flop
-        outb(VGA_AC_INDEX, i);  // Palette index
-        outb(VGA_AC_WRITE, i & 0x0F);  // Set overscan color
+        outb(VGA_AC_INDEX, i);
+        outb(VGA_AC_WRITE, i & 0x0F);  // Enable intensity bit
     }
-    inb(VGA_IS1_READ);          // Reset flip-flop
-    outb(VGA_AC_INDEX, 0x20);   // End attribute mode
+    outb(VGA_AC_INDEX, 0x20);  // End attribute controller sequence
 
     // Clear the screen
     clear_screen();
