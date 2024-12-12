@@ -18,8 +18,10 @@
 #define VGA_GC_INDEX   0x3CE
 #define VGA_GC_DATA    0x3CF
 #define VGA_AC_INDEX   0x3C0
-#define VGA_AC_DATA    0x3C1
+#define VGA_AC_WRITE   0x3C0
+#define VGA_AC_READ    0x3C1
 #define VGA_MISC_WRITE 0x3C2
+#define VGA_MISC_READ  0x3CC
 #define VGA_MEMORY     0xA0000  // Correct segment address
 
 // Mode 13h constants
@@ -89,11 +91,11 @@ void set_mode_13h() {
     // Attribute controller settings
     for (int i = 0; i < 16; i++) {
         outb(VGA_AC_INDEX, i);
-        outb(VGA_AC_DATA, i);
+        outb(VGA_AC_WRITE, i);
     }
-    for (int i = 16; i < 256; i++) {
-        outb(VGA_AC_INDEX, i & 0xFF);
-        outb(VGA_AC_DATA, i & 0xFF);
+    for (int i = 16; i < 32; i++) {
+        outb(VGA_AC_INDEX, i);
+        outb(VGA_AC_WRITE, i & 0x0F);
     }
     outb(VGA_AC_INDEX, 0x20);   // End attribute mode
 
