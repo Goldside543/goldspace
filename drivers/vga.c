@@ -30,6 +30,20 @@
 #define MODE_13H_HEIGHT 200
 #define MODE_13H_DEPTH  256
 
+void clear_vmemory() {
+    // Clear text mode memory (0xB8000)
+    uint16_t* text_mode = (uint16_t*)0xB8000;
+    for (int i = 0; i < 80 * 25; i++) { // 80x25 characters
+        text_mode[i] = 0x0700; // Black background, white text, space
+    }
+
+    // Clear graphics mode memory (0xA0000)
+    uint8_t* graphics_mode = (uint8_t*)0xA0000;
+    for (int i = 0; i < 320 * 200; i++) { // 320x200 pixels
+        graphics_mode[i] = 0; // Black
+    }
+}
+
 void clear_screen() {
     uint8_t* screen = (uint8_t*)VGA_MEMORY;
     for (int i = 0; i < (MODE_13H_WIDTH * MODE_13H_HEIGHT); i++) {
@@ -38,6 +52,7 @@ void clear_screen() {
 }
 
 void set_mode_13h() {
+    clear_vmemory();
     // Set miscellaneous output register for mode 13h
     outb(VGA_MISC_WRITE, 0x63); // Select graphics mode and clock
     
