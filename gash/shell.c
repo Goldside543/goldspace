@@ -75,7 +75,7 @@ void shell_graphics() {
     print("\n");
     print("Switching graphics mode...\n");
     set_mode_13h();
-    print("Mode switched.\n");
+    draw_rectangle(110, 75, 100, 50, 4);
 }
 
 void shell_scan() {
