@@ -31,6 +31,7 @@ static bool use_keyboard_driver = false;  // This will be set in usb_init()
 #include "../fs/fat32/fat32.h"
 #include "../fs/fs.h"
 #include "idt.h"
+#include "../security/aslr.h"
 
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
@@ -209,6 +210,8 @@ void kernel_main() {
     // gpu_init();
 
     init_graphics();
+
+    init_random_seed();
 
     static unsigned int io_base;
 
