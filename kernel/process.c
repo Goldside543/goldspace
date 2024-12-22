@@ -12,6 +12,7 @@
 #include <stddef.h>
 #include "../mm/memory.h"
 #include "process.h"
+#include "../security/aslr.h"
 
 static uint32_t next_pid = 1;  // Static counter for PID generation
 
@@ -91,8 +92,24 @@ pcb_t* create_process(void (*entry_point)()) {
     }
 
     new_pcb->pid = generate_pid();
-    new_pcb->page_directory = setup_page_directory();
-    new_pcb->stack = setup_stack();
+
+    // Randomize the page directory address for ASLR
+    new_pcb->page_directory = (uint32_t *)generate_random_address();
+    if (!new_pcb->page_directory) {
+        kfree(new_pcb);
+        return NULL; // Randomized allocation failed
+    }
+
+    // Randomize the stack address for ASLR
+    new_pcb->stack = (uint32_t *)generate_random_address();
+    if (!new_pcb->stack) {
+        kfree(new_pcb->page_directory);
+        kfree(new_pcb);
+        return NULL; // Randomized stack allocation failed
+    }
+
+    new_pcb->heap = (uint32_t *)generate_random_address();
+
     new_pcb->state = PROCESS_RUNNING;
     new_pcb->eip = (uint32_t)entry_point;
     new_pcb->next = NULL;
