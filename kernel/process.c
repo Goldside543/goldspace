@@ -108,8 +108,6 @@ pcb_t* create_process(void (*entry_point)()) {
         return NULL; // Randomized stack allocation failed
     }
 
-    new_pcb->heap = (uint32_t *)generate_random_address();
-
     new_pcb->state = PROCESS_RUNNING;
     new_pcb->eip = (uint32_t)entry_point;
     new_pcb->next = NULL;
