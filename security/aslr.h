@@ -5,6 +5,7 @@
 
 #include <stdint.h>
 
+void init_random_seed();
 uint32_t generate_random_address();
 
 #endif // ASLR_H
