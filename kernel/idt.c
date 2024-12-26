@@ -103,10 +103,9 @@ void init_idt() {
 
     print("ICW4 set...\n");
 
-   // outb(0x21, 0xFF);  // Mask all IRQs on master PIC
-   // outb(0xA1, 0xFF);  // Mask all IRQs on slave PIC
-   // outb(0x21, 0xFD);  // Unmask IRQ1 (keyboard)
-   // outb(0xA1, 0xFF);  // Keep all slave IRQs masked
+    outb(0x21, 0xFF);  // Mask all IRQs on master PIC
+    outb(0xA1, 0xFF);  // Mask all IRQs on slave PIC
+    outb(0x21, 0xFD);  // Unmask IRQ1 (keyboard)
 
     print("OCW1 set...\n");
 
