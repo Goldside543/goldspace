@@ -66,9 +66,12 @@ void init_idt() {
 
     // Set specific IDT entries (e.g., software interrupt)
     set_idt_entry(0x80, software_interrupt_handler); // Software interrupt for syscalls
-    set_idt_entry(0x21, keyboard_interrupt_handler); // Hardware interrupt for keyboards
 
     print("Set system call handler.\n");
+
+    set_idt_entry(0x21, keyboard_interrupt_handler); // Hardware interrupt for keyboards
+
+    print("Set keyboard handler.\n");
 
     // Prepare the IDT pointer
     struct idt_pointer idtp;
