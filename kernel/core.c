@@ -228,18 +228,6 @@ void kernel_main() {
     cpu_delay(50000000);
 
     shell_clear();
-    
-/* The following code is to be removed if you are
-   building Goldspace without Gash, including the
-   copyright notice, as you are intended to include
-   that in your OS. To remove the commands, you should
-   remove the gash/ directory, and remove the include
-   line, #include "../gash/gash.h" from the top of
-   this file.
-
-   In addition, you will need to remove gash/shell.c
-   from the top-level Makefile.
-*/
 
     print("Welcome to Goldspace and the Gash shell!\n");
     print("Type 'help' for available commands.\n");
@@ -251,25 +239,35 @@ void kernel_main() {
     print("under certain conditions. See the GPL-2.0 license for details.\n");
     print("\n");
 
-    while (1) {
-        char command[256];
-        size_t command_len = 0;
+   int testing = 1;
 
-        // Read user input
-        print("> ");
-        while (1) {
-            char c = get_char();
-            if (c == '\n' || c == '\r') {
-                command[command_len] = '\0';  // Null-terminate the command string
-                break;
-            } else if (command_len < sizeof(command) - 1 && c != 0) {
-                command[command_len++] = c;
-                // Echo back the character to the screen
-                print_char(c);
-            }
-        }
+   if (testing == 1) { 
+      while (1) {
+           char command[256];
+           size_t command_len = 0;
 
-        // Execute command
-        shell_execute_command(command);
-    }
+           // Read user input
+           print("> ");
+           while (1) {
+               char c = get_char();
+               if (c == '\n' || c == '\r') {
+                   command[command_len] = '\0';  // Null-terminate the command string
+                   break;
+               } else if (command_len < sizeof(command) - 1 && c != 0) {
+                   command[command_len++] = c;
+                   // Echo back the character to the screen
+                   print_char(c);
+               }
+           }
+
+           // Execute command
+           shell_execute_command(command);
+       }
+   }
+   else if (testing == 0) {
+      while (1) {
+         cpudelay(500000);
+         schedule();
+      }
+   }
 }
