@@ -14,6 +14,25 @@
 // GDT entries
 #define GDT_SIZE 6
 
+// TSS (Task State Segment) structure
+struct tss_entry {
+    uint32_t prev_task_link;
+    uint32_t esp0;
+    uint32_t ss0;
+    uint32_t esp1;
+    uint32_t ss1;
+    uint32_t esp2;
+    uint32_t ss2;
+    uint32_t cr3;
+    uint32_t eip;
+    uint32_t eflags;
+    uint32_t eax, ecx, edx, ebx, esp, ebp, esi, edi;
+    uint32_t es, cs, ss, ds, fs, gs;
+    uint32_t ldt;
+    uint16_t trap;
+    uint16_t iobase;
+} __attribute__((packed));
+
 // GDT structure
 struct gdt_entry {
     uint16_t limit_low;
@@ -35,6 +54,41 @@ struct gdt_entry gdt[GDT_SIZE];
 
 // Define the GDT pointer (for loading the GDT)
 struct gdt_ptr gdtp;
+
+struct tss_entry tss;
+
+void tss_init() {
+    // Initialize the TSS with default values (this will be a minimal setup)
+    tss.prev_task_link = 0;
+    tss.esp0 = 0;  // Stack pointer for the kernel mode (this should point to the kernel stack)
+    tss.ss0 = 0x10; // Kernel data segment
+    tss.esp1 = 0;
+    tss.ss1 = 0;
+    tss.esp2 = 0;
+    tss.ss2 = 0;
+    tss.cr3 = 0;    // Page directory pointer (use virtual address for paging if needed)
+    tss.eip = 0;
+    tss.eflags = 0x202;  // Interrupt flag set (IF = 1)
+    // General-purpose registers (can be set to 0 for now)
+    tss.eax = 0;
+    tss.ecx = 0;
+    tss.edx = 0;
+    tss.ebx = 0;
+    tss.esp = 0;
+    tss.ebp = 0;
+    tss.esi = 0;
+    tss.edi = 0;
+    // Segment selectors for the current task
+    tss.es = 0x10;  // Kernel data segment
+    tss.cs = 0x08;  // Kernel code segment
+    tss.ss = 0x10;  // Kernel data segment
+    tss.ds = 0x10;  // Kernel data segment
+    tss.fs = 0x10;  // Kernel data segment
+    tss.gs = 0x10;  // Kernel data segment
+    tss.ldt = 0;    // No Local Descriptor Table
+    tss.trap = 0;
+    tss.iobase = 0xFFFF;  // I/O base address
+}
 
 // Function to set up a GDT entry
 void gdt_set_entry(int num, uint32_t base, uint32_t limit, uint8_t access, uint8_t granularity) {
@@ -76,7 +130,8 @@ void gdt_init() {
     print("Set user data segment.\n");
 
     // TSS descriptor (entry 5) - 0x28
-    gdt_set_entry(5, 0, 0x67, 0x89, 0x40);  // Minimal example
+    init_tss();
+    gdt_set_entry(5, (uint32_t)&tss, sizeof(struct tss_entry), 0x89, 0x40);  // Access flags for TSS descriptor
 
     print("Set TSS descriptor.\n");
 
