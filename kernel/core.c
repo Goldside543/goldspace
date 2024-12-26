@@ -231,6 +231,8 @@ void kernel_main() {
 
     shell_clear();
 
+    asm volatile("sti");
+
     print("Welcome to Goldspace and the Gash shell!\n");
     print("Type 'help' for available commands.\n");
     print("\n");
