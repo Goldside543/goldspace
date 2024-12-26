@@ -266,7 +266,7 @@ void kernel_main() {
    }
    else if (testing == 0) {
       while (1) {
-         cpudelay(500000);
+         cpu_delay(50000);
          schedule();
       }
    }
