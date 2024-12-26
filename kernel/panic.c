@@ -22,6 +22,7 @@ void panic(const char *error_message) {
     print(error_message);
     // Halt the CPU with an infinite loop
     while (1) {
+	__asm__ volatile ("cli"); // Clear interrupt flag
 	__asm__ volatile ("hlt"); // Halt CPU
     }
 }
