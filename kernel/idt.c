@@ -10,12 +10,17 @@
 
 #include <stdint.h>
 #include "interrupt.h"
-#include "panic.h"
 #include "print.h"
+#include "io.h"
 
 #define IDT_ENTRIES 256
 
 extern void software_interrupt_handler();
+
+void keyboard_interrupt_handler() {
+    uint8_t scancode = inb(0x60); // Read scancode from the keyboard data port
+    outb(0x20, 0x20); // Acknowledge the interrupt to PIC (End of Interrupt)
+}
 
 // Define the structure for an IDT entry
 struct idt_entry {
@@ -36,7 +41,7 @@ struct idt_pointer {
 struct idt_entry idt[IDT_ENTRIES];
 
 void default_handler(void) {
-   panic("Unknown interrupt.");
+   return;
 }
 
 // Function to set an IDT entry
@@ -61,6 +66,7 @@ void init_idt() {
 
     // Set specific IDT entries (e.g., software interrupt)
     set_idt_entry(0x80, software_interrupt_handler); // Software interrupt for syscalls
+    set_idt_entry(0x21, keyboard_interrupt_handler); // Hardware interrupt for keyboards
 
     print("Set system call handler.\n");
 
