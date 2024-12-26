@@ -82,6 +82,7 @@ void shell_scan() {
     print("\n");
     print("Scanning PCI bus...\n");
     pci_scan_bus();
+    find_rtl8139_dma_address();
 }
     
 void shell_create(const char *name) {
