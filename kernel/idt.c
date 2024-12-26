@@ -83,6 +83,33 @@ void init_idt() {
     // Load the IDT using the lidt instruction
     asm volatile("lidt %0" : : "m"(idtp));
 
+    outb(0x20, 0x11);  // ICW1 for master PIC: begin initialization, cascade mode
+    outb(0xA0, 0x11);  // ICW1 for slave PIC: same for slave PIC
+
+    print("ICW1...\n");
+
+    outb(0x21, 0x20);  // ICW2 for master PIC: vector offset 0x20
+    outb(0xA1, 0x28);  // ICW2 for slave PIC: vector offset 0x28
+
+    print("ICW2...\n");
+
+    outb(0x21, 0x04);  // ICW3 for master PIC: tell it the slave is on IRQ2
+    outb(0xA1, 0x02);  // ICW3 for slave PIC: tell it the master is on IRQ2
+
+    print("ICW3...\n");
+ 
+    outb(0x21, 0x01);  // ICW4 for master PIC: 8086 mode, no special features
+    outb(0xA1, 0x01);  // ICW4 for slave PIC: 8086 mode, no special features
+
+    print("ICW4...\n");
+
+    outb(0x21, 0xFF);  // Mask all IRQs on master PIC
+    outb(0xA1, 0xFF);  // Mask all IRQs on slave PIC
+    outb(0x21, 0xFD);  // Unmask IRQ1 (keyboard)
+    outb(0xA1, 0xFF);  // Keep all slave IRQs masked
+
+    print("OCW1...\n");
+
     print("Setting interrupt flag...\n");
 
     asm volatile("sti"); // Set interrupt flag
