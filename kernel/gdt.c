@@ -130,7 +130,7 @@ void gdt_init() {
     print("Set user data segment.\n");
 
     // TSS descriptor (entry 5) - 0x28
-    init_tss();
+    tss_init();
     gdt_set_entry(5, (uint32_t)&tss, sizeof(struct tss_entry), 0x89, 0x40);  // Access flags for TSS descriptor
 
     print("Set TSS descriptor.\n");
