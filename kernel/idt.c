@@ -110,7 +110,4 @@ void init_idt() {
 
     print("OCW1 set...\n");
 
-    print("Setting interrupt flag...\n");
-
-    asm volatile("sti"); // Set interrupt flag
 }
