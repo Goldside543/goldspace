@@ -8,7 +8,7 @@ Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is des
 # Compilation instructions:
 * `git clone https://github.com/Goldside543/goldspace.git`
 * `cd goldspace`
-* `make` <br> <br>
+* `make -j$(nproc)` <br> <br>
 (for compiling as 64-bit, the following commands go between `cd goldspace` and `make`) <br> <br>
 * `chmod +x scripts/64-bitifier.sh`
 * `sed -i "s|path/to/kernel/source|$(pwd)|" scripts/64-bitifier.sh`
