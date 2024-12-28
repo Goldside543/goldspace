@@ -10,6 +10,8 @@
 
 #include "../fs.h"
 #include "../bffs/bffs.h"
+#include "../fat32/fat32.c"
+#include <stddef.h>
 
 // As the kernel is currently limited to a single disk drive, a simple constant set in fs/fs.h will do.
 
