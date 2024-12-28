@@ -3,6 +3,8 @@
 #ifndef VFS_H
 #define VFS_H
 
+#include <stddef.h>
+
 int vfs_create_file(const char* name);
 int vfs_write_file(int file_index, const char* data, size_t size);
 int vfs_read_file(int file_index, char* buffer, size_t size);
