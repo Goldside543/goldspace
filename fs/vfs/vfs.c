@@ -11,59 +11,68 @@
 #include "../fs.h"
 #include "../bffs/bffs.h"
 
-/* As the kernel is currently limited to a single
-   disk drive, a simple constant set in fs/fs.h 
-   will do.
-*/
+// As the kernel is currently limited to a single disk drive, a simple constant set in fs/fs.h will do.
 
 int vfs_create_file(const char* name) {
     int result; // Declare result variable
 
 #if BFFS == 0
-    result = create_file(name);
+    result = create_file(name);  // Create file using the BFFS system
 #elif BFFS == 1
-    // Behavior not yet defined
-    result = -10;
+    #if FAT32 == 0
+        result = fat32_write_file(name, NULL, 0);  // Use FAT32 to create a file
+    #elif FAT32 == 1
+        result = -1;  // Return -1 if FAT32 is disabled
+    #endif
 #endif
 
-    return result; // Return the result of the operation
+    return result;  // Return the result of the operation
 }
 
 int vfs_write_file(int file_index, const char* data, size_t size) {
     int result; // Declare result variable
 
 #if BFFS == 0
-    result = write_file(file_index, data, size);
+    result = write_file(file_index, data, size);  // Write file using the BFFS system
 #elif BFFS == 1
-    // Behavior not yet defined
-    result = -1;
+    #if FAT32 == 0
+        result = fat32_write_file(file_index, data, size);  // Use FAT32 to write data to a file
+    #elif FAT32 == 1
+        result = -1;  // Return -1 if FAT32 is disabled
+    #endif
 #endif
 
-    return result; // Return the result of the operation
+    return result;  // Return the result of the operation
 }
 
 int vfs_read_file(int file_index, char* buffer, size_t size) {
     int result; // Declare result variable
 
 #if BFFS == 0
-    result = read_file(file_index, buffer, size);
+    result = read_file(file_index, buffer, size);  // Read file using the BFFS system
 #elif BFFS == 1
-    // Behavior not yet defined
-    result = -10;
+    #if FAT32 == 0
+        result = fat32_read_file(file_index, buffer, size);  // Use FAT32 to read data from a file
+    #elif FAT32 == 1
+        result = -1;  // Return -1 if FAT32 is disabled
+    #endif
 #endif
 
-    return result; // Return the result of the operation
+    return result;  // Return the result of the operation
 }
 
 int vfs_delete_file(int file_index) {
     int result; // Declare result variable
 
 #if BFFS == 0
-    result = delete_file(file_index);
+    result = delete_file(file_index);  // Delete file using the BFFS system
 #elif BFFS == 1
-    // Behavior not yet defined
-    result = -10;
+    #if FAT32 == 0
+        result = fat32_delete_file(file_index);  // Use FAT32 to delete a file
+    #elif FAT32 == 1
+        result = -1;  // Return -1 if FAT32 is disabled
+    #endif
 #endif
 
-    return result; // Return the result of the operation
+    return result;  // Return the result of the operation
 }
