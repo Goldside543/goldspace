@@ -190,7 +190,7 @@ void kernel_main() {
     cursor_y = 0;
     move_cursor();
 
-    gdt_init();
+    // gdt_init();
 
     #if BFFS == 0 
         fs_init();
