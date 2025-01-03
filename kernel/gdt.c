@@ -4,7 +4,7 @@
  *
  * My GDT implementation.
  *
- * Copyright (C) 2024 Goldside543
+ * Copyright (C) 2024-2025 Goldside543
  *
  */
 
