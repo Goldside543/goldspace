@@ -4,7 +4,7 @@
  *
  * This file is the main part of the kernel, where it all comes together.
  *
- * Copyright (C) 2024 Goldside543
+ * Copyright (C) 2024-2025 Goldside543
  *
  */
 
