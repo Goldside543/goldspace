@@ -106,56 +106,50 @@ void gdt_init() {
 
     // Null descriptor (entry 0)
     gdt_set_entry(0, 0, 0, 0, 0);
-
     print("Set null descriptor.\n");
 
     // Kernel code segment (entry 1) - 0x08
     gdt_set_entry(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
-
     print("Set kernel code segment.\n");
 
     // Kernel data segment (entry 2) - 0x10
     gdt_set_entry(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
-
     print("Set kernel data segment.\n");
 
     // User code segment (entry 3) - 0x18
     gdt_set_entry(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
-
     print("Set user code segment.\n");
 
     // User data segment (entry 4) - 0x20
     gdt_set_entry(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
-
     print("Set user data segment.\n");
 
     // TSS descriptor (entry 5) - 0x28
     tss_init();
-    gdt_set_entry(5, (uint32_t)&tss, sizeof(struct tss_entry), 0x89, 0x40);  // Access flags for TSS descriptor
-
+    gdt_set_entry(5, (uint32_t)&tss, sizeof(struct tss_entry), 0x89, 0x40); // Access flags for TSS descriptor
     print("Set TSS descriptor.\n");
 
     // Set up the GDT pointer
     gdtp.limit = (sizeof(gdt) - 1);
     gdtp.base = (uint32_t)&gdt;
-
     print("Loading GDT...\n");
 
     // Load the GDT using inline assembly
     asm volatile(
-        "cli\n"
-        "lgdt (%0)\n"     // Load GDT register with address of GDT pointer
-        "mov $0x10, %%ax\n"  // Load code segment selector (kernel)
-        "mov %%ax, %%ds\n"   // Load data segment (kernel)
-        "mov %%ax, %%es\n"   // Load extra segment
-        "mov %%ax, %%fs\n"   // Load fs segment
-        "mov %%ax, %%gs\n"   // Load gs segment
-        "mov $0x08, %%ax\n"  // Load code segment (kernel)
-        "mov %%ax, %%ss\n"   // Load stack segment (kernel)
-        "jmp $0x08, $next\n" // Jump to flush old code selector
-        "next:\n"
+        "cli\n"                  // Disable interrupts
+        "lgdt (%0)\n"            // Load GDT register with address of GDT pointer
+        "mov $0x10, %%ax\n"      // Load kernel data segment selector
+        "mov %%ax, %%ds\n"       // Set DS
+        "mov %%ax, %%es\n"       // Set ES
+        "mov %%ax, %%fs\n"       // Set FS
+        "mov %%ax, %%gs\n"       // Set GS
+        "mov %%ax, %%ss\n"       // Set SS (stack segment)
+        "mov $0x08, %%ax\n"      // Load kernel code segment selector
+        "jmp $0x08, $1f\n"       // Long jump to flush instruction pipeline
+        "1:\n"
         :
         : "r" (&gdtp)
-        : "%ax", "%bx"
+        : "memory"
     );
+    print("GDT loaded successfully.\n");
 }
