@@ -75,13 +75,14 @@ void shell_graphics() {
     print("\n");
     print("Switching graphics mode...\n");
     set_mode_13h();
-    print("Mode switched.\n");
+    draw_rectangle(110, 75, 100, 50, 4);
 }
 
 void shell_scan() {
     print("\n");
     print("Scanning PCI bus...\n");
     pci_scan_bus();
+    find_rtl8139_dma_address();
 }
     
 void shell_create(const char *name) {

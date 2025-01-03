@@ -4,7 +4,7 @@
  * 
  * Functions for scanning the PCI bus.
  *
- * Copyright (C) 2024 Goldside543
+ * Copyright (C) 2024-2025 Goldside543
  *
  */
 
@@ -12,6 +12,7 @@
 #include "../kernel/io.h"
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 #define PCI_CONFIG_ADDRESS 0xCF8
 #define PCI_CONFIG_DATA    0xCFC
@@ -149,4 +150,51 @@ void pci_scan_bus() {
             }
         }
     }
+}
+
+uint32_t* find_rtl8139_dma_address() {
+    for (uint16_t bus = 0; bus < 256; ++bus) {
+        for (uint8_t device = 0; device < 32; ++device) {
+            // Check function 0 for the device presence
+            uint32_t vendor_device = pci_read_config(bus, device, 0, 0x00);
+
+            // If vendor_id is 0xFFFF, no device present in this slot
+            if ((vendor_device & 0xFFFF) == 0xFFFF) {
+                continue;
+            }
+
+            // Now check all functions for this device
+            for (uint8_t function = 0; function < 8; ++function) {
+                vendor_device = pci_read_config(bus, device, function, 0x00);
+
+                if ((vendor_device & 0xFFFF) == 0xFFFF) {
+                    continue;  // Skip if no device present
+                }
+
+                // Check if this is an RTL8139 device (vendor 0x10EC, device 0x8139)
+                uint16_t vendor_id = vendor_device & 0xFFFF;
+                uint16_t device_id = (vendor_device >> 16) & 0xFFFF;
+
+                if (vendor_id == 0x10ec && device_id == 0x8139) {
+                    // Found RTL8139, let's read the Base Address Register (BAR)
+                    uint32_t bar0 = pci_read_config(bus, device, function, 0x10);  // BAR0 (Memory Base Address)
+                    
+                    // Check if BAR0 is valid (non-zero)
+                    if (bar0 != 0) {
+                        // Assuming BAR0 contains the DMA address (memory-mapped)
+                        print("Found RTL8139! DMA Base Address: ");
+                        char buffer[32];
+                        itoa(bar0, buffer, 16);  // Convert the DMA address to hex string
+                        print(buffer);
+                        print("\n");
+
+                        return (uint32_t*)bar0;  // Return the DMA base address
+                    }
+                }
+            }
+        }
+    }
+
+    print("RTL8139 not found.\n");
+    return NULL;  // Return NULL if RTL8139 is not found
 }

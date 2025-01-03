@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include "../kernel/print.h"
 
-#define MEMORY_POOL_SIZE 1024
+#define MEMORY_POOL_SIZE (1024 * 1024)
 #define PAGE_SIZE 4096 // 4 KB pages
 #define NUM_PAGES (MEMORY_POOL_SIZE / PAGE_SIZE)
 #define PAGE_TABLE_SIZE (NUM_PAGES * sizeof(uint32_t))

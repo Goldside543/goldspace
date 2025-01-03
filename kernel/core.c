@@ -32,6 +32,7 @@ static bool use_keyboard_driver = false;  // This will be set in usb_init()
 #include "../fs/fs.h"
 #include "idt.h"
 #include "gdt.h"
+#include "../security/aslr.h"
 
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
@@ -197,6 +198,8 @@ void kernel_main() {
         fat32_mount();
     #endif
 
+    init_idt();
+
     page_table_init();
 
     audio_init();
@@ -213,6 +216,8 @@ void kernel_main() {
 
     init_graphics();
 
+    init_random_seed();
+
     static unsigned int io_base;
 
     unsigned char mac_addr[6];
@@ -228,48 +233,48 @@ void kernel_main() {
     cpu_delay(50000000);
 
     shell_clear();
-    
-/* The following code is to be removed if you are
-   building Goldspace without Gash, including the
-   copyright notice, as you are intended to include
-   that in your OS. To remove the commands, you should
-   remove the gash/ directory, and remove the include
-   line, #include "../gash/gash.h" from the top of
-   this file.
 
-   In addition, you will need to remove gash/shell.c
-   from the top-level Makefile.
-*/
+    asm volatile("sti");
 
     print("Welcome to Goldspace and the Gash shell!\n");
     print("Type 'help' for available commands.\n");
     print("\n");
 
-    print("Goldspace v3.0.0, Copyright (C) 2024 Goldside543\n");
+    print("Goldspace v3.1.0, Copyright (C) 2024 Goldside543\n");
     print("Goldspace comes with ABSOLUTELY NO WARRANTY.\n");
     print("This is free software, and you are welcome to redistribute it\n");
     print("under certain conditions. See the GPL-2.0 license for details.\n");
     print("\n");
 
-    while (1) {
-        char command[256];
-        size_t command_len = 0;
+   int testing = 1;
 
-        // Read user input
-        print("> ");
-        while (1) {
-            char c = get_char();
-            if (c == '\n' || c == '\r') {
-                command[command_len] = '\0';  // Null-terminate the command string
-                break;
-            } else if (command_len < sizeof(command) - 1 && c != 0) {
-                command[command_len++] = c;
-                // Echo back the character to the screen
-                print_char(c);
-            }
-        }
+   if (testing == 1) { 
+      while (1) {
+           char command[256];
+           size_t command_len = 0;
 
-        // Execute command
-        shell_execute_command(command);
-    }
+           // Read user input
+           print("> ");
+           while (1) {
+               char c = get_char();
+               if (c == '\n' || c == '\r') {
+                   command[command_len] = '\0';  // Null-terminate the command string
+                   break;
+               } else if (command_len < sizeof(command) - 1 && c != 0) {
+                   command[command_len++] = c;
+                   // Echo back the character to the screen
+                   print_char(c);
+               }
+           }
+
+           // Execute command
+           shell_execute_command(command);
+       }
+   }
+   else if (testing == 0) {
+      while (1) {
+         cpu_delay(50000);
+         schedule();
+      }
+   }
 }
