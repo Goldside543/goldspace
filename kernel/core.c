@@ -31,6 +31,7 @@ static bool use_keyboard_driver = false;  // This will be set in usb_init()
 #include "../fs/fat32/fat32.h"
 #include "../fs/fs.h"
 #include "idt.h"
+#include "gdt.h"
 #include "../security/aslr.h"
 
 multiboot_header_t mb_header = {
@@ -188,6 +189,8 @@ void kernel_main() {
     cursor_x = 0;
     cursor_y = 0;
     move_cursor();
+
+    gdt_init();
 
     #if BFFS == 0 
         fs_init();
