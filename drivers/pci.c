@@ -4,7 +4,7 @@
  * 
  * Functions for scanning the PCI bus.
  *
- * Copyright (C) 2024 Goldside543
+ * Copyright (C) 2024-2025 Goldside543
  *
  */
 
@@ -175,7 +175,7 @@ uint32_t* find_rtl8139_dma_address() {
                 uint16_t vendor_id = vendor_device & 0xFFFF;
                 uint16_t device_id = (vendor_device >> 16) & 0xFFFF;
 
-                if (vendor_id == 0x10EC && device_id == 0x8139) {
+                if (vendor_id == 0x10ec && device_id == 0x8139) {
                     // Found RTL8139, let's read the Base Address Register (BAR)
                     uint32_t bar0 = pci_read_config(bus, device, function, 0x10);  // BAR0 (Memory Base Address)
                     
