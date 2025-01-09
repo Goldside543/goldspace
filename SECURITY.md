@@ -6,11 +6,18 @@ The following versions of Goldspace are receiving emergency security updates. Af
 
 | Version | Supported          |
 | ------- | ------------------ |
-| v3.x.x  |  :white_check_mark: |
-| v2.x.x   | :white_check_mark: (will end November 4th, 2025) |
-| v1.x.x   | :x:                |
-| pre-v1.x.x   | :x: |
+| Alpha 3.x.x  |  :white_check_mark: |
+| Alpha 2.x.x   | :white_check_mark: (will end November 4th, 2025) |
+| Alpha 1.x.x   | :x:                |
+| pre-Alpha   | :x: |
 
 ## Reporting a Vulnerability
 
 To report a vulnerability, create a security advisory in the security tab. I will get to it ASAP.
+
+# P.S.
+
+As of Alpha 3.1.0, every version prior is now labeled as Alpha. In hindsight, not mentioning that it's in the alpha phase made Goldspace sound kind of like a complete kernel, when it totally isn't. <br> <br> <br>
+
+
+Yet, that is. :)
