@@ -26,4 +26,4 @@ Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is des
 * `builddate` prints build date and time.
 # For additional documentation...
 See the user manual or developer manual, conveniently located in the Documentation directory!
-# Version number: v3.1.0
+# Version number: Alpha 3.1.0
