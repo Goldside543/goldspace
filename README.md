@@ -27,3 +27,8 @@ Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is des
 # For additional documentation...
 See the user manual or developer manual, conveniently located in the Documentation directory!
 # Version number: Alpha 3.1.0
+Yeah, my versioning is totally screwed up, but I don't care.
+
+Beta will be entered once I can switch to ring 3.
+
+Full release will be entered once I have a decent amount of work done, like program support and a vast array of hardware support and system calls :D
