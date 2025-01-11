@@ -101,7 +101,7 @@ void init_idt() {
 
     outb(0x21, 0xFF);  // Mask all IRQs on master PIC
     outb(0xA1, 0xFF);  // Mask all IRQs on slave PIC
-    outb(0x21, 0xFE);  // Unmask IRQ1 (keyboard)
+    outb(0x21, 0xFD);  // Unmask IRQ1 (keyboard)
 
     print("OCW1 set...\n");
 
