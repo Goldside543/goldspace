@@ -125,6 +125,7 @@ char input_buffer[256];
 int input_len = 0;
 
 void keyboard_isr() {
+    print("Received interrupt from IRQ1.");
     asm volatile("pusha");
     uint8_t scancode = inb(0x60);  // Read the scancode from the keyboard data port
     static bool extended = false;
@@ -213,7 +214,7 @@ void kernel_main() {
     cursor_y = 0;
     move_cursor();
 
-    gdt_init();
+    // gdt_init();
 
     #if BFFS == 0 
         fs_init();
