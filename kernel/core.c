@@ -126,6 +126,7 @@ int input_len = 0;
 
 void keyboard_isr() {
     uint8_t scancode = inb(0x60);  // Read the scancode from the keyboard data port
+    static bool extended = false;
 
     if (scancode == 0xE0) {  // If it's the first byte of a multi-byte scan code
         extended = true;
