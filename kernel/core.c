@@ -124,41 +124,41 @@ char scancode_to_ascii_table[128] = {
 char input_buffer[256];
 int input_len = 0;
 
-char get_char() {
-    static bool extended = false;
-    uint8_t scancode;
-    char ascii = 0;
-
-    if (use_keyboard_driver) {
-        scancode = read_keyboard();
-    } else {
-        while (!(inb(0x64) & 0x01));  // Wait until input buffer is not empty
-        scancode = inb(0x60);  // Get the scan code
-    }
+void keyboard_isr() {
+    uint8_t scancode = inb(0x60);  // Read the scancode from the keyboard data port
 
     if (scancode == 0xE0) {  // If it's the first byte of a multi-byte scan code
         extended = true;
-        return 0;
+        return;
     }
 
     if (scancode & 0x80) {  // If it's a key release event
-        extended = false;  // Reset the extended flag
-        return 0;
+        extended = false;
+        return;
     }
 
     if (extended) {  // Handle extended scan codes
         extended = false;
         switch (scancode) {
-            case 0x48: return 'U';  // Up arrow
-            case 0x50: return 'D';  // Down arrow
-            case 0x4B: return 'L';  // Left arrow
-            case 0x4D: return 'R';  // Right arrow
-            default: return 0;
+            case 0x48:  // Up arrow
+                input_buffer[input_len++] = 'U';
+                break;
+            case 0x50:  // Down arrow
+                input_buffer[input_len++] = 'D';
+                break;
+            case 0x4B:  // Left arrow
+                input_buffer[input_len++] = 'L';
+                break;
+            case 0x4D:  // Right arrow
+                input_buffer[input_len++] = 'R';
+                break;
+            default:
+                break;
         }
     } else {
-        // Convert scan code to ASCII
-        ascii = scancode_to_ascii_table[scancode];
-
+        // Convert scan code to ASCII (this part is the same as your original logic)
+        char ascii = scancode_to_ascii_table[scancode];
+        
         // Handle special characters
         if (ascii == '\b') {  // Backspace
             if (input_len > 0) {
@@ -167,15 +167,34 @@ char get_char() {
             }
         } else if (ascii == '\r' || ascii == '\n') {  // Enter
             input_buffer[input_len] = '\0';
-            input_len = 0;
-        } else if (ascii != 0 && input_len < sizeof(input_buffer) - 1) {  // Regular character
-            input_buffer[input_len] = ascii;
-            input_len++;
-            input_buffer[input_len] = '\0';
+            input_len = 0;  // Reset after Enter (optional based on your logic)
+        } else if (ascii != 0 && input_len < 256 - 1) {  // Regular character
+            input_buffer[input_len++] = ascii;
+            input_buffer[input_len] = '\0';  // Null-terminate the string
+        }
+    }
+
+    // Send an End of Interrupt (EOI) to the PIC
+    outb(0x20, 0x20);  // EOI for Master PIC (IRQ1)
+}
+
+char get_char() {
+    if (input_len > 0) {
+        // Return the first character from the buffer
+        char c = input_buffer[0];
+
+        // Shift the buffer to remove the processed character
+        for (uint8_t i = 1; i < input_len; i++) {
+            input_buffer[i - 1] = input_buffer[i];
         }
 
-        return ascii;
+        // Decrease the length of the buffer
+        input_len--;
+
+        return c;
     }
+
+    return 0;  // Return 0 if there's no input
 }
 
 void kernel_main() {
