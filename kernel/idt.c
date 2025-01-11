@@ -49,6 +49,20 @@ void set_idt_entry(int interrupt_number, void (*handler)()) {
     idt[interrupt_number].offset_high = ((uintptr_t)handler >> 16) & 0xFFFF;
 }
 
+void irq_clear_mask(uint8_t IRQline) {
+    uint16_t port;
+    uint8_t value;
+
+    if(IRQline < 8) {
+        port = 0x21;
+    } else {
+        port = 0xA1;
+        IRQline -= 8;
+    }
+    value = inb(port) & ~(1 << IRQline);
+    outb(port, value);        
+}
+
 // Function to initialize the IDT
 void init_idt() {
     print("Preparing IDT...\n");
@@ -101,7 +115,7 @@ void init_idt() {
 
     outb(0x21, 0xFF);  // Mask all IRQs on master PIC
     outb(0xA1, 0xFF);  // Mask all IRQs on slave PIC
-    outb(0x21, 0xFD);  // Unmask IRQ1 (keyboard)
+    irq_clear_mask(1); // Unmask IRQ1 (keyboard)
 
     print("OCW1 set...\n");
 
