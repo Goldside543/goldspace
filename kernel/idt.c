@@ -4,7 +4,7 @@
  *
  * Interrupt Descriptor Table.
  *
- * Copyright (C) 2024 Goldside543
+ * Copyright (C) 2024-2025 Goldside543
  *
  */
 
@@ -16,11 +16,7 @@
 #define IDT_ENTRIES 256
 
 extern void software_interrupt_handler();
-
-void keyboard_interrupt_handler() {
-    uint8_t scancode = inb(0x60); // Read scancode from the keyboard data port
-    outb(0x20, 0x20); // Acknowledge the interrupt to PIC (End of Interrupt)
-}
+extern void keyboard_isr();
 
 // Define the structure for an IDT entry
 struct idt_entry {
@@ -69,7 +65,7 @@ void init_idt() {
 
     print("Set system call handler.\n");
 
-    set_idt_entry(0x21, keyboard_interrupt_handler); // Hardware interrupt for keyboards
+    set_idt_entry(0x21, keyboard_isr); // Hardware interrupt for keyboards
 
     print("Set keyboard handler.\n");
 
@@ -105,7 +101,7 @@ void init_idt() {
 
     outb(0x21, 0xFF);  // Mask all IRQs on master PIC
     outb(0xA1, 0xFF);  // Mask all IRQs on slave PIC
-    outb(0x21, 0xFD);  // Unmask IRQ1 (keyboard)
+    outb(0x21, 0xFE);  // Unmask IRQ1 (keyboard)
 
     print("OCW1 set...\n");
 
