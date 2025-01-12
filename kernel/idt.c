@@ -12,11 +12,18 @@
 #include "interrupt.h"
 #include "print.h"
 #include "io.h"
+#include "process.h"
 
 #define IDT_ENTRIES 256
 
 extern void software_interrupt_handler();
 extern void keyboard_isr();
+
+void pit_isr() {
+    schedule();
+    outb(0x20, 0x20);
+    asm volatile("iret");
+}
 
 // Define the structure for an IDT entry
 struct idt_entry {
@@ -37,7 +44,8 @@ struct idt_pointer {
 struct idt_entry idt[IDT_ENTRIES];
 
 void default_handler(void) {
-   return;
+    outb(0x20, 0x20);
+    asm volatile("iret");
 }
 
 // Function to set an IDT entry
@@ -83,6 +91,10 @@ void init_idt() {
 
     print("Set keyboard handler.\n");
 
+    set_idt_entry(0x20, pit_isr); // Hardware interrupt for PIT
+
+    print("Set PIT handler.\n");
+
     // Prepare the IDT pointer
     struct idt_pointer idtp;
     idtp.limit = (sizeof(struct idt_entry) * IDT_ENTRIES) - 1; // Size of IDT - 1
@@ -116,6 +128,7 @@ void init_idt() {
     outb(0x21, 0xFF);  // Mask all IRQs on master PIC
     outb(0xA1, 0xFF);  // Mask all IRQs on slave PIC
     irq_clear_mask(1); // Unmask IRQ1 (keyboard)
+    irq_clear_mask(0); // Unmask IRQ0 (PIT)
 
     print("OCW1 set...\n");
 
