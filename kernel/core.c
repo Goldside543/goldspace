@@ -127,7 +127,6 @@ int input_len = 0;
 void keyboard_isr() {
     print("\n");
     print("Received interrupt from IRQ1.");
-    asm volatile("pusha");
     uint8_t scancode = inb(0x60);  // Read the scancode from the keyboard data port
     static bool extended = false;
 
@@ -180,7 +179,6 @@ void keyboard_isr() {
 
     // Send an End of Interrupt (EOI) to the PIC
     outb(0x20, 0x20);  // EOI for Master PIC (IRQ1)
-    asm volatile("popa");
     asm volatile("iret");
 }
 
