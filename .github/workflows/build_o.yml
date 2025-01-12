@@ -1,4 +1,4 @@
-name: Build and Upload Goldspace
+name: Build and Upload Goldspace | Optimized
 
 on:
   workflow_dispatch:
