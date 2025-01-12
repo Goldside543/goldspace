@@ -1,0 +1,30 @@
+name: Build and Upload Goldspace
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Add Rust target for i686
+      run: rustup target add i686-unknown-linux-gnu
+
+    - name: Set up dependencies
+      run: sudo apt-get update && sudo apt-get install -y build-essential nasm mtools xorriso
+
+    - name: Replace -g with -O3
+      run: sed -i 's/-g/-O3/g' Makefile
+
+    - name: Build ISO
+      run: make -j$(nproc)
+
+    - name: Upload ISO
+      uses: actions/upload-artifact@v4
+      with:
+        name: goldspace
+        path: goldspace.iso
