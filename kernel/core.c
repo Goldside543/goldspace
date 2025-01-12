@@ -201,6 +201,17 @@ char get_char() {
     return 0;  // Return 0 if there's no input
 }
 
+void setup_pit(uint16_t divisor) {
+    // Send the control byte to PIT to configure channel 0
+    outb(0x43, 0x36); // 0x36 is for channel 0, mode 3 (rate generator), binary counting
+
+    // Send the low byte of the divisor
+    outb(0x40, (uint8_t)(divisor & 0xFF));
+
+    // Send the high byte of the divisor
+    outb(0x40, (uint8_t)((divisor >> 8) & 0xFF));
+}
+
 void kernel_main() {
 
 /* There is an issue with the way the kernel handles input that causes
@@ -214,6 +225,8 @@ void kernel_main() {
     move_cursor();
 
     gdt_init();
+
+    setup_pit(4773);
 
     #if BFFS == 0 
         fs_init();
