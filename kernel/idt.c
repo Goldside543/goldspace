@@ -20,8 +20,10 @@ extern void software_interrupt_handler();
 extern void keyboard_isr();
 
 void pit_isr() {
+    asm volatile("pushad");
     schedule();
     outb(0x20, 0x20);
+    asm volatile("popad");
     asm volatile("iret");
 }
 
@@ -44,7 +46,9 @@ struct idt_pointer {
 struct idt_entry idt[IDT_ENTRIES];
 
 void default_handler(void) {
+    asm volatile("pushad");
     outb(0x20, 0x20);
+    asm volatile("popad");
     asm volatile("iret");
 }
 
