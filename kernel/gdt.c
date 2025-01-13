@@ -63,7 +63,7 @@ void flush_tss() {
         "mov %%ax, %[selector] \n\t" // Move selector to ax
         "ltr %%ax \n\t"              // Load TSS selector into the TSS register
         :
-        : [selector] "r"((5 * 8) | 0) // The TSS selector (5th entry in the GDT)
+        : [selector] "r"((uint16_t)((5 * 8) | 0)) // The TSS selector (5th entry in the GDT)
         : "%ax"                       // Mark ax as modified
     );
 }
