@@ -144,8 +144,6 @@ void gdt_init() {
     print("Successfully initialized TSS.\n");
     gdt_set_entry(5, (uint32_t)&tss, sizeof(struct tss_entry), 0x89, 0x40); // Access flags for TSS descriptor
     print("Set TSS descriptor.\n");
-    flush_tss();
-    print("Flushed TSS.\n");
 
     // Set up the GDT pointer
     gdtp.limit = (sizeof(gdt) - 1);
@@ -169,5 +167,7 @@ void gdt_init() {
         : "r" (&gdtp)
         : "memory"
     );
+    flush_tss();
+    print("Flushed TSS.\n");
     print("GDT loaded successfully.\n");
 }
