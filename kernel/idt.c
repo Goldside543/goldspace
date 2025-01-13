@@ -13,6 +13,7 @@
 #include "print.h"
 #include "io.h"
 #include "process.h"
+#include "panic.h"
 
 #define IDT_ENTRIES 256
 
@@ -25,6 +26,10 @@ void pit_isr() {
     outb(0x20, 0x20);
     asm volatile("popal");
     asm volatile("iret");
+}
+
+void gpf_handler() {
+    panic("General Protection Fault!");
 }
 
 // Define the structure for an IDT entry
@@ -98,6 +103,10 @@ void init_idt() {
     set_idt_entry(0x20, pit_isr); // Hardware interrupt for PIT
 
     print("Set PIT handler.\n");
+
+    set_idt_entry(0x0D, gpf_handler); // Fault handler for GPF
+
+    print("Set GPF handler.\n");
 
     // Prepare the IDT pointer
     struct idt_pointer idtp;
