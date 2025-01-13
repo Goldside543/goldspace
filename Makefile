@@ -135,7 +135,7 @@ security/aslr.o: security/aslr.c
 	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c security/aslr.c -o security/aslr.o
 
 kernel/tss.o: kernel/tss.s
-	$(AS) -o kernel/tss.o kernel/tss.s
+	$(AS) -32 -o kernel/tss.o kernel/tss.s
 
 clean:
 	rm -rf *.bin *.o *.iso isodir rust/target kernel/*.o drivers/*.o net/*.o kernel/kernel.bin fs/*.o mm/*.o ipc/*.o gash/*.o
