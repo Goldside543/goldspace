@@ -63,7 +63,7 @@ void flush_tss() {
         "mov %%ax, %[selector] \n\t" // Move selector to ax
         "ltr %%ax \n\t"              // Load TSS selector into the TSS register
         :
-        : [selector] "m"((5 * 8) | 0) // The TSS selector (5th entry in the GDT)
+        : [selector] "r"((5 * 8) | 0) // The TSS selector (5th entry in the GDT)
         : "%ax"                       // Mark ax as modified
     );
 }
@@ -138,7 +138,7 @@ void gdt_init() {
     print("Set user data segment.\n");
 
     // TSS descriptor (entry 5) - 0x28
-    kmemset(&tss_entry, 0, sizeof(struct tss_entry));
+    kmemset(&tss, 0, sizeof(struct tss_entry));
     tss_init();
     gdt_set_entry(5, (uint32_t)&tss, sizeof(struct tss_entry), 0x89, 0x40); // Access flags for TSS descriptor
     flush_tss();
