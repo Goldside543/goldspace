@@ -58,15 +58,7 @@ struct gdt_ptr gdtp;
 
 struct tss_entry tss;
 
-void flush_tss() {
-    asm volatile (
-        "movw %%ax, %[selector] \n\t" // Move selector to ax
-        "ltr %%ax \n\t"              // Load TSS selector into the TSS register
-        :
-        : [selector] "r"((uint16_t)((5 * 8) | 0)) // The TSS selector (5th entry in the GDT)
-        : "%ax"                       // Mark ax as modified
-    );
-}
+extern void flush_tss(void);
 
 uint8_t kernel_stack[8192] __attribute__((aligned(16)));  // Align to 16 bytes
 
@@ -167,7 +159,7 @@ void gdt_init() {
         : "r" (&gdtp)
         : "memory"
     );
-    // flush_tss();
-    // print("Flushed TSS.\n");
+    flush_tss();
+    print("Flushed TSS.\n");
     print("GDT loaded successfully.\n");
 }
