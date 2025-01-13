@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include "print.h"
+#include "../mm/memory.h"
 
 // GDT entries
 #define GDT_SIZE 6
@@ -57,10 +58,22 @@ struct gdt_ptr gdtp;
 
 struct tss_entry tss;
 
+void flush_tss() {
+    asm volatile (
+        "mov %%ax, %[selector] \n\t" // Move selector to ax
+        "ltr %%ax \n\t"              // Load TSS selector into the TSS register
+        :
+        : [selector] "m"((5 * 8) | 0) // The TSS selector (5th entry in the GDT)
+        : "%ax"                       // Mark ax as modified
+    );
+}
+
+uint8_t kernel_stack[8192];
+
 void tss_init() {
     // Initialize the TSS with default values (this will be a minimal setup)
     tss.prev_task_link = 0;
-    tss.esp0 = 0;  // Stack pointer for the kernel mode (this should point to the kernel stack)
+    tss.esp0 = (uint32_t)(&kernel_stack[8192]);  // Stack pointer for the kernel mode (this should point to the kernel stack)
     tss.ss0 = 0x10; // Kernel data segment
     tss.esp1 = 0;
     tss.ss1 = 0;
@@ -125,8 +138,10 @@ void gdt_init() {
     print("Set user data segment.\n");
 
     // TSS descriptor (entry 5) - 0x28
+    kmemset(&tss_entry, 0, sizeof(struct tss_entry));
     tss_init();
     gdt_set_entry(5, (uint32_t)&tss, sizeof(struct tss_entry), 0x89, 0x40); // Access flags for TSS descriptor
+    flush_tss();
     print("Set TSS descriptor.\n");
 
     // Set up the GDT pointer
