@@ -139,10 +139,13 @@ void gdt_init() {
 
     // TSS descriptor (entry 5) - 0x28
     kmemset(&tss, 0, sizeof(struct tss_entry));
+    print("Cleared TSS struct with kmemset.\n");
     tss_init();
+    print("Successfully initialized TSS.\n");
     gdt_set_entry(5, (uint32_t)&tss, sizeof(struct tss_entry), 0x89, 0x40); // Access flags for TSS descriptor
-    flush_tss();
     print("Set TSS descriptor.\n");
+    flush_tss();
+    print("Flushed TSS.\n");
 
     // Set up the GDT pointer
     gdtp.limit = (sizeof(gdt) - 1);
