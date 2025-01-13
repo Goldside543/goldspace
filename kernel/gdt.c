@@ -73,7 +73,7 @@ void tss_init() {
     tss.ss2 = 0;
     tss.cr3 = 0;    // Page directory pointer (use virtual address for paging if needed)
     tss.eip = 0;
-    tss.eflags = 0x202;  // Interrupt flag set (IF = 1)
+    tss.eflags = 0x0;
     // General-purpose registers (can be set to 0 for now)
     tss.eax = 0;
     tss.ecx = 0;
