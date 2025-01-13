@@ -2,7 +2,7 @@
 
 LD = ld 		# Edit this to change the linker
 CC = gcc		# Edit this to change the C compiler
-AS = nasm		# For now, nasm is the only option
+AS = as			# For now, as is the only option
 ARCH = -m32		# 64-bit support is lackluster, so only -m32 is gonna work
 LD_ARCH = -m elf_i386	# Architecture used in linker
 DEBUG = -g		# Just remove -g and debug symbols will be disabled, making a smaller kernel binary
@@ -133,6 +133,9 @@ kernel/gdt.o: kernel/gdt.c
 
 security/aslr.o: security/aslr.c
 	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c security/aslr.c -o security/aslr.o
+
+kernel/tss.o: kernel/tss.s
+	$(AS) -o kernel/tss.o kernel/tss.c
 
 clean:
 	rm -rf *.bin *.o *.iso isodir rust/target kernel/*.o drivers/*.o net/*.o kernel/kernel.bin fs/*.o mm/*.o ipc/*.o gash/*.o
