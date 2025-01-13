@@ -2,7 +2,7 @@
 
 LD = ld 		# Edit this to change the linker
 CC = gcc		# Edit this to change the C compiler
-AS = nasm		# For now, nasm is the only option
+AS = as			# For now, as is the only option
 ARCH = -m32		# 64-bit support is lackluster, so only -m32 is gonna work
 LD_ARCH = -m elf_i386	# Architecture used in linker
 DEBUG = -g		# Just remove -g and debug symbols will be disabled, making a smaller kernel binary
@@ -14,17 +14,14 @@ RUSTFLAGS = -A warnings # Here because Rust wouldn't shut the frick (keeping it 
 
 all: goldspace.iso
 
-goldspace.iso: boot/boot.bin kernel/kernel.bin
+goldspace.iso: kernel/kernel.bin
 	mkdir -p isodir/boot/grub
 	cp kernel/kernel.bin isodir/boot/
 	cp grub.cfg isodir/boot/grub/
 	grub-mkrescue -o goldspace.iso isodir
 
-boot/boot.bin: boot/boot.asm
-	$(AS) -f bin boot/boot.asm -o boot/boot.bin
-
-kernel/kernel.bin: kernel/kernel.o rust/target/i686-unknown-linux-gnu/release/libgoldspacerust.a gash/shell.o kernel/string.o fs/bffs/bffs.o net/net-io.o drivers/rtl8139.o net/sockets.o net/arp.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o fs/fs_syscalls.o kernel/execute.o kernel/process.o ipc/ipc.o kernel/panic.o kernel/v86.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o fs/fat32/fat32.o drivers/pci.o security/aslr.o kernel/gdt.o
-	$(LD) $(DEBUG) $(LD_ARCH) -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/bffs/bffs.o net/net-io.o drivers/rtl8139.o net/sockets.o net/arp.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o fs/fs_syscalls.o kernel/execute.o kernel/process.o rust/target/i686-unknown-linux-gnu/release/libgoldspacerust.a ipc/ipc.o kernel/panic.o kernel/v86.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o fs/fat32/fat32.o drivers/pci.o security/aslr.o kernel/gdt.o
+kernel/kernel.bin: kernel/kernel.o rust/target/i686-unknown-linux-gnu/release/libgoldspacerust.a gash/shell.o kernel/string.o fs/bffs/bffs.o net/net-io.o drivers/rtl8139.o net/sockets.o net/arp.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o fs/fs_syscalls.o kernel/execute.o kernel/process.o ipc/ipc.o kernel/panic.o kernel/v86.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o fs/fat32/fat32.o drivers/pci.o security/aslr.o kernel/gdt.o kernel/tss.o
+	$(LD) $(DEBUG) $(LD_ARCH) -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/bffs/bffs.o net/net-io.o drivers/rtl8139.o net/sockets.o net/arp.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o fs/fs_syscalls.o kernel/execute.o kernel/process.o rust/target/i686-unknown-linux-gnu/release/libgoldspacerust.a ipc/ipc.o kernel/panic.o kernel/v86.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o fs/fat32/fat32.o drivers/pci.o security/aslr.o kernel/gdt.o kernel/tss.o
 
 kernel/kernel.o: kernel/core.c
 	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c kernel/core.c -o kernel/kernel.o
@@ -137,5 +134,8 @@ kernel/gdt.o: kernel/gdt.c
 security/aslr.o: security/aslr.c
 	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c security/aslr.c -o security/aslr.o
 
+kernel/tss.o: kernel/tss.s
+	$(AS) -o kernel/tss.o kernel/tss.c
+
 clean:
-	rm -rf *.bin *.o *.iso isodir rust/target kernel/*.o drivers/*.o net/*.o kernel/kernel.bin boot/boot.bin fs/*.o mm/*.o ipc/*.o gash/*.o
+	rm -rf *.bin *.o *.iso isodir rust/target kernel/*.o drivers/*.o net/*.o kernel/kernel.bin fs/*.o mm/*.o ipc/*.o gash/*.o
