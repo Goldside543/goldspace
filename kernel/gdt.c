@@ -167,7 +167,7 @@ void gdt_init() {
         : "r" (&gdtp)
         : "memory"
     );
-    flush_tss();
-    print("Flushed TSS.\n");
+    // flush_tss();
+    // print("Flushed TSS.\n");
     print("GDT loaded successfully.\n");
 }
