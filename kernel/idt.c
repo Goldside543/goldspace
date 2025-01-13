@@ -87,13 +87,6 @@ void irq_clear_mask(uint8_t IRQline) {
 // Function to initialize the IDT
 void init_idt() {
     print("Preparing IDT...\n");
-    
-    // Initialize all IDT entries to default handler
-    for (int i = 0; i < IDT_ENTRIES; i++) {
-        set_idt_entry(i, default_handler); // Set all to a default handler initially
-    }
-
-    print("Set default handler.\n");
 
     // Set specific IDT entries (e.g., software interrupt)
     set_idt_entry(0x80, software_interrupt_handler); // Software interrupt for syscalls
