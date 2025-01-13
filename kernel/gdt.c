@@ -60,7 +60,7 @@ struct tss_entry tss;
 
 void flush_tss() {
     asm volatile (
-        "mov %%ax, %[selector] \n\t" // Move selector to ax
+        "movw %%ax, %[selector] \n\t" // Move selector to ax
         "ltr %%ax \n\t"              // Load TSS selector into the TSS register
         :
         : [selector] "r"((uint16_t)((5 * 8) | 0)) // The TSS selector (5th entry in the GDT)
@@ -68,7 +68,7 @@ void flush_tss() {
     );
 }
 
-uint8_t kernel_stack[8192];
+uint8_t kernel_stack[8192] __attribute__((aligned(16)));  // Align to 16 bytes
 
 void tss_init() {
     // Initialize the TSS with default values (this will be a minimal setup)
