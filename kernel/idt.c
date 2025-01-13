@@ -32,6 +32,10 @@ void gpf_handler() {
     panic("General Protection Fault!");
 }
 
+void df_handler() {
+    panic("Double Fault!");
+}
+
 // Define the structure for an IDT entry
 struct idt_entry {
     uint16_t offset_low;   // Lower 16 bits of the handler function's address
@@ -107,6 +111,10 @@ void init_idt() {
     set_idt_entry(0x0D, gpf_handler); // Fault handler for GPF
 
     print("Set GPF handler.\n");
+
+    set_idt_entry(0x08, df_handler); // Fault handler for DF
+
+    print("Set DF handler.\n");
 
     // Prepare the IDT pointer
     struct idt_pointer idtp;
