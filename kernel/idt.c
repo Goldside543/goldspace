@@ -19,6 +19,7 @@
 
 extern void software_interrupt_handler();
 extern void keyboard_isr_wrapper(void);
+extern void pit_isr_wrapper(void);
 
 void pit_isr() {
     asm volatile("pushal");
@@ -105,7 +106,7 @@ void init_idt() {
 
     print("Set keyboard handler.\n");
 
-    set_idt_entry(0x20, pit_isr); // Hardware interrupt for PIT
+    set_idt_entry(0x20, pit_isr_wrapper); // Hardware interrupt for PIT
 
     print("Set PIT handler.\n");
 
