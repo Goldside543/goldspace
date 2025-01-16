@@ -125,8 +125,6 @@ char input_buffer[256];
 int input_len = 0;
 
 void keyboard_isr() {
-    print("\n");
-    print("Received interrupt from IRQ1.");
     uint8_t scancode = inb(0x60);  // Read the scancode from the keyboard data port
     static bool extended = false;
 
