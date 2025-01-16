@@ -21,11 +21,6 @@ extern void software_interrupt_handler();
 extern void keyboard_isr_wrapper(void);
 extern void pit_isr_wrapper(void);
 
-void pit_isr() {
-    schedule();
-    outb(0x20, 0x20);
-}
-
 void gpf_handler() {
     panic("General Protection Fault!");
 }
@@ -88,6 +83,12 @@ void irq_clear_mask(uint8_t IRQline) {
     }
     value = inb(port) & ~(1 << IRQline);
     outb(port, value);        
+}
+
+void pit_isr() {
+    schedule();
+    irq_clear_mask(1);
+    outb(0x20, 0x20);
 }
 
 // Function to initialize the IDT
