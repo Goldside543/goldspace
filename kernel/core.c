@@ -171,7 +171,7 @@ void keyboard_isr() {
                 break;
         }
     } else {
-        // Convert scan code to ASCII (this part is the same as your original logic)
+        // Convert scan code to ASCII
         char ascii = scancode_to_ascii_table[scancode];
         
         // Handle special characters
@@ -182,7 +182,7 @@ void keyboard_isr() {
             }
         } else if (ascii == '\r' || ascii == '\n') {  // Enter
             input_buffer[input_len] = '\0';
-            input_len = 0;  // Reset after Enter (optional based on your logic)
+            input_len = 0;  // Reset after Enter
         } else if (ascii != 0 && input_len < 256 - 1) {  // Regular character
             input_buffer[input_len++] = ascii;
             input_buffer[input_len] = '\0';  // Null-terminate the string
@@ -191,7 +191,6 @@ void keyboard_isr() {
 
     // Send an End of Interrupt (EOI) to the PIC
     outb(0x20, 0x20);  // EOI for Master PIC (IRQ1)
-    irq_set_mask(1);
 }
 
 char get_char() {
@@ -300,6 +299,10 @@ void kernel_main() {
       while (1) {
            char command[256];
            size_t command_len = 0;
+
+           if (input_len == 0) {
+                asm volatile("hlt");
+           }
 
            // Read user input
            print("> ");
