@@ -87,7 +87,6 @@ void irq_clear_mask(uint8_t IRQline) {
 
 void pit_isr() {
     schedule();
-    irq_clear_mask(1);
     outb(0x20, 0x20);
 }
 
