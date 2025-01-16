@@ -65,7 +65,7 @@ uint8_t kernel_stack[8192] __attribute__((aligned(16)));  // Align to 16 bytes
 void tss_init() {
     // Initialize the TSS with default values (this will be a minimal setup)
     tss.prev_task_link = 0;
-    tss.esp0 = (uint32_t)(&kernel_stack[8192]);  // Stack pointer for the kernel mode (this should point to the kernel stack)
+    tss.esp0 = (uint32_t)(&kernel_stack[8192 - sizeof(uint32_t)]);  // Stack pointer for the kernel mode (this should point to the kernel stack)
     tss.ss0 = 0x10; // Kernel data segment
     tss.esp1 = 0;
     tss.ss1 = 0;
