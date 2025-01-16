@@ -179,7 +179,7 @@ void keyboard_isr() {
 
     // Send an End of Interrupt (EOI) to the PIC
     outb(0x20, 0x20);  // EOI for Master PIC (IRQ1)
-    asm volatile("iret");
+    asm volatile("iretd");
 }
 
 char get_char() {
