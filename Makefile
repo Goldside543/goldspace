@@ -137,5 +137,8 @@ security/aslr.o: security/aslr.c
 kernel/tss.o: kernel/tss.s
 	$(AS) -32 -o kernel/tss.o kernel/tss.s
 
+kernel/keyboard_isr_wrapper.o: kernel/keyboard_isr_wrapper.s
+	$(AS) -32 -o kernel/keyboard_isr_wrapper.o kernel/keyboard_isr_wrapper.s
+
 clean:
 	rm -rf *.bin *.o *.iso isodir rust/target kernel/*.o drivers/*.o net/*.o kernel/kernel.bin fs/*.o mm/*.o ipc/*.o gash/*.o
