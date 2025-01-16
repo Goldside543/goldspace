@@ -149,7 +149,6 @@ void keyboard_isr() {
 
     if (scancode & 0x80) {  // If it's a key release event
         extended = false;
-        return;
     }
 
     if (extended) {  // Handle extended scan codes
