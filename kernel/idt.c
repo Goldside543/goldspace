@@ -18,7 +18,7 @@
 #define IDT_ENTRIES 256
 
 extern void software_interrupt_handler();
-extern void keyboard_isr();
+extern void keyboard_isr_wrapper(void);
 
 void pit_isr() {
     asm volatile("pushal");
@@ -101,7 +101,7 @@ void init_idt() {
 
     print("Set system call handler.\n");
 
-    set_idt_entry(0x21, keyboard_isr); // Hardware interrupt for keyboards
+    set_idt_entry(0x21, keyboard_isr_wrapper); // Hardware interrupt for keyboards
 
     print("Set keyboard handler.\n");
 
