@@ -22,11 +22,8 @@ extern void keyboard_isr_wrapper(void);
 extern void pit_isr_wrapper(void);
 
 void pit_isr() {
-    asm volatile("pushal");
     schedule();
     outb(0x20, 0x20);
-    asm volatile("popal");
-    asm volatile("iret");
 }
 
 void gpf_handler() {
