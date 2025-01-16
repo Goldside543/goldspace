@@ -70,6 +70,14 @@ void set_idt_entry(int interrupt_number, void (*handler)()) {
     idt[interrupt_number].offset_high = ((uintptr_t)handler >> 16) & 0xFFFF;
 }
 
+void set_idt_entry_exception(int exception_number, void (*handler)()) {
+    idt[exception_number].offset_low = (uintptr_t)handler & 0xFFFF;
+    idt[exception_number].selector = 0x08; // Kernel code segment selector
+    idt[exception_number].zero = 0;
+    idt[exception_number].type_attr = 0x8F; // Present, DPL=0, 32-bit trap gate
+    idt[exception_number].offset_high = ((uintptr_t)handler >> 16) & 0xFFFF;
+}
+
 void irq_clear_mask(uint8_t IRQline) {
     uint16_t port;
     uint8_t value;
@@ -101,11 +109,11 @@ void init_idt() {
 
     print("Set PIT handler.\n");
 
-    set_idt_entry(0x0D, gpf_handler); // Fault handler for GPF
+    set_idt_entry_exception(0x0D, gpf_handler); // Fault handler for GPF
 
     print("Set GPF handler.\n");
 
-    set_idt_entry(0x08, df_handler); // Fault handler for DF
+    set_idt_entry_exception(0x08, df_handler); // Fault handler for DF
 
     print("Set DF handler.\n");
 
