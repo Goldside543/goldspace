@@ -124,6 +124,20 @@ char scancode_to_ascii_table[128] = {
 char input_buffer[256];
 int input_len = 0;
 
+void irq_set_mask(uint8_t IRQline) {
+    uint16_t port;
+    uint8_t value;
+
+    if(IRQline < 8) {
+        port = 0x21;
+    } else {
+        port = 0xA1;
+        IRQline -= 8;
+    }
+    value = inb(port) | (1 << IRQline);
+    outb(port, value);        
+}
+
 void keyboard_isr() {
     uint8_t scancode = inb(0x60);  // Read the scancode from the keyboard data port
     static bool extended = false;
@@ -177,6 +191,7 @@ void keyboard_isr() {
 
     // Send an End of Interrupt (EOI) to the PIC
     outb(0x20, 0x20);  // EOI for Master PIC (IRQ1)
+    irq_set_mask(1);
 }
 
 char get_char() {
