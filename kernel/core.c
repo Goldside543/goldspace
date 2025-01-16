@@ -149,6 +149,7 @@ void keyboard_isr() {
 
     if (scancode & 0x80) {  // If it's a key release event
         extended = false;
+        return;  // Ignore the key release event for now
     }
 
     if (extended) {  // Handle extended scan codes
@@ -170,9 +171,14 @@ void keyboard_isr() {
                 break;
         }
     } else {
-        // Convert scan code to ASCII
+        // Convert scancode to ASCII
         char ascii = scancode_to_ascii_table[scancode];
         
+        // Ensure that only valid ASCII characters are processed
+        if (ascii == 0) {
+            return;  // If invalid, simply ignore the scancode
+        }
+
         // Handle special characters
         if (ascii == '\b') {  // Backspace
             if (input_len > 0) {
