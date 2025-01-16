@@ -47,7 +47,16 @@ void clear_vmemory() {
 void clear_screen() {
     uint8_t* screen = (uint8_t*)VGA_MEMORY;
     for (int i = 0; i < (MODE_13H_WIDTH * MODE_13H_HEIGHT); i++) {
-        screen[i] = 1; // Clear to color 1
+        screen[i] = 0; // Clear to color 0
+    }
+}
+
+void set_palette() {
+    // Set a basic 256-color palette
+    for (int i = 0; i < 256; i++) {
+        // Write color values to the palette registers
+        outb(VGA_AC_INDEX, 0x00);  // Select color index
+        outb(VGA_AC_WRITE, i);      // Set the color
     }
 }
 
@@ -76,15 +85,41 @@ void set_mode_13h() {
 
     // Configure CRTC registers
     static const uint8_t crtc_values[] = {
-        0x5F, 0x4F, 0x50, 0x82, 0x54, 0x80, 0xBF, 0x1F,
-        0x00, 0x41, 0x0D, 0x0E, 0x00, 0x00, 0x00, 0x00,
-        0x9C, 0x0E, 0x8F, 0x28, 0x40, 0x96, 0xB9, 0xA3,
-        0xFF
+    0x5F,  // Horizontal Total
+    0x4F,  // Horizontal Displayed
+    0x50,  // Horizontal Sync Position
+    0x82,  // Sync Width
+    0x54,  // Vertical Total
+    0x80,  // Vertical Displayed
+    0xBF,  // Vertical Sync Position
+    0x1F,  // Sync Height
+    0x00,  // Vertical Sync Start
+    0x41,  // Vertical Sync End
+    0x0D,  // Vertical Total Adjust
+    0x0E,  // Horizontal Scroll
+    0x00,  // Reserved
+    0x00,  // Reserved
+    0x00,  // Reserved
+    0x00,  // Reserved
+    0x9C,  // Start Address High
+    0x0E,  // Start Address Low
+    0x8F,  // Cursor Start
+    0x28,  // Cursor End
+    0x40,  // Display Start
+    0x96,  // Video Memory Start Address
+    0xB9,  // Video Memory End Address
+    0xA3,  // Reserved
+    0xFF   // Reserved
     };
+
     for (int i = 0; i < 25; i++) {
         outb(VGA_CRTC_INDEX, i);
         outb(VGA_CRTC_DATA, crtc_values[i]);
     }
+
+    // Lock CRTC registers
+    outb(VGA_CRTC_INDEX, 0x11);
+    outb(VGA_CRTC_DATA, inb(VGA_CRTC_DATA) | 0x80); // Set bit 7 to lock
 
     // Graphics controller settings
     outb(VGA_GC_INDEX, 0x00);  // Set/reset
@@ -114,6 +149,8 @@ void set_mode_13h() {
         outb(VGA_AC_WRITE, i & 0x0F);  // Enable intensity bit
     }
     outb(VGA_AC_INDEX, 0x20);  // End attribute controller sequence
+
+    set_palette();
 
     // Clear the screen
     clear_screen();
