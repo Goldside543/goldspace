@@ -139,11 +139,11 @@ void irq_set_mask(uint8_t IRQline) {
 }
 
 char keyboard_isr() {
-    while (!(inb(0x64) & 0x01)) {
-    // Wait for the keyboard output buffer to be ready
+    if ((inb(0x64) & 1) == 0) {
+        return;
     }
-    
-    uint8_t scancode = inb(0x60);  // Read the scancode from the keyboard data port
+
+    uint8_t scancode = inb(0x60);
     static bool extended = false;
     char ascii = 0;
 
