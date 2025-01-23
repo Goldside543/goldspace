@@ -185,9 +185,6 @@ char keyboard_isr() {
             input_buffer[input_len] = '\0';
         }
     }
-
-    // Send an End of Interrupt (EOI) to the PIC
-    outb(0x20, 0x20);  // EOI for Master PIC (IRQ1)
 }
 
 char get_char() {
