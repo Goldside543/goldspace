@@ -141,6 +141,7 @@ void irq_set_mask(uint8_t IRQline) {
 void keyboard_isr() {
     uint8_t scancode = inb(0x60);  // Read the scancode from the keyboard data port
     static bool extended = false;
+    char ascii = 0;
 
     if (scancode == 0xE0) {  // If it's the first byte of a multi-byte scan code
         extended = true;
