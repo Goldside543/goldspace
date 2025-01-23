@@ -140,7 +140,7 @@ void irq_set_mask(uint8_t IRQline) {
 
 char keyboard_isr() {
     if ((inb(0x64) & 1) == 0) {
-        return;
+        return 0;
     }
 
     uint8_t scancode = inb(0x60);
