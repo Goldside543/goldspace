@@ -138,7 +138,7 @@ void irq_set_mask(uint8_t IRQline) {
     outb(port, value);        
 }
 
-void keyboard_isr() {
+char keyboard_isr() {
     uint8_t scancode = inb(0x60);  // Read the scancode from the keyboard data port
     static bool extended = false;
     char ascii = 0;
