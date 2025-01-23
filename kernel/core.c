@@ -142,42 +142,28 @@ void keyboard_isr() {
     uint8_t scancode = inb(0x60);  // Read the scancode from the keyboard data port
     static bool extended = false;
 
-    if (scancode == 0xE0) {  // If it's the first byte of a multi-byte scan code
+        if (scancode == 0xE0) {  // If it's the first byte of a multi-byte scan code
         extended = true;
-        return;
+        return 0;
     }
 
     if (scancode & 0x80) {  // If it's a key release event
-        extended = false;
-        return;  // Ignore the key release event for now
+        extended = false;  // Reset the extended flag
+        return 0;
     }
 
     if (extended) {  // Handle extended scan codes
         extended = false;
         switch (scancode) {
-            case 0x48:  // Up arrow
-                input_buffer[input_len++] = 'U';
-                break;
-            case 0x50:  // Down arrow
-                input_buffer[input_len++] = 'D';
-                break;
-            case 0x4B:  // Left arrow
-                input_buffer[input_len++] = 'L';
-                break;
-            case 0x4D:  // Right arrow
-                input_buffer[input_len++] = 'R';
-                break;
-            default:
-                break;
+            case 0x48: return 'U';  // Up arrow
+            case 0x50: return 'D';  // Down arrow
+            case 0x4B: return 'L';  // Left arrow
+            case 0x4D: return 'R';  // Right arrow
+            default: return 0;
         }
     } else {
-        // Convert scancode to ASCII
-        char ascii = scancode_to_ascii_table[scancode];
-        
-        // Ensure that only valid ASCII characters are processed
-        if (ascii == 0) {
-            return;  // If invalid, simply ignore the scancode
-        }
+        // Convert scan code to ASCII
+        ascii = scancode_to_ascii_table[scancode];
 
         // Handle special characters
         if (ascii == '\b') {  // Backspace
@@ -187,10 +173,11 @@ void keyboard_isr() {
             }
         } else if (ascii == '\r' || ascii == '\n') {  // Enter
             input_buffer[input_len] = '\0';
-            input_len = 0;  // Reset after Enter
-        } else if (ascii != 0 && input_len < 256 - 1) {  // Regular character
-            input_buffer[input_len++] = ascii;
-            input_buffer[input_len] = '\0';  // Null-terminate the string
+            input_len = 0;
+        } else if (ascii != 0 && input_len < sizeof(input_buffer) - 1) {  // Regular character
+            input_buffer[input_len] = ascii;
+            input_len++;
+            input_buffer[input_len] = '\0';
         }
     }
 
