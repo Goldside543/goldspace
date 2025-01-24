@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
 .global pit_isr_wrapper
 
 pit_isr_wrapper:
