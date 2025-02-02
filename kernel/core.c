@@ -189,12 +189,15 @@ char keyboard_isr() {
 
 char get_char() {
     if (input_len > 0) {
-        char c = input_buffer[0];
-	input_len--;
-	return c;
+        char c = input_buffer[0];  // Read the first character in the buffer
+        for (int i = 0; i < input_len - 1; i++) {
+            input_buffer[i] = input_buffer[i + 1];  // Shift the buffer left
+        }
+        input_len--;  // Decrement length after reading
+        return c;
     }
 
-    return 0;
+    return 0;  // Return 0 if the buffer is empty
 }
 
 void setup_pit(uint16_t divisor) {
