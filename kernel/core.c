@@ -190,6 +190,7 @@ char keyboard_isr() {
 char get_char() {
     if (input_len > 0) {
         char c = input_buffer[0];
+	input_len--;
 	return c;
     }
 
