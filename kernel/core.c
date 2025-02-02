@@ -123,6 +123,8 @@ char scancode_to_ascii_table[128] = {
 
 char input_buffer[256];
 int input_len = 0;
+static bool backspace_flag = false;
+static bool enter_flag = false;
 
 void irq_set_mask(uint8_t IRQline) {
     uint16_t port;
@@ -179,6 +181,7 @@ char keyboard_isr() {
         } else if (ascii == '\r' || ascii == '\n') {  // Enter
             input_buffer[input_len] = '\0';
             input_len = 0;
+            enter_flag = true;
         } else if (ascii != 0 && input_len < sizeof(input_buffer) - 1) {  // Regular character
             input_buffer[input_len] = ascii;
             input_len++;
@@ -296,8 +299,9 @@ void kernel_main() {
            print("> ");
            while (1) {
                char c = get_char();
-               if (c == '\n' || c == '\r') {
+               if (enter_flag == true) {
                    command[command_len] = '\0';  // Null-terminate the command string
+                   enter_flag = false;
                    break;
                } else if (command_len < sizeof(command) - 1 && c != 0) {
                    command[command_len++] = c;
