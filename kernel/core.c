@@ -12,6 +12,7 @@
 void kernel_main();  // Forward declaration
 static bool use_keyboard_driver = false;  // This will be set in usb_init()
 void protect_tsc(void);
+void protect_iopl(void);
 
 #include <stddef.h>
 #include <stdint.h>
@@ -258,6 +259,8 @@ void kernel_main() {
     init_random_seed();
 
     protect_tsc();
+
+    protect_iopl();
 
     static unsigned int io_base;
 
