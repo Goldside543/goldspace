@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-only
 
-LD = i686-linux-gnu-ld 			# Edit this to change the linker
-CC = i686-linux-gnu-gcc --std=gnu17		# Edit this to change the C compiler
+LD = ld 			# Edit this to change the linker
+CC = gcc --std=gnu17		# Edit this to change the C compiler
 AS = as				# For now, as is the only option
 ARCH = -m32			# 64-bit support is lackluster, so only -m32 is gonna work
 LD_ARCH = -m elf_i386		# Architecture used in linker
@@ -21,7 +21,7 @@ goldspace.iso: kernel/kernel.bin
 	grub-mkrescue -o goldspace.iso isodir
 
 kernel/kernel.bin: kernel/kernel.o rust/target/i686-unknown-linux-gnu/release/libgoldspacerust.a gash/shell.o kernel/string.o fs/bffs/bffs.o net/net-io.o drivers/rtl8139.o net/sockets.o net/arp.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o fs/fs_syscalls.o kernel/execute.o kernel/process.o ipc/ipc.o kernel/panic.o kernel/v86.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o fs/fat32/fat32.o drivers/pci.o security/aslr.o kernel/gdt.o kernel/tss.o kernel/keyboard_isr_wrapper.o kernel/pit_isr_wrapper.o kernel/privileges.o
-	$(LD) $(DEBUG) $(LD_ARCH) -T kernel/linker.i686-linux-gnu-ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/bffs/bffs.o net/net-io.o drivers/rtl8139.o net/sockets.o net/arp.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o fs/fs_syscalls.o kernel/execute.o kernel/process.o rust/target/i686-unknown-linux-gnu/release/libgoldspacerust.a ipc/ipc.o kernel/panic.o kernel/v86.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o fs/fat32/fat32.o drivers/pci.o security/aslr.o kernel/gdt.o kernel/tss.o kernel/keyboard_isr_wrapper.o kernel/pit_isr_wrapper.o kernel/privileges.o
+	$(LD) $(DEBUG) $(LD_ARCH) -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/bffs/bffs.o net/net-io.o drivers/rtl8139.o net/sockets.o net/arp.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o fs/fs_syscalls.o kernel/execute.o kernel/process.o rust/target/i686-unknown-linux-gnu/release/libgoldspacerust.a ipc/ipc.o kernel/panic.o kernel/v86.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o fs/fat32/fat32.o drivers/pci.o security/aslr.o kernel/gdt.o kernel/tss.o kernel/keyboard_isr_wrapper.o kernel/pit_isr_wrapper.o kernel/privileges.o
 
 kernel/kernel.o: kernel/core.c
 	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c kernel/core.c -o kernel/kernel.o
