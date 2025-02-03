@@ -11,6 +11,7 @@
 #include <stdbool.h>
 void kernel_main();  // Forward declaration
 static bool use_keyboard_driver = false;  // This will be set in usb_init()
+void protect_tsc(void);
 
 #include <stddef.h>
 #include <stdint.h>
@@ -230,7 +231,7 @@ void kernel_main() {
 
     setup_pit(4773);
 
-    #if BFFS == 0 
+    #if BFFS == 0
         fs_init();
     #elif BFFS == 1
         fat32_mount();
@@ -255,6 +256,8 @@ void kernel_main() {
     init_graphics();
 
     init_random_seed();
+
+    protect_tsc();
 
     static unsigned int io_base;
 
