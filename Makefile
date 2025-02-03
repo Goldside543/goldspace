@@ -1,13 +1,13 @@
 # SPDX-License-Identifier: GPL-2.0-only
 
-LD = ld 		# Edit this to change the linker
-CC = gcc		# Edit this to change the C compiler
-AS = as			# For now, as is the only option
-ARCH = -m32		# 64-bit support is lackluster, so only -m32 is gonna work
-LD_ARCH = -m elf_i386	# Architecture used in linker
-DEBUG = -g		# Just remove -g and debug symbols will be disabled, making a smaller kernel binary
-WARNINGS = -Werror	# If you want to see warnings, use -Wall here, I guess
-RUSTFLAGS = -A warnings # Here because Rust wouldn't shut the frick (keeping it PG-13) up about warnings
+LD = ld 			# Edit this to change the linker
+CC = gcc --std=gnu17		# Edit this to change the C compiler
+AS = as				# For now, as is the only option
+ARCH = -m32			# 64-bit support is lackluster, so only -m32 is gonna work
+LD_ARCH = -m elf_i386		# Architecture used in linker
+DEBUG = -g			# Just remove -g and debug symbols will be disabled, making a smaller kernel binary
+WARNINGS = -Werror		# If you want to see warnings, use -Wall here, I guess
+RUSTFLAGS = -A warnings 	# Here because Rust wouldn't shut the frick (keeping it PG-13) up about warnings
 
 .PHONY: clean
 .PHONY: all
