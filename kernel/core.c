@@ -257,7 +257,7 @@ void kernel_main() {
 
     init_random_seed();
 
-    protect_tsc();
+    // protect_tsc();
 
     static unsigned int io_base;
 
