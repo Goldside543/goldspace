@@ -4,7 +4,7 @@
  *
  * Interrupt Descriptor Table.
  *
- * Copyright (C) 2024 Goldside543
+ * Copyright (C) 2024-2025 Goldside543
  *
  */
 
@@ -12,14 +12,21 @@
 #include "interrupt.h"
 #include "print.h"
 #include "io.h"
+#include "process.h"
+#include "panic.h"
 
 #define IDT_ENTRIES 256
 
 extern void software_interrupt_handler();
+extern void keyboard_isr_wrapper(void);
+extern void pit_isr_wrapper(void);
 
-void keyboard_interrupt_handler() {
-    uint8_t scancode = inb(0x60); // Read scancode from the keyboard data port
-    outb(0x20, 0x20); // Acknowledge the interrupt to PIC (End of Interrupt)
+void gpf_handler() {
+    panic("General Protection Fault!");
+}
+
+void df_handler() {
+    panic("Double Fault!");
 }
 
 // Define the structure for an IDT entry
@@ -41,7 +48,10 @@ struct idt_pointer {
 struct idt_entry idt[IDT_ENTRIES];
 
 void default_handler(void) {
-   return;
+    asm volatile("pushal");
+    outb(0x20, 0x20);
+    asm volatile("popal");
+    asm volatile("iret");
 }
 
 // Function to set an IDT entry
@@ -53,25 +63,57 @@ void set_idt_entry(int interrupt_number, void (*handler)()) {
     idt[interrupt_number].offset_high = ((uintptr_t)handler >> 16) & 0xFFFF;
 }
 
+void set_idt_entry_exception(int exception_number, void (*handler)()) {
+    idt[exception_number].offset_low = (uintptr_t)handler & 0xFFFF;
+    idt[exception_number].selector = 0x08; // Kernel code segment selector
+    idt[exception_number].zero = 0;
+    idt[exception_number].type_attr = 0x8F; // Present, DPL=0, 32-bit trap gate
+    idt[exception_number].offset_high = ((uintptr_t)handler >> 16) & 0xFFFF;
+}
+
+void irq_clear_mask(uint8_t IRQline) {
+    uint16_t port;
+    uint8_t value;
+
+    if(IRQline < 8) {
+        port = 0x21;
+    } else {
+        port = 0xA1;
+        IRQline -= 8;
+    }
+    value = inb(port) & ~(1 << IRQline);
+    outb(port, value);        
+}
+
+void pit_isr() {
+    schedule();
+    outb(0x20, 0x20);
+}
+
 // Function to initialize the IDT
 void init_idt() {
     print("Preparing IDT...\n");
-    
-    // Initialize all IDT entries to default handler
-    for (int i = 0; i < IDT_ENTRIES; i++) {
-        set_idt_entry(i, default_handler); // Set all to a default handler initially
-    }
-
-    print("Set default handler.\n");
 
     // Set specific IDT entries (e.g., software interrupt)
     set_idt_entry(0x80, software_interrupt_handler); // Software interrupt for syscalls
 
     print("Set system call handler.\n");
 
-    set_idt_entry(0x21, keyboard_interrupt_handler); // Hardware interrupt for keyboards
+    set_idt_entry(0x21, keyboard_isr_wrapper); // Hardware interrupt for keyboards
 
     print("Set keyboard handler.\n");
+
+    set_idt_entry(0x20, pit_isr_wrapper); // Hardware interrupt for PIT
+
+    print("Set PIT handler.\n");
+
+    set_idt_entry_exception(0x0D, gpf_handler); // Fault handler for GPF
+
+    print("Set GPF handler.\n");
+
+    set_idt_entry_exception(0x08, df_handler); // Fault handler for DF
+
+    print("Set DF handler.\n");
 
     // Prepare the IDT pointer
     struct idt_pointer idtp;
@@ -105,7 +147,8 @@ void init_idt() {
 
     outb(0x21, 0xFF);  // Mask all IRQs on master PIC
     outb(0xA1, 0xFF);  // Mask all IRQs on slave PIC
-    outb(0x21, 0xFD);  // Unmask IRQ1 (keyboard)
+    irq_clear_mask(1); // Unmask IRQ1 (keyboard)
+    irq_clear_mask(0); // Unmask IRQ0 (PIT)
 
     print("OCW1 set...\n");
 

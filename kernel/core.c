@@ -123,18 +123,31 @@ char scancode_to_ascii_table[128] = {
 
 char input_buffer[256];
 int input_len = 0;
+static bool backspace_flag = false;
+static bool enter_flag = false;
 
-char get_char() {
-    static bool extended = false;
-    uint8_t scancode;
-    char ascii = 0;
+void irq_set_mask(uint8_t IRQline) {
+    uint16_t port;
+    uint8_t value;
 
-    if (use_keyboard_driver) {
-        scancode = read_keyboard();
+    if(IRQline < 8) {
+        port = 0x21;
     } else {
-        while (!(inb(0x64) & 0x01));  // Wait until input buffer is not empty
-        scancode = inb(0x60);  // Get the scan code
+        port = 0xA1;
+        IRQline -= 8;
     }
+    value = inb(port) | (1 << IRQline);
+    outb(port, value);        
+}
+
+char keyboard_isr() {
+    if ((inb(0x64) & 1) == 0) {
+        return 0;
+    }
+
+    uint8_t scancode = inb(0x60);
+    static bool extended = false;
+    char ascii = 0;
 
     if (scancode == 0xE0) {  // If it's the first byte of a multi-byte scan code
         extended = true;
@@ -168,14 +181,37 @@ char get_char() {
         } else if (ascii == '\r' || ascii == '\n') {  // Enter
             input_buffer[input_len] = '\0';
             input_len = 0;
+            enter_flag = true;
         } else if (ascii != 0 && input_len < sizeof(input_buffer) - 1) {  // Regular character
             input_buffer[input_len] = ascii;
             input_len++;
             input_buffer[input_len] = '\0';
         }
-
-        return ascii;
     }
+}
+
+char get_char() {
+    if (input_len > 0) {
+        char c = input_buffer[0];  // Read the first character in the buffer
+        for (int i = 0; i < input_len - 1; i++) {
+            input_buffer[i] = input_buffer[i + 1];  // Shift the buffer left
+        }
+        input_len--;  // Decrement length after reading
+        return c;
+    }
+
+    return 0;  // Return 0 if the buffer is empty
+}
+
+void setup_pit(uint16_t divisor) {
+    // Send the control byte to PIT to configure channel 0
+    outb(0x43, 0x36); // 0x36 is for channel 0, mode 3 (rate generator), binary counting
+
+    // Send the low byte of the divisor
+    outb(0x40, (uint8_t)(divisor & 0xFF));
+
+    // Send the high byte of the divisor
+    outb(0x40, (uint8_t)((divisor >> 8) & 0xFF));
 }
 
 void kernel_main() {
@@ -190,7 +226,9 @@ void kernel_main() {
     cursor_y = 0;
     move_cursor();
 
-    // gdt_init();
+    gdt_init();
+
+    setup_pit(4773);
 
     #if BFFS == 0 
         fs_init();
@@ -253,12 +291,17 @@ void kernel_main() {
            char command[256];
            size_t command_len = 0;
 
+           if (input_len == 0) {
+                asm volatile("hlt");
+           }
+
            // Read user input
            print("> ");
            while (1) {
                char c = get_char();
-               if (c == '\n' || c == '\r') {
+               if (enter_flag == true) {
                    command[command_len] = '\0';  // Null-terminate the command string
+                   enter_flag = false;
                    break;
                } else if (command_len < sizeof(command) - 1 && c != 0) {
                    command[command_len++] = c;
@@ -273,8 +316,7 @@ void kernel_main() {
    }
    else if (testing == 0) {
       while (1) {
-         cpu_delay(50000);
-         schedule();
+         asm volatile("hlt");
       }
    }
 }

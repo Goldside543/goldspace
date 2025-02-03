@@ -58,12 +58,14 @@ struct gdt_ptr gdtp;
 
 struct tss_entry tss;
 
-uint8_t kernel_stack[8192];
+extern void flush_tss(void);
+
+uint8_t kernel_stack[8192] __attribute__((aligned(16)));  // Align to 16 bytes
 
 void tss_init() {
     // Initialize the TSS with default values (this will be a minimal setup)
     tss.prev_task_link = 0;
-    tss.esp0 = (uint32_t)(&kernel_stack[8192]);  // Stack pointer for the kernel mode (this should point to the kernel stack)
+    tss.esp0 = (uint32_t)(&kernel_stack[8192 - sizeof(uint32_t)]);  // Stack pointer for the kernel mode (this should point to the kernel stack)
     tss.ss0 = 0x10; // Kernel data segment
     tss.esp1 = 0;
     tss.ss1 = 0;
@@ -71,7 +73,7 @@ void tss_init() {
     tss.ss2 = 0;
     tss.cr3 = 0;    // Page directory pointer (use virtual address for paging if needed)
     tss.eip = 0;
-    tss.eflags = 0x202;  // Interrupt flag set (IF = 1)
+    tss.eflags = 0x0;
     // General-purpose registers (can be set to 0 for now)
     tss.eax = 0;
     tss.ecx = 0;
@@ -129,7 +131,9 @@ void gdt_init() {
 
     // TSS descriptor (entry 5) - 0x28
     kmemset(&tss, 0, sizeof(struct tss_entry));
+    print("Cleared TSS struct with kmemset.\n");
     tss_init();
+    print("Successfully initialized TSS.\n");
     gdt_set_entry(5, (uint32_t)&tss, sizeof(struct tss_entry), 0x89, 0x40); // Access flags for TSS descriptor
     print("Set TSS descriptor.\n");
 
@@ -155,5 +159,7 @@ void gdt_init() {
         : "r" (&gdtp)
         : "memory"
     );
+    flush_tss();
+    print("Flushed TSS.\n");
     print("GDT loaded successfully.\n");
 }
