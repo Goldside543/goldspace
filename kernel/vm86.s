@@ -19,8 +19,8 @@ enter_vm86:
 
     movl $vm86_stack, %esp     # Set up a stack
 
-    pushfl                     # Push original EFLAGS
+    pushf                      # Push original EFLAGS
     orl $0x20000, (%esp)       # Set VM86 mode bit (bit 17 in EFLAGS)
-    popfl                      # Restore EFLAGS with VM86 mode enabled
+    popf                       # Restore EFLAGS with VM86 mode enabled
 
     iret
