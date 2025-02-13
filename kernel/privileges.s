@@ -6,3 +6,5 @@ protect_tsc:
 	movl %cr4, %eax
 	orl $0x4, %eax
 	movl %eax, %cr4
+
+	ret

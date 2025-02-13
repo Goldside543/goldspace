@@ -17,7 +17,6 @@
 #include "../fs/bffs/bffs.h"
 #include "../drivers/graphics.h"
 #include "../kernel/panic.h"
-#include "../kernel/v86.h"
 #include "../drivers/vga.h"
 #include "../drivers/pci.h"
 
