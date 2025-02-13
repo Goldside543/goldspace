@@ -294,13 +294,10 @@ void kernel_main() {
            char command[256];
            size_t command_len = 0;
 
-           if (input_len == 0) {
-                asm volatile("hlt");
-           }
-
            // Read user input
            print("> ");
            while (1) {
+               asm volatile("hlt");
                char c = get_char();
                if (enter_flag == true) {
                    command[command_len] = '\0';  // Null-terminate the command string
