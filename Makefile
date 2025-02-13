@@ -143,7 +143,7 @@ kernel/pit_isr_wrapper.o: kernel/pit_isr_wrapper.s
 kernel/privileges.o: kernel/privileges.s
 	$(AS) -32 -o kernel/privileges.o kernel/privileges.s
 
-kernel/privileges.o: kernel/vm86.s
+kernel/vm86.o: kernel/vm86.s
 	$(AS) -32 -o kernel/vm86.o kernel/vm86.s
 
 clean:
