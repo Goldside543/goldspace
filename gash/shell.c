@@ -701,7 +701,10 @@ void shell_execute_command(const char *command) {
     } else if (my_strcmp(command_name, "calculate") == 0) {
         if (*args != '\0') {
             char calculated_number = shell_calculate(args);
-            print(calculated_number);
+            char str[15] = {calculated_number, '\0'};
+            print("\n");
+            print(str);
+            print("\n");
         } else {
             print("\n");
             print("calculate: missing arguments\n");
