@@ -145,7 +145,7 @@ double atof(const char *str) {
     return result * sign;
 }
 
-void shell_calculate(const char *args) {
+double shell_calculate(const char *args) {
     int state = 0;  // 0 = reading number 1, 1 = reading operator, 2 = reading number 2
     char current_char;
     char num1_str[100], num2_str[100];  // Temporary storage for numbers as strings
@@ -700,7 +700,7 @@ void shell_execute_command(const char *command) {
         shell_scan();
     } else if (my_strcmp(command_name, "calculate") == 0) {
         if (*args != '\0') {
-            double calculated_number = shell_calculate(args);
+            char calculated_number = shell_calculate(args);
             print(calculated_number);
         } else {
             print("\n");
