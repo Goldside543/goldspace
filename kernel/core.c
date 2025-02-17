@@ -182,9 +182,9 @@ char keyboard_isr() {
         // Convert scan code to ASCII
         ascii = scancode_to_ascii_table[scancode];
 
-        // If Shift is pressed, convert lowercase to uppercase
         if (shift_pressed && ascii >= 'a' && ascii <= 'z') {
             ascii -= ('a' - 'A');  // Convert to uppercase
+            shift_pressed = false; // Backup to ensure that the shift flag is false
         }
 
         // Handle special characters
