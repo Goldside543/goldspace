@@ -126,6 +126,7 @@ char input_buffer[256];
 int input_len = 0;
 static bool backspace_flag = false;
 static bool enter_flag = false;
+static bool shift_pressed = false;
 
 void irq_set_mask(uint8_t IRQline) {
     uint16_t port;
@@ -156,7 +157,15 @@ char keyboard_isr() {
     }
 
     if (scancode & 0x80) {  // If it's a key release event
+        if (scancode == 0x2A || scancode == 0x36) {  // Left or right Shift release
+            shift_pressed = false;
+        }
         extended = false;  // Reset the extended flag
+        return 0;
+    }
+
+    if (scancode == 0x2A || scancode == 0x36) {  // Left or right Shift press
+        shift_pressed = true;
         return 0;
     }
 
@@ -172,6 +181,11 @@ char keyboard_isr() {
     } else {
         // Convert scan code to ASCII
         ascii = scancode_to_ascii_table[scancode];
+
+        if (shift_pressed && ascii >= 'a' && ascii <= 'z') {
+            ascii -= ('a' - 'A');  // Convert to uppercase
+            shift_pressed = false; // Backup to ensure that the shift flag is false
+        }
 
         // Handle special characters
         if (ascii == '\b') {  // Backspace

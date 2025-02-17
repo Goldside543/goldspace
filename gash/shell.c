@@ -83,6 +83,115 @@ void shell_scan() {
     pci_scan_bus();
     find_rtl8139_dma_address();
 }
+
+double calculate(double num1, char operator, double num2) {
+    switch (operator) {
+        case '+':
+            return num1 + num2;
+        case '-':
+            return num1 - num2;
+        case '*':
+            return num1 * num2;
+        case '/':
+            if (num2 != 0)
+                return num1 / num2;
+            else {
+                return 0; // Return 0 for error case
+            }
+        default:
+            return 0; // Return 0 for invalid operator
+    }
+}
+
+int isspace(char c) {
+    return (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\v' || c == '\f');
+}
+
+double atof(const char *str) {
+    double result = 0.0;
+    double sign = 1.0;
+    int i = 0;
+
+    // Handle leading spaces
+    while (isspace(str[i])) {
+        i++;
+    }
+
+    // Handle optional sign
+    if (str[i] == '-') {
+        sign = -1.0;
+        i++;
+    } else if (str[i] == '+') {
+        i++;
+    }
+
+    // Convert integer part
+    while (str[i] >= '0' && str[i] <= '9') {
+        result = result * 10.0 + (str[i] - '0');
+        i++;
+    }
+
+    // Handle the decimal point and fractional part
+    if (str[i] == '.') {
+        i++;
+        double decimal_place = 0.1;
+        while (str[i] >= '0' && str[i] <= '9') {
+            result += (str[i] - '0') * decimal_place;
+            decimal_place /= 10.0;
+            i++;
+        }
+    }
+
+    return result * sign;
+}
+
+double shell_calculate(const char *args) {
+    int state = 0;  // 0 = reading number 1, 1 = reading operator, 2 = reading number 2
+    char current_char;
+    char num1_str[100], num2_str[100];  // Temporary storage for numbers as strings
+    int num1_idx = 0, num2_idx = 0;
+    double num1 = 0, num2 = 0;
+    char operator = '\0';
+
+    while ((current_char = *args++) != '\0') {
+        switch (state) {
+            case 0: // Reading number 1
+                if (current_char == ' ') {
+                    num1_str[num1_idx] = '\0';  // Null-terminate the first number string
+                    num1 = atof(num1_str);  // Convert the first number to a double
+                    state = 1;  // Move to reading operator
+                } else {
+                    num1_str[num1_idx++] = current_char;
+                }
+                break;
+
+            case 1: // Reading operator
+                if (!isspace(current_char)) {
+                    operator = current_char;  // Save the operator
+                    state = 2;  // Move to reading number 2
+                }
+                break;
+
+            case 2: // Reading number 2
+                if (current_char != '\0' && current_char != ' ') {
+                    num2_str[num2_idx++] = current_char;
+                } else if (current_char == '\0') {
+                    num2_str[num2_idx] = '\0';  // Null-terminate the second number string
+                    num2 = atof(num2_str);  // Convert the second number to a double
+                    state = 3;  // We are done, go to the calculation step
+                }
+                break;
+        }
+    }
+
+    // After parsing the inputs, call the calculate function
+    if (state == 3 && operator != '\0') {
+        double result = calculate(num1, operator, num2);
+        return result;
+    } else {
+        return 0;
+    }
+}
     
 void shell_create(const char *name) {
     int result = create_file(name);
@@ -589,6 +698,17 @@ void shell_execute_command(const char *command) {
         }
     } else if (my_strcmp(command_name, "scan") == 0) {
         shell_scan();
+    } else if (my_strcmp(command_name, "calculate") == 0) {
+        if (*args != '\0') {
+            char calculated_number = shell_calculate(args);
+            char str[15] = {calculated_number, '\0'};
+            print("\n");
+            print(str);
+            print("\n");
+        } else {
+            print("\n");
+            print("calculate: missing arguments\n");
+        }
     } else {
         print("\n");
         print("Unknown command: ");
