@@ -83,6 +83,25 @@ void shell_scan() {
     pci_scan_bus();
     find_rtl8139_dma_address();
 }
+
+double shell_calculate(double num1, char operator, double num2) {
+    switch (operator) {
+        case '+':
+            return num1 + num2;
+        case '-':
+            return num1 - num2;
+        case '*':
+            return num1 * num2;
+        case '/':
+            if (num2 != 0)
+                return num1 / num2;
+            else {
+                return 0; // Return 0 for error case
+            }
+        default:
+            return 0; // Return 0 for invalid operator
+    }
+}
     
 void shell_create(const char *name) {
     int result = create_file(name);
@@ -589,6 +608,14 @@ void shell_execute_command(const char *command) {
         }
     } else if (my_strcmp(command_name, "scan") == 0) {
         shell_scan();
+    } else if (my_strcmp(command_name, "calculate") == 0) {
+        if (*args != '\0') {
+            calculated_number = shell_calculate(args);
+            print(calculated_number);
+        } else {
+            print("\n");
+            print("calculate: missing arguments\n");
+        }
     } else {
         print("\n");
         print("Unknown command: ");
