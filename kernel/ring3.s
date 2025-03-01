@@ -14,6 +14,7 @@ jump_usermode:
     pushl $0x23                    # Push the data selector (4*8 | 3 = 0x23)
     pushl %eax                     # Push current esp
     pushfl                         # Push flags
+    cld                            # C code following the sysV ABI requires DF to be clear on function entry
     pushl $0x1b                    # Push the code selector (3*8 | 3 = 0x1B)
     pushl $run_user_space          # Push the address of the function to return to
     iret
