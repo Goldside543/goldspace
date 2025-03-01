@@ -26,6 +26,13 @@ Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is des
 * `builddate` prints build date and time.
 # For additional documentation...
 See the user manual or developer manual, conveniently located in the Documentation directory!
+# Donate
+Hey, thanks for considering donating! Below are some crypto addresses you can donate to!
+
+* BTC: bc1qn9zjpgvl63j0dtm29hzkhfe6vxul7nn3w34xek
+* LTC: ltc1q524te5cj87ylffcq43jwx7rw8r4l8yl3nrqyc3
+* DOGE: DSsFPmvePCAAUJyt6u1Smwz8tJLSrs4nz4
+* BCH: qrw04k2gt8gkggqg6sgu3s3y436nlawapgv4t4h87g
 # Version number: Alpha 3.2.0
 Yeah, my versioning is totally screwed up, but I don't care.
 
