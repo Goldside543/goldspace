@@ -33,6 +33,7 @@ Hey, thanks for considering donating! Below are some crypto addresses you can do
 * LTC: ltc1q524te5cj87ylffcq43jwx7rw8r4l8yl3nrqyc3
 * DOGE: DSsFPmvePCAAUJyt6u1Smwz8tJLSrs4nz4
 * BCH: qrw04k2gt8gkggqg6sgu3s3y436nlawapgv4t4h87g
+* XMR: 44JqnEYZcCQViedo82qWP2Cp2H9jkfatWKdGPfdBK3Lybe46XEdqMVgNTKWwLAhDHDTR7dtum3hUNRRMd2SPZfxME7m8hYL
 # Version number: Alpha 3.2.0
 Yeah, my versioning is totally screwed up, but I don't care.
 
