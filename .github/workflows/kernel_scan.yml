@@ -16,14 +16,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         
-      - name: Set up Clang
-        run: |
-          sudo apt-get update
-          sudo apt-get install clang
-        
       - name: Run Static Analysis
         run: |
-          clang --analyze -Xanalyzer -analyzer-checker=core -c */*.c > results.txt
+          gcc -fanalyzer -c */*.c > results.txt
           
       - name: Upload Results
         if: always()
