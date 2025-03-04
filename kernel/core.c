@@ -19,7 +19,6 @@ void protect_tsc(void);
 #include "io.h"
 #include "multiboot.h"
 #include "../fs/bffs/bffs.h"
-#include "../drivers/rtl8139.h"
 #include "../drivers/audio.h"
 #include "../drivers/usb.h"
 #include "../drivers/keyboard.h"
@@ -272,18 +271,6 @@ void kernel_main() {
     init_random_seed();
 
     // protect_tsc();
-
-    static unsigned int io_base;
-
-    unsigned char mac_addr[6];
-    for (int i = 0; i < 6; i++) {
-    mac_addr[i] = inb(io_base + i);  // Read MAC address byte by byte
-    }
-
-    net_interface_t iface;
-    unsigned int ip = 0xC0A895E2; // IP address 192.168.149.226
-    unsigned int netmask = 0xFFFFF000; // Example netmask (255.255.240.0)
-    init_net_interface(&iface, "eth0", mac_addr, ip, netmask);
 
     cpu_delay(50000000);
 
