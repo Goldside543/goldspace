@@ -34,9 +34,9 @@ Hey, thanks for considering donating! Below are some crypto addresses you can do
 * DOGE: DSsFPmvePCAAUJyt6u1Smwz8tJLSrs4nz4
 * BCH: qrw04k2gt8gkggqg6sgu3s3y436nlawapgv4t4h87g
 * XMR: 44JqnEYZcCQViedo82qWP2Cp2H9jkfatWKdGPfdBK3Lybe46XEdqMVgNTKWwLAhDHDTR7dtum3hUNRRMd2SPZfxME7m8hYL
-# Version number: Alpha 3.2.0
+# Version number: Beta 1.0.0
 Yeah, my versioning is totally screwed up, but I don't care.
 
-Beta will be entered once I can switch to ring 3.
+Now that Goldspace can enter ring 3, it will be entering the Beta stage :)
 
 Full release will be entered once I have a decent amount of work done, like program support and a vast array of hardware support and system calls :D
