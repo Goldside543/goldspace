@@ -192,6 +192,12 @@ double shell_calculate(const char *args) {
         return 0;
     }
 }
+
+extern void jump_usermode(void);
+
+void shell_usermode() {
+   jump_usermode();
+}
     
 void shell_create(const char *name) {
     int result = create_file(name);
@@ -675,6 +681,8 @@ void shell_execute_command(const char *command) {
         shell_date();
     } else if (my_strcmp(command_name, "mode13h") == 0) {
         shell_graphics();
+    } else if (my_strcmp(command_name, "user") == 0) {
+        shell_usermode();
     } else if (my_strcmp(command_name, "fatwrite") == 0) {
         if (*args != '\0') {
             fat32writefile(args);
