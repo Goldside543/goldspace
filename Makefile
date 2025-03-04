@@ -20,8 +20,8 @@ goldspace.iso: kernel/kernel.bin
 	cp grub.cfg isodir/boot/grub/
 	grub-mkrescue -o goldspace.iso isodir
 
-kernel/kernel.bin: kernel/kernel.o rust/target/i686-unknown-linux-gnu/release/libgoldspacerust.a gash/shell.o kernel/string.o fs/bffs/bffs.o net/net-io.o drivers/rtl8139.o net/sockets.o net/arp.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o fs/fs_syscalls.o kernel/execute.o kernel/process.o ipc/ipc.o kernel/panic.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o fs/fat32/fat32.o drivers/pci.o security/aslr.o kernel/gdt.o kernel/tss.o kernel/keyboard_isr_wrapper.o kernel/pit_isr_wrapper.o kernel/privileges.o kernel/vm86.o kernel/enter_user_mode.o kernel/ring3.o
-	$(LD) $(DEBUG) $(LD_ARCH) -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/bffs/bffs.o net/net-io.o drivers/rtl8139.o net/sockets.o net/arp.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o fs/fs_syscalls.o kernel/execute.o kernel/process.o rust/target/i686-unknown-linux-gnu/release/libgoldspacerust.a ipc/ipc.o kernel/panic.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o fs/fat32/fat32.o drivers/pci.o security/aslr.o kernel/gdt.o kernel/tss.o kernel/keyboard_isr_wrapper.o kernel/pit_isr_wrapper.o kernel/privileges.o kernel/vm86.o kernel/enter_user_mode.o kernel/ring3.o
+kernel/kernel.bin: kernel/kernel.o rust/target/i686-unknown-linux-gnu/release/libgoldspacerust.a gash/shell.o kernel/string.o fs/bffs/bffs.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o fs/fs_syscalls.o kernel/execute.o kernel/process.o ipc/ipc.o kernel/panic.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o fs/fat32/fat32.o drivers/pci.o security/aslr.o kernel/gdt.o kernel/tss.o kernel/keyboard_isr_wrapper.o kernel/pit_isr_wrapper.o kernel/privileges.o kernel/vm86.o kernel/enter_user_mode.o kernel/ring3.o
+	$(LD) $(DEBUG) $(LD_ARCH) -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/bffs/bffs.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o fs/fs_syscalls.o kernel/execute.o kernel/process.o rust/target/i686-unknown-linux-gnu/release/libgoldspacerust.a ipc/ipc.o kernel/panic.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o fs/fat32/fat32.o drivers/pci.o security/aslr.o kernel/gdt.o kernel/tss.o kernel/keyboard_isr_wrapper.o kernel/pit_isr_wrapper.o kernel/privileges.o kernel/vm86.o kernel/enter_user_mode.o kernel/ring3.o
 
 kernel/kernel.o: kernel/core.c
 	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c kernel/core.c -o kernel/kernel.o
@@ -37,18 +37,6 @@ kernel/string.o: kernel/string.c
 
 fs/bffs/bffs.o: fs/bffs/bffs.c
 	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c fs/bffs/bffs.c -o fs/bffs/bffs.o
-
-net/net-io.o: net/net-io.c
-	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c net/net-io.c -o net/net-io.o
-
-drivers/rtl8139.o: drivers/rtl8139.c
-	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c drivers/rtl8139.c -o drivers/rtl8139.o
-
-net/sockets.o: net/sockets.c
-	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c net/sockets.c -o net/sockets.o
-
-net/arp.o: net/arp.c
-	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c net/arp.c -o net/arp.o
 
 mm/memory.o: mm/memory.c
 	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fstack-protector-strong -c mm/memory.c -o mm/memory.o
