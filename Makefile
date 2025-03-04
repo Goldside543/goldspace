@@ -131,7 +131,7 @@ kernel/gdt.o: kernel/gdt.c
 security/aslr.o: security/aslr.c
 	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c security/aslr.c -o security/aslr.o
 
-kernel/enter_user_mode.o: security/enter_user_mode.c
+kernel/enter_user_mode.o: kernel/enter_user_mode.c
 	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c kernel/enter_user_mode.c -o kernel/enter_user_mode.o
 
 kernel/tss.o: kernel/tss.s
