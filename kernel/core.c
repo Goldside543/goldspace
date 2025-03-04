@@ -260,8 +260,6 @@ void kernel_main() {
 
     init_keyboard();
 
-    rtl8139_init();
-
     initialize_process_system();
 
     // gpu_init();
