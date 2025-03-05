@@ -23,4 +23,6 @@ uint8_t bcd_to_bin(uint8_t bcd);
 
 void get_current_time(uint8_t *hour, uint8_t *minute, uint8_t *second);
 
+uint32_t read_rtc_unix_time();
+
 #endif // RTC_H

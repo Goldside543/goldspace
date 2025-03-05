@@ -33,6 +33,8 @@ void protect_tsc(void);
 #include "idt.h"
 #include "gdt.h"
 #include "../security/aslr.h"
+#include "time.h"
+#include "../drivers/rtc.h"
 
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
@@ -228,6 +230,8 @@ void setup_pit(uint16_t divisor) {
     outb(0x40, (uint8_t)((divisor >> 8) & 0xFF));
 }
 
+volatile uint32_t unix_time = 0;
+
 void kernel_main() {
 
 /* There is an issue with the way the kernel handles input that causes
@@ -241,6 +245,8 @@ void kernel_main() {
     move_cursor();
 
     gdt_init();
+
+    unix_time = read_rtc_unix_time();
 
     setup_pit(4773);
 
