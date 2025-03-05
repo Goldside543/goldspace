@@ -14,7 +14,7 @@ The following versions of Goldspace are receiving emergency security updates. Af
 
 ## Reporting a Vulnerability
 
-To report a vulnerability, create a security advisory in the security tab. I will get to it ASAP.
+To report a vulnerability, create an issue and detail the vulnerability. I will get to it ASAP.
 
 # P.S.
 
