@@ -14,6 +14,7 @@
 #include "io.h"
 #include "process.h"
 #include "panic.h"
+#include "time.h"
 
 #define IDT_ENTRIES 256
 
@@ -86,6 +87,15 @@ void irq_clear_mask(uint8_t IRQline) {
 }
 
 void pit_isr() {
+    static uint32_t ticks = 0;
+    ticks++;
+
+    // If PIT is set to fire 1000 times per second (1ms ticks)
+    if (ticks >= 1000) {
+        unix_time++;
+        ticks = 0;
+    }
+
     schedule();
     outb(0x20, 0x20);
 }
