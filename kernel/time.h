@@ -5,6 +5,6 @@
 
 #include <stdint.h>
 
-volatile uint32_h unix_time = 0;
+volatile uint32_t unix_time = 0;
 
 #endif // TIME_H
