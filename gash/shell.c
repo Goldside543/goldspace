@@ -19,7 +19,6 @@
 #include "../kernel/panic.h"
 #include "../drivers/vga.h"
 #include "../drivers/pci.h"
-#include "../kernel/time.h"
 
 const char *build_date = __DATE__;    // Compile date
 const char *build_time = __TIME__;    // Compile time
@@ -684,8 +683,6 @@ void shell_execute_command(const char *command) {
         shell_graphics();
     } else if (my_strcmp(command_name, "user") == 0) {
         shell_usermode();
-    } else if (my_strcmp(command_name, "time") == 0) {
-        print(unix_time);
     } else if (my_strcmp(command_name, "fatwrite") == 0) {
         if (*args != '\0') {
             fat32writefile(args);
