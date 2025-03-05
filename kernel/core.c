@@ -33,6 +33,8 @@ void protect_tsc(void);
 #include "idt.h"
 #include "gdt.h"
 #include "../security/aslr.h"
+#include "time.h"
+#include "../drivers/rtc.h"
 
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
@@ -241,6 +243,8 @@ void kernel_main() {
     move_cursor();
 
     gdt_init();
+
+    unix_time = read_rtc_unix_time();
 
     setup_pit(4773);
 
