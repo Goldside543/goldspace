@@ -230,6 +230,8 @@ void setup_pit(uint16_t divisor) {
     outb(0x40, (uint8_t)((divisor >> 8) & 0xFF));
 }
 
+volatile uint32_t unix_time = 0;
+
 void kernel_main() {
 
 /* There is an issue with the way the kernel handles input that causes
