@@ -37,6 +37,4 @@ void software_interrupt_handler() {
     int result = syscall_handler(syscall_number, arg1, arg2, arg3, arg4);
 
     asm volatile ("movl %0, %%eax" : : "r"(result));
-
-    asm volatile ("iret");
 }
