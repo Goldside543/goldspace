@@ -12,6 +12,7 @@
 #include "../../kernel/string.h"
 #include "../../drivers/disk.h"
 #include "../../mm/memory.h"
+#include "../../kernel/print.h"
 
 #define SECTOR_SIZE 512
 #define FAT32_MAX_FILES 128
@@ -67,8 +68,10 @@ static uint32_t data_start;
 // Mount the FAT32 file system
 bool fat32_mount() {
     ata_pio_init();
+    print("Initializing hard disk...\n");
     // Read the boot sector
     ata_pio_read(0, &boot_sector, FAT32_BOOTSECTOR_SIZE);
+    print("Reading boot sector...\n");
     if (boot_sector.boot_sector_signature != FAT32_SIGNATURE) {
         return false; // Not a FAT32 filesystem
     }
