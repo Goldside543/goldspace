@@ -5,10 +5,12 @@
  * Basically, the first thing Goldspace does
  * when it enters user mode.
  *
- * Copyright (C) 2024 Goldside543
+ * Copyright (C) 2025 Goldside543
  *
  */
 
 int run_user_space() {
-   return 0; // do nothin'
+   while(1) {
+      asm volatile("nop"); // do nothing
+   }
 }
