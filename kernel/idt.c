@@ -18,7 +18,7 @@
 
 #define IDT_ENTRIES 256
 
-extern void software_interrupt_handler();
+extern void software_isr_wrapper(void);
 extern void keyboard_isr_wrapper(void);
 extern void pit_isr_wrapper(void);
 
@@ -105,7 +105,7 @@ void init_idt() {
     print("Preparing IDT...\n");
 
     // Set specific IDT entries (e.g., software interrupt)
-    set_idt_entry(0x80, software_interrupt_handler); // Software interrupt for syscalls
+    set_idt_entry(0x80, software_isr_wrapper); // Software interrupt for syscalls
 
     print("Set system call handler.\n");
 
