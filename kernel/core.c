@@ -272,8 +272,6 @@ void kernel_main() {
 
     init_graphics();
 
-    init_random_seed();
-
     // protect_tsc();
 
     cpu_delay(50000000);
