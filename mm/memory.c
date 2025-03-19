@@ -57,6 +57,33 @@ void kfree(void* ptr) {
     }
 }
 
+void *krealloc(void *ptr, size_t new_size) {
+    if (!ptr) {
+        // If ptr is NULL, just allocate new memory
+        return kmalloc(new_size);
+    }
+    
+    if (new_size == 0) {
+        // If new_size is 0, free the memory and return NULL
+        kfree(ptr);
+        return NULL;
+    }
+
+    // Allocate new memory block
+    void *new_ptr = kmalloc(new_size);
+    if (!new_ptr) {
+        return NULL;  // Failed to allocate
+    }
+
+    // Copy old data to new block (only up to the new size)
+    kmemcpy(new_ptr, ptr, new_size);  
+
+    // Free old block
+    kfree(ptr);
+
+    return new_ptr;
+}
+
 void* kmemset(void* ptr, int value, size_t num) {
     unsigned char* p = (unsigned char*)ptr;
     while (num--) {
