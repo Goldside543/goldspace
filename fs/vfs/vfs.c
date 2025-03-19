@@ -4,77 +4,79 @@
  *
  * Simple virtual file system layer I'm implementing.
  *
- * Copyright (C) 2024 Goldside543
+ * Copyright (C) 202402025 Goldside543
  *
  */
 
-#include "../fs.h"
-#include "../bffs/bffs.h"
-#include "../fat32/fat32.h"
 #include <stddef.h>
+#include "../../kernel/string.h"
 
-// As the kernel is currently limited to a single disk drive, a simple constant set in fs/fs.h will do.
+typedef struct FileSystem {
+    const char *name;
+    int (*mount)(const char *device);
+    int (*unmount)();
+    int (*open)(const char *path, int flags);
+    int (*close)(int fd);
+    int (*read)(int fd, void *buf, size_t size);
+    int (*write)(int fd, const void *buf, size_t size);
+} FileSystem;
 
-int vfs_create_file(const char* name) {
-    int result; // Declare result variable
+typedef struct FileDescriptor {
+    int fd;
+    FileSystem *fs;
+    void *private_data; // FS-specific file data (like inode pointer)
+} FileDescriptor;
 
-#if BFFS == 0
-    result = create_file(name);  // Create file using the BFFS system
-#elif BFFS == 1
-    #if FAT32 == 0
-        result = fat32_write_file(name, NULL, 0);  // Use FAT32 to create a file
-    #elif FAT32 == 1
-        result = -1;  // Return -1 if FAT32 is disabled
-    #endif
-#endif
+#define MAX_FILES 268435437
+FileDescriptor open_files[MAX_FILES];
 
-    return result;  // Return the result of the operation
+#define MAX_FS 4
+FileSystem *registered_fs[MAX_FS];
+
+void register_fs(FileSystem *fs) {
+    for (int i = 0; i < MAX_FS; i++) {
+        if (!registered_fs[i]) {
+            registered_fs[i] = fs;
+            return;
+        }
+    }
 }
 
-int vfs_write_file(int file_index, const char* data, size_t size) {
-    int result; // Declare result variable
-
-#if BFFS == 0
-    result = write_file(file_index, data, size);  // Write file using the BFFS system
-#elif BFFS == 1
-    #if FAT32 == 0
-        result = fat32_write_file(file_index, data, size);  // Use FAT32 to write data to a file
-    #elif FAT32 == 1
-        result = -1;  // Return -1 if FAT32 is disabled
-    #endif
-#endif
-
-    return result;  // Return the result of the operation
+int vfs_mount(const char *fs_name, const char *device) {
+    for (int i = 0; i < MAX_FS; i++) {
+        if (registered_fs[i] && my_strcmp(registered_fs[i]->name, fs_name) == 0) {
+            return registered_fs[i]->mount(device);
+        }
+    }
+    return -1; // FS not found
 }
 
-int vfs_read_file(int file_index, char* buffer, size_t size) {
-    int result; // Declare result variable
-
-#if BFFS == 0
-    result = read_file(file_index, buffer, size);  // Read file using the BFFS system
-#elif BFFS == 1
-    #if FAT32 == 0
-        result = fat32_read_file(file_index, buffer, size);  // Use FAT32 to read data from a file
-    #elif FAT32 == 1
-        result = -1;  // Return -1 if FAT32 is disabled
-    #endif
-#endif
-
-    return result;  // Return the result of the operation
+int vfs_open(const char *path, int flags) {
+    for (int i = 0; i < MAX_FS; i++) {
+        if (registered_fs[i]) {
+            int fd = registered_fs[i]->open(path, flags);
+            if (fd >= 0) {
+                open_files[fd].fs = registered_fs[i];
+                return fd;
+            }
+        }
+    }
+    return -1; // File not found
 }
 
-int vfs_delete_file(int file_index) {
-    int result; // Declare result variable
+ssize_t vfs_read(int fd, void *buf, size_t size) {
+    if (fd < 0 || fd >= MAX_FILES || !open_files[fd].fs) return -1;
+    return open_files[fd].fs->read(fd, buf, size);
+}
 
-#if BFFS == 0
-    result = delete_file(file_index);  // Delete file using the BFFS system
-#elif BFFS == 1
-    #if FAT32 == 0
-        result = fat32_delete_file(file_index);  // Use FAT32 to delete a file
-    #elif FAT32 == 1
-        result = -1;  // Return -1 if FAT32 is disabled
-    #endif
-#endif
+ssize_t vfs_write(int fd, const void *buf, size_t size) {
+    if (fd < 0 || fd >= MAX_FILES || !open_files[fd].fs) return -1;
+    return open_files[fd].fs->write(fd, buf, size);
+}
 
-    return result;  // Return the result of the operation
+int vfs_close(int fd) {
+    if (fd < 0 || fd >= MAX_FILES || !open_files[fd].fs) return -1;
+    open_files[fd].fs->close(fd);
+    open_files[fd].fs = NULL;
+    return 0;
 }
