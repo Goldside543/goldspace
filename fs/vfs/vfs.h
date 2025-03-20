@@ -23,6 +23,13 @@ typedef struct FileDescriptor {
     void *private_data; // FS-specific file data (like inode pointer)
 } FileDescriptor;
 
+struct stat {
+    size_t st_size;  // File size in bytes
+    unsigned int st_mode;  // File permissions (you can use `S_IFREG`, `S_IFDIR` for regular files, directories, etc.)
+    unsigned int st_uid;   // User ID of file owner
+    unsigned int st_gid;   // Group ID of file owner
+};
+
 void register_fs(FileSystem *fs);
 
 int vfs_mount(const char *fs_name, const char *device, void* unused1, void* unused2);
