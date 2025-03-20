@@ -11,6 +11,18 @@
 #include "../../mm/memory.h"
 #include "../../kernel/string.h"
 
+#define NAME_MAX 255
+
+struct ramfs_node {
+    char name[NAME_MAX];   // File name
+    int is_directory;      // 1 if directory, 0 if file
+    char *data;            // Pointer to file data (if file)
+    size_t size;           // Size of file
+    struct ramfs_node *parent;
+    struct ramfs_node *children;  // First child (if dir)
+    struct ramfs_node *next;      // Sibling pointer
+};
+
 struct ramfs_node *root;  // Root directory of RAMFS
 
 void ramfs_init() {
