@@ -70,11 +70,13 @@ void execute_program(const void *program_code, size_t size, char **argv) {
     stack[argc] = NULL;  // NULL-terminate argv
 
     // Set the new process's stack pointer to point to the arguments
-    new_process->stack_ptr = (void *)stack;
+    new_process->stack = (void *)stack;
 
     // Context switch to the new process
     context_switch(new_process); // Switch to the new process's context
 }
+
+#define O_RDONLY 0 // For now
 
 // System call interface for execute_elf_program
 int sys_execv(void *path, void *argv, void *unused1, void *unused2) {
