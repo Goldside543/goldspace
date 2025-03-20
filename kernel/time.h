@@ -5,6 +5,6 @@
 
 #include <stdint.h>
 
-extern volatile uint32_t unix_time;
+extern volatile int32_t unix_time;
 
 #endif // TIME_H
