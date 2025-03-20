@@ -88,7 +88,7 @@ int sys_execv(void *path, void *argv, void *unused1, void *unused2) {
 
     // Get the file size (assuming vfs_stat exists)
     struct stat st;
-    if (vfs_stat(path, &st) < 0) {
+    if (vfs_stat(path, &st, NULL, NULL) < 0) {
         vfs_close(code_fd, NULL, NULL, NULL);
         return -1; // Failed to get file size
     }
