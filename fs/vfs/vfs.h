@@ -7,7 +7,7 @@
 
 void register_fs(FileSystem *fs);
 
-int vfs_mount(const char *fs_name, const char *device);
+int vfs_mount(const char *fs_name, const char *device, void* unused1, void* unused2);
 
 int vfs_open(const char *path, int flags, void* unused1, void* unused2);
 
