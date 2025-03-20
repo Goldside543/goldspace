@@ -30,4 +30,6 @@ void map_page(uint32_t virtual_address, uint32_t physical_address);
 // Handle memory paging for a given virtual address and size
 void kmempaging(void* virtual_address, size_t size);
 
+void *krealloc(void *ptr, size_t new_size);
+
 #endif // MEMORY_H
