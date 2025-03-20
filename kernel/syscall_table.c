@@ -20,4 +20,5 @@ int (*syscall_table[])(void*, void*, void*, void*) = {
     [SYS_EXECV] = (int (*)(void*, void*, void*, void*))sys_execv,
     [SYS_YIELD]          = (int (*)(void*, void*, void*, void*))sys_yield,
     [SYS_EXIT]          = (int (*)(void*, void*, void*, void*))sys_exit,
+    [SYS_STAT]          = (int (*)(void*, void*, void*, void*))vfs_stat,
 };
