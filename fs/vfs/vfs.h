@@ -5,6 +5,22 @@
 
 #include <stddef.h>
 
+typedef struct FileSystem {
+    const char *name;
+    int (*mount)(const char *device);
+    int (*unmount)();
+    int (*open)(const char *path, int flags);
+    int (*close)(int fd);
+    int (*read)(int fd, void *buf, size_t size);
+    int (*write)(int fd, const void *buf, size_t size);
+} FileSystem;
+
+typedef struct FileDescriptor {
+    int fd;
+    FileSystem *fs;
+    void *private_data; // FS-specific file data (like inode pointer)
+} FileDescriptor;
+
 void register_fs(FileSystem *fs);
 
 int vfs_mount(const char *fs_name, const char *device, void* unused1, void* unused2);
