@@ -54,7 +54,7 @@ ssize_t vfs_read(int fd, void *buf, size_t size, void* unused1) {
     return open_files[fd].fs->read(fd, buf, size);
 }
 
-ssize_t vfs_write(int fd, const void *buf, size_t size, void* unused 1) {
+ssize_t vfs_write(int fd, const void *buf, size_t size, void* unused1) {
     if (fd < 0 || fd >= MAX_FILES || !open_files[fd].fs) return -1;
     return open_files[fd].fs->write(fd, buf, size);
 }
