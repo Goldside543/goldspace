@@ -13,8 +13,6 @@
 #include "shell.h"
 #include "../kernel/io.h"
 #include "../kernel/string.h"
-#include "../fs/fat32/fat32.h"
-#include "../fs/bffs/bffs.h"
 #include "../drivers/graphics.h"
 #include "../kernel/panic.h"
 #include "../drivers/vga.h"
