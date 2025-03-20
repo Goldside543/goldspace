@@ -7,6 +7,13 @@
 
 typedef int ssize_t;
 
+struct stat {
+    size_t st_size;  // File size in bytes
+    unsigned int st_mode;  // File permissions (you can use `S_IFREG`, `S_IFDIR` for regular files, directories, etc.)
+    unsigned int st_uid;   // User ID of file owner
+    unsigned int st_gid;   // Group ID of file owner
+};
+
 typedef struct FileSystem {
     const char *name;
     int (*mount)(const char *device);
@@ -15,6 +22,7 @@ typedef struct FileSystem {
     int (*close)(int fd);
     int (*read)(int fd, void *buf, size_t size);
     int (*write)(int fd, const void *buf, size_t size);
+    int (*stat)(const char *path, struct stat *st);
 } FileSystem;
 
 typedef struct FileDescriptor {
