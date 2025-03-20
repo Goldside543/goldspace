@@ -4,7 +4,7 @@
  *
  * Main file of Gash, a shell for testing Goldspace.
  *
- * Copyright (C) 2024 Goldside543
+ * Copyright (C) 2024-2025 Goldside543
  *
  */
 
