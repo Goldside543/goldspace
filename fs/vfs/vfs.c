@@ -12,7 +12,7 @@
 #include "../../kernel/string.h"
 #include "vfs.h"
 
-#define MAX_FILES 268435437
+#define MAX_FILES 100000
 FileDescriptor open_files[MAX_FILES];
 
 #define MAX_FS 4
