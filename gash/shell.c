@@ -28,10 +28,6 @@ void shell_help() {
     print("Available commands:\n");
     print("help - Display this help message\n");
     print("echo <message> - Echo the message back to the screen\n");
-    print("create <filename> - Create a new file\n");
-    print("write <filename> <data> - Write data to a file\n");
-    print("read <filename> - Read data from a file\n");
-    print("delete <filename> - Delete a file\n");
     print("clear - Clear the screen\n");
     print("render - Test rendering\n");
     print("panic - Trigger a kernel panic\n");
