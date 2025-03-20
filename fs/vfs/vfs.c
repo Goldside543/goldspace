@@ -4,7 +4,7 @@
  *
  * Simple virtual file system layer I'm implementing.
  *
- * Copyright (C) 202402025 Goldside543
+ * Copyright (C) 2024-2025 Goldside543
  *
  */
 
