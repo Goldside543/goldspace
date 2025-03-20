@@ -79,7 +79,7 @@ void execute_program(const void *program_code, size_t size, char **argv) {
 // System call interface for execute_elf_program
 int sys_execve(void *path, void *argv, void *unused1, void *unused2) {
     // Open the file
-    int code_fd = vfs_open(path);
+    int code_fd = vfs_open(path, O_RDONLY);
     if (code_fd < 0) {
         return -1; // Failed to open file
     }
@@ -93,7 +93,7 @@ int sys_execve(void *path, void *argv, void *unused1, void *unused2) {
     size_t program_size = st.st_size;
 
     // Allocate memory for the program
-    void *code = malloc(program_size);
+    void *code = kmalloc(program_size);
     if (!code) {
         vfs_close(code_fd);
         return -1; // Memory allocation failed
@@ -103,7 +103,7 @@ int sys_execve(void *path, void *argv, void *unused1, void *unused2) {
     ssize_t bytes_read = vfs_read(code_fd, code, program_size);
     vfs_close(code_fd);  // Close file after reading
     if (bytes_read < 0 || (size_t)bytes_read != program_size) {
-        free(code);
+        kfree(code);
         return -1; // Read failed
     }
 
@@ -111,7 +111,7 @@ int sys_execve(void *path, void *argv, void *unused1, void *unused2) {
     execute_program(code, program_size, (char **)argv);
 
     // Free memory after execution (if execute_program doesn't take ownership)
-    free(code);
+    kfree(code);
 
     return 0; // Success
 }
