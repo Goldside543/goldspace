@@ -17,7 +17,7 @@ int (*syscall_table[])(void*, void*, void*, void*) = {
     [SYS_WRITE]     = (int (*)(void*, void*, void*, void*))vfs_write,
     [SYS_READ]      = (int (*)(void*, void*, void*, void*))vfs_read,
     [SYS_CLOSE]      = (int (*)(void*, void*, void*, void*))vfs_close,
-    [SYS_EXECUTE_PROGRAM] = (int (*)(void*, void*, void*, void*))sys_execute_program,
+    [SYS_EXECVE] = (int (*)(void*, void*, void*, void*))sys_execve,
     [SYS_YIELD]          = (int (*)(void*, void*, void*, void*))sys_yield,
     [SYS_EXIT]          = (int (*)(void*, void*, void*, void*))sys_exit,
 };
