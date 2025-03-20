@@ -1,3 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * fs/ramfs/ramfs.c
+ *
+ * RAM file system.
+ *
+ * Copyright (C) 2025 Goldside543
+ *
+ */
+
 #include "../../mm/memory.h"
 #include "../../kernel/string.h"
 
