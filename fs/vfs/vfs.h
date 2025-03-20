@@ -43,4 +43,6 @@ ssize_t vfs_write(int fd, const void *buf, size_t size, void* unused1);
 
 int vfs_close(int fd, void* unused1, void* unused2, void* unused3);
 
+int vfs_stat(const char *path, struct stat *st, void* unused1, void* unused2);
+
 #endif // VFS_H

@@ -5,7 +5,7 @@
 
 #include "syscall_numbers.h"
 
-int sys_execute_program(void* program_code, void* size, void* unused1, void* unused2);
+int sys_execv(void* path, void* argv, void* unused1, void* unused2);
 int sys_yield(void* unused1, void* unused2, void* unused3, void* unused4);
 int sys_exit(void* unused1, void* unused2, void* unused3, void* unused4);
 

@@ -78,7 +78,7 @@ kernel/syscall_table.o: kernel/syscall_table.c
 	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c kernel/syscall_table.c -o kernel/syscall_table.o
 
 kernel/execute.o: kernel/execute.c
-	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fstack-protector-strong -c kernel/execute.c -o kernel/execute.o
+	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c kernel/execute.c -o kernel/execute.o
 
 rust/target/i686-unknown-linux-gnu/release/libgoldspacerust.a: rust/src/lib.rs
 	cd rust && cargo build --target i686-unknown-linux-gnu --release
