@@ -57,6 +57,23 @@ void kfree(void* ptr) {
     }
 }
 
+void* kmemset(void* ptr, int value, size_t num) {
+    unsigned char* p = (unsigned char*)ptr;
+    while (num--) {
+        *p++ = (unsigned char)value;
+    }
+    return ptr;
+}
+
+void* kmemcpy(void* dest, const void* src, size_t num) {
+    unsigned char* d = (unsigned char*)dest;
+    const unsigned char* s = (const unsigned char*)src;
+    while (num--) {
+        *d++ = *s++;
+    }
+    return dest;
+}
+
 void *krealloc(void *ptr, size_t new_size) {
     if (!ptr) {
         // If ptr is NULL, just allocate new memory
@@ -82,23 +99,6 @@ void *krealloc(void *ptr, size_t new_size) {
     kfree(ptr);
 
     return new_ptr;
-}
-
-void* kmemset(void* ptr, int value, size_t num) {
-    unsigned char* p = (unsigned char*)ptr;
-    while (num--) {
-        *p++ = (unsigned char)value;
-    }
-    return ptr;
-}
-
-void* kmemcpy(void* dest, const void* src, size_t num) {
-    unsigned char* d = (unsigned char*)dest;
-    const unsigned char* s = (const unsigned char*)src;
-    while (num--) {
-        *d++ = *s++;
-    }
-    return dest;
 }
 
 int kmemcmp(const void* ptr1, const void* ptr2, size_t num) {
