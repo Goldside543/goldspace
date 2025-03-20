@@ -16,7 +16,7 @@
 
 // System call handler for creating a file
 int sys_create_file(const char* name) {
-    int result = vfs_create_file(name);
+    int result = vfs_create(name);
     if(result<0){
         print("No space left in the file table.\n");
     }
@@ -24,7 +24,7 @@ int sys_create_file(const char* name) {
 
 // System call handler for writing to a file
 int sys_write_file(int file_index, const char* data, int size) {
-    int result = vfs_write_file(file_index, data, size);
+    int result = vfs_write(file_index, data, size);
     if(result<0){
         print("No free blocks available, data size is too large or file doesn't exist\n");
     }
@@ -32,7 +32,7 @@ int sys_write_file(int file_index, const char* data, int size) {
 
 // System call handler for reading from a file
 int sys_read_file(int file_index, char* buffer, int size) {
-    int result = vfs_read_file(file_index, buffer, size);
+    int result = vfs_read(file_index, buffer, size);
     if(result<0){
         print("File doesn't exist or no data written.\n");
     }
@@ -40,7 +40,7 @@ int sys_read_file(int file_index, char* buffer, int size) {
 
 // System call handler for deleting a file
 int sys_delete_file(int file_index) {
-    int result = vfs_delete_file(file_index);
+    int result = vfs_delete(file_index);
     if(result<0){
         print("File doesn't exist.\n");
     }
