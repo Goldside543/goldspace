@@ -17,10 +17,6 @@ Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is des
 * `help` displays help.
 * `clear` clears the screen.
 * `echo <message>` allows you to type in something, and it'll be repeated!
-* `create <filename>` creates a file!
-* `write <filename> <data>` writes data to a file!
-* `read <filename>` reads a file!
-* `delete <filename>` deletes a file!
 * `render` does a rendering test on the GPU.
 * `panic` causes a kernel panic.
 * `builddate` prints build date and time.
@@ -34,7 +30,7 @@ Hey, thanks for considering donating! Below are some crypto addresses you can do
 * DOGE: DSsFPmvePCAAUJyt6u1Smwz8tJLSrs4nz4
 * BCH: qrw04k2gt8gkggqg6sgu3s3y436nlawapgv4t4h87g
 * XMR: 44JqnEYZcCQViedo82qWP2Cp2H9jkfatWKdGPfdBK3Lybe46XEdqMVgNTKWwLAhDHDTR7dtum3hUNRRMd2SPZfxME7m8hYL
-# Version number: Beta 1.0.0
+# Version number: Beta 1.1.0
 Yeah, my versioning is totally screwed up, but I don't care.
 
 Now that Goldspace can enter ring 3, it will be entering the Beta stage :)

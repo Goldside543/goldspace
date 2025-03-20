@@ -18,7 +18,6 @@ void protect_tsc(void);
 #include "../gash/shell.h"
 #include "io.h"
 #include "multiboot.h"
-#include "../fs/bffs/bffs.h"
 #include "../drivers/audio.h"
 #include "../drivers/usb.h"
 #include "../drivers/keyboard.h"
@@ -28,8 +27,6 @@ void protect_tsc(void);
 #include "../mm/memory.h"
 #include "../drivers/gpu.h"
 #include "process.h"
-#include "../fs/fat32/fat32.h"
-#include "../fs/fs.h"
 #include "idt.h"
 #include "gdt.h"
 #include "../security/aslr.h"
@@ -249,12 +246,6 @@ void kernel_main() {
     unix_time = read_rtc_unix_time();
 
     setup_pit(4773);
-
-    #if BFFS == 0
-        fs_init();
-    #elif BFFS == 1
-        fat32_mount();
-    #endif
 
     init_idt();
 
