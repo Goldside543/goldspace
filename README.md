@@ -17,10 +17,6 @@ Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is des
 * `help` displays help.
 * `clear` clears the screen.
 * `echo <message>` allows you to type in something, and it'll be repeated!
-* `create <filename>` creates a file!
-* `write <filename> <data>` writes data to a file!
-* `read <filename>` reads a file!
-* `delete <filename>` deletes a file!
 * `render` does a rendering test on the GPU.
 * `panic` causes a kernel panic.
 * `builddate` prints build date and time.
