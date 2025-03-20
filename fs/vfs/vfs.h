@@ -5,9 +5,16 @@
 
 #include <stddef.h>
 
-int vfs_create_file(const char* name);
-int vfs_write_file(int file_index, const char* data, size_t size);
-int vfs_read_file(int file_index, char* buffer, size_t size);
-int vfs_delete_file(int file_index);
+void register_fs(FileSystem *fs);
+
+int vfs_mount(const char *fs_name, const char *device);
+
+int vfs_open(const char *path, int flags);
+
+ssize_t vfs_read(int fd, void *buf, size_t size);
+
+ssize_t vfs_write(int fd, const void *buf, size_t size);
+
+int vfs_close(int fd);
 
 #endif // VFS_H
