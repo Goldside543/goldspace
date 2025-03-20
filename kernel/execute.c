@@ -77,7 +77,7 @@ void execute_program(const void *program_code, size_t size, char **argv) {
 }
 
 // System call interface for execute_elf_program
-int sys_execve(void *path, void *argv, void *unused1, void *unused2) {
+int sys_execv(void *path, void *argv, void *unused1, void *unused2) {
     // Open the file
     int code_fd = vfs_open(path, O_RDONLY, NULL, NULL);
     if (code_fd < 0) {
