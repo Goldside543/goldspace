@@ -10,22 +10,7 @@
 
 #include <stddef.h>
 #include "../../kernel/string.h"
-
-typedef struct FileSystem {
-    const char *name;
-    int (*mount)(const char *device);
-    int (*unmount)();
-    int (*open)(const char *path, int flags);
-    int (*close)(int fd);
-    int (*read)(int fd, void *buf, size_t size);
-    int (*write)(int fd, const void *buf, size_t size);
-} FileSystem;
-
-typedef struct FileDescriptor {
-    int fd;
-    FileSystem *fs;
-    void *private_data; // FS-specific file data (like inode pointer)
-} FileDescriptor;
+#include "vfs.h"
 
 #define MAX_FILES 268435437
 FileDescriptor open_files[MAX_FILES];
