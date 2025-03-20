@@ -9,6 +9,7 @@
  */
 
 #include "syscall_table.h"
+#include "../fs/vfs/vfs.h"
 
 // Define the syscall table
 int (*syscall_table[])(void*, void*, void*, void*) = {
