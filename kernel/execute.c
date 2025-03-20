@@ -79,7 +79,7 @@ void execute_program(const void *program_code, size_t size, char **argv) {
 // System call interface for execute_elf_program
 int sys_execve(void *path, void *argv, void *unused1, void *unused2) {
     // Open the file
-    int code_fd = vfs_open(path, O_RDONLY);
+    int code_fd = vfs_open(path, O_RDONLY, NULL, NULL);
     if (code_fd < 0) {
         return -1; // Failed to open file
     }
@@ -87,7 +87,7 @@ int sys_execve(void *path, void *argv, void *unused1, void *unused2) {
     // Get the file size (assuming vfs_stat exists)
     struct stat st;
     if (vfs_stat(path, &st) < 0) {
-        vfs_close(code_fd);
+        vfs_close(code_fd, NULL, NULL, NULL);
         return -1; // Failed to get file size
     }
     size_t program_size = st.st_size;
@@ -95,13 +95,13 @@ int sys_execve(void *path, void *argv, void *unused1, void *unused2) {
     // Allocate memory for the program
     void *code = kmalloc(program_size);
     if (!code) {
-        vfs_close(code_fd);
+        vfs_close(code_fd, NULL, NULL, NULL);
         return -1; // Memory allocation failed
     }
 
     // Read the file into memory
-    ssize_t bytes_read = vfs_read(code_fd, code, program_size);
-    vfs_close(code_fd);  // Close file after reading
+    ssize_t bytes_read = vfs_read(code_fd, code, program_size, NULL);
+    vfs_close(code_fd, NULL, NULL, NULL);  // Close file after reading
     if (bytes_read < 0 || (size_t)bytes_read != program_size) {
         kfree(code);
         return -1; // Read failed
