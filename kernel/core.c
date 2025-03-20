@@ -227,7 +227,7 @@ void setup_pit(uint16_t divisor) {
     outb(0x40, (uint8_t)((divisor >> 8) & 0xFF));
 }
 
-volatile uint32_t unix_time = 0;
+volatile int32_t unix_time = 0;
 
 void kernel_main() {
 
