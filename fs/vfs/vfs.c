@@ -66,7 +66,7 @@ int vfs_close(int fd, void* unused1, void* unused2, void* unused3) {
     return 0;
 }
 
-int vfs_stat(const char *path, struct stat *st) {
+int vfs_stat(const char *path, struct stat *st, void* unused1, void* unused2) {
     // Check each registered filesystem
     for (int i = 0; i < MAX_FS; i++) {
         if (registered_fs[i]) {
