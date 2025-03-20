@@ -5,6 +5,8 @@
 
 #include <stddef.h>
 
+typedef int ssize_t;
+
 typedef struct FileSystem {
     const char *name;
     int (*mount)(const char *device);
