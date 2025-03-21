@@ -90,8 +90,8 @@ void pit_isr() {
     static uint32_t ticks = 0;
     ticks++;
 
-    // If PIT is set to fire 1000 times per second (1ms ticks)
-    if (ticks >= 1000) {
+    // PIT is set to fire 250 times per second
+    if (ticks >= 250) {
         unix_time++;
         ticks = 0;
     }
