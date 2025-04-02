@@ -20,8 +20,8 @@ goldspace.iso: kernel/kernel.bin
 	cp grub.cfg isodir/boot/grub/
 	grub-mkrescue -o goldspace.iso isodir
 
-kernel/kernel.bin: kernel/kernel.o gash/shell.o kernel/string.o fs/ramfs/ramfs.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o kernel/execute.o kernel/process.o ipc/ipc.o kernel/panic.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o drivers/pci.o security/aslr.o kernel/gdt.o kernel/tss.o kernel/keyboard_isr_wrapper.o kernel/pit_isr_wrapper.o kernel/privileges.o kernel/vm86.o kernel/enter_user_mode.o kernel/ring3.o kernel/software_isr_wrapper.o
-	$(LD) $(DEBUG) $(LD_ARCH) -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/ramfs/ramfs.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o kernel/execute.o kernel/process.o ipc/ipc.o kernel/panic.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o drivers/pci.o security/aslr.o kernel/gdt.o kernel/tss.o kernel/keyboard_isr_wrapper.o kernel/pit_isr_wrapper.o kernel/privileges.o kernel/vm86.o kernel/enter_user_mode.o kernel/ring3.o kernel/software_isr_wrapper.o
+kernel/kernel.bin: kernel/kernel.o gash/shell.o kernel/string.o fs/ramfs/ramfs.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o kernel/execute.o kernel/process.o ipc/ipc.o kernel/panic.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o drivers/pci.o security/aslr.o kernel/gdt.o kernel/tss.o kernel/keyboard_isr_wrapper.o kernel/pit_isr_wrapper.o kernel/privileges.o kernel/vm86.o kernel/enter_user_mode.o kernel/ring3.o kernel/software_isr_wrapper.o drivers/serial.o
+	$(LD) $(DEBUG) $(LD_ARCH) -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/ramfs/ramfs.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o kernel/execute.o kernel/process.o ipc/ipc.o kernel/panic.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o drivers/pci.o security/aslr.o kernel/gdt.o kernel/tss.o kernel/keyboard_isr_wrapper.o kernel/pit_isr_wrapper.o kernel/privileges.o kernel/vm86.o kernel/enter_user_mode.o kernel/ring3.o kernel/software_isr_wrapper.o drivers/serial.o
 
 kernel/kernel.o: kernel/core.c
 	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c kernel/core.c -o kernel/kernel.o
@@ -115,6 +115,9 @@ kernel/enter_user_mode.o: kernel/enter_user_mode.c
 
 fs/ramfs/ramfs.o: fs/ramfs/ramfs.c
 	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c fs/ramfs/ramfs.c -o fs/ramfs/ramfs.o
+
+drivers/serial.o: drivers/serial.c
+	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c drivers/serial.c -o drivers/serial.o
 
 kernel/tss.o: kernel/tss.s
 	$(AS) -32 -o kernel/tss.o kernel/tss.s
