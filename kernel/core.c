@@ -32,6 +32,7 @@ void protect_tsc(void);
 #include "../security/aslr.h"
 #include "time.h"
 #include "../drivers/rtc.h"
+#include "../drivers/serial.h"
 
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
@@ -262,6 +263,8 @@ void kernel_main() {
     // gpu_init();
 
     init_graphics();
+
+    init_serial();
 
     // protect_tsc();
 
