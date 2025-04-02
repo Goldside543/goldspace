@@ -3,7 +3,7 @@
 #ifndef SERIAL_H
 #define SERIAL_H
 
-static int init_serial();
+int init_serial();
 char read_serial();
 void write_serial(char a);
 
