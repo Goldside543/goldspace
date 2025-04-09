@@ -4,10 +4,10 @@ ENTRY(kernel_main)
 
 /* Define memory regions */
 MEMORY {
-    MULTIBOOT : ORIGIN = 0x00000000, LENGTH = 4K
-    CODE      : ORIGIN = 0x00100000, LENGTH = 128M
-    DATA      : ORIGIN = 0x08100000, LENGTH = 128M
-    RO_DATA   : ORIGIN = 0x10000000, LENGTH = 128M
+    MULTIBOOT : ORIGIN = 0x00000000, LENGTH = 4K  /* Small region for Multiboot header */
+    CODE      : ORIGIN = 0x00100000, LENGTH = 64M  /* Kernel code section */
+    DATA      : ORIGIN = 0x06000000, LENGTH = 64M  /* Kernel data section */
+    RO_DATA   : ORIGIN = 0x0C000000, LENGTH = 64M  /* Read-only data section */
 }
 
 /* Define sections */
