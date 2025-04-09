@@ -21,9 +21,17 @@
 extern void software_isr_wrapper(void);
 extern void keyboard_isr_wrapper(void);
 extern void pit_isr_wrapper(void);
+extern void gpf_isr_wrapper(void);
+extern void report_cs(void);
 
 void gpf_handler() {
-    panic("General Protection Fault!");
+    code_segment = report_cs();
+    if (code_segment == 3) {
+        terminate_process(current_process);
+        return;
+    }
+        
+    panic("General Protection Fault in the kernel!");
 }
 
 void df_handler() {
