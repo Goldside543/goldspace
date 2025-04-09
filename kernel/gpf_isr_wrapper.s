@@ -11,6 +11,7 @@ gpf_isr_wrapper:
   popl %eax
   popl %eax
   movl %eax, saved_cs
+  and $0x3, saved_cs
   pushal
   cld              # C code following the sysV ABI requires DF to be clear on function entry
   call gpf_handler
