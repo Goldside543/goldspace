@@ -25,7 +25,7 @@ extern void gpf_isr_wrapper(void);
 extern void report_cs(void);
 
 void gpf_handler() {
-    code_segment = report_cs();
+    int code_segment = report_cs();
     if (code_segment == 3) {
         terminate_process(current_process);
         return;
