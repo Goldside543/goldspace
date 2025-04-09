@@ -2,6 +2,14 @@
 
 ENTRY(kernel_main)
 
+/* Define memory regions */
+MEMORY {
+    CODE (rx)     : ORIGIN = 0x00100000, LENGTH = 128M  /* Readable and Executable */
+    DATA (rw)     : ORIGIN = 0x08100000, LENGTH = 128M  /* Readable and Writable */
+    RO_DATA (r--) : ORIGIN = 0x10000000, LENGTH = 128M  /* Read-only, not executable */
+}
+
+/* Define sections */
 SECTIONS {
     . = 0x00100000;  /* Set kernel base address */
 
@@ -37,20 +45,4 @@ SECTIONS {
     .eh_frame : {
         KEEP(*(.eh_frame))  /* Ensure exception handling frames are kept, if present */
     } > RO_DATA
-
-    /* Explicit permissions */
-    /* Code section is executable, not writable */
-    CODE : { *(.text) *(.text.*) *(.rodata) *(.rodata.*) }
-        > CODE
-        SECTIONS {
-            .text : { *(.text) } > CODE
-        }
-        /* Make it executable but not writable */
-        EXECUTABLE
-
-    /* Data section is writable, not executable */
-    DATA : { *(.data) *(.data.*) *(.bss) *(.bss.*) }
-        > DATA
-        /* Make it writable but not executable */
-        RW
 }
