@@ -3,10 +3,10 @@
 .global gpf_isr_wrapper
 .global saved_cs
 
-.data
+.section .data
 saved_cs: .long 0
 
-.text
+.section .text
 gpf_isr_wrapper:
   popl %eax
   popl %eax
