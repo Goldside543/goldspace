@@ -4,21 +4,22 @@ ENTRY(kernel_main)
 
 /* Define memory regions */
 MEMORY {
-    CODE    : ORIGIN = 0x00100000, LENGTH = 128M
-    DATA    : ORIGIN = 0x08100000, LENGTH = 128M
-    RO_DATA : ORIGIN = 0x10000000, LENGTH = 128M
+    MULTIBOOT : ORIGIN = 0x00000000, LENGTH = 4K
+    CODE      : ORIGIN = 0x00100000, LENGTH = 128M
+    DATA      : ORIGIN = 0x08100000, LENGTH = 128M
+    RO_DATA   : ORIGIN = 0x10000000, LENGTH = 128M
 }
 
 /* Define sections */
 SECTIONS {
-    . = 0x00100000;  /* Set kernel base address */
+    . = 0x00000000;  /* Set the start of memory to the beginning */
 
     /* Multiboot header */
     .multiboot : ALIGN(4) {
-        LONG(0x1BADB002)
+        LONG(0x1BADB002)  /* Magic number */
         LONG(0x00000000)  /* Flags (set to 0) */
         LONG(-(0x1BADB002 + 0x00000000))  /* Checksum (negative sum of header fields) */
-    } > RO_DATA
+    } > MULTIBOOT  /* Place Multiboot header in the MULTIBOOT section */
 
     /* Code section (.text) */
     .text : ALIGN(16) {
