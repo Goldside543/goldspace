@@ -22,10 +22,10 @@ extern void software_isr_wrapper(void);
 extern void keyboard_isr_wrapper(void);
 extern void pit_isr_wrapper(void);
 extern void gpf_isr_wrapper(void);
-extern long saved_cs;
+extern long saved_cpl;
 
 void gpf_handler() {
-    if (saved_cs == 3) {
+    if (saved_cpl == 3) {
         terminate_process(current_process);
         return;
     }
