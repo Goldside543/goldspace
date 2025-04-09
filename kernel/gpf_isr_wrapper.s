@@ -17,3 +17,5 @@ gpf_isr_wrapper:
   call gpf_handler
   popal
   iret
+
+.section .note.GNU-stack,"",@progbits
