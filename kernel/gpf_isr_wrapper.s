@@ -2,6 +2,8 @@
 
 .global gpf_isr_wrapper
 .global saved_cs
+.global saved_cpl
+.global saved_eip
 
 .section .data
 saved_cs: .long 0
