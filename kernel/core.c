@@ -252,11 +252,11 @@ void kernel_main() {
 
     page_table_init();
 
-    audio_init();
+    // audio_init();
 
-    usb_init();
+    // usb_init();
 
-    init_keyboard();
+    // init_keyboard();
 
     initialize_process_system();
 
