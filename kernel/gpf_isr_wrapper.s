@@ -14,7 +14,8 @@ gpf_isr_wrapper:
   movl %eax, saved_eip
   popl %eax
   movl %eax, saved_cs
-  movl saved_cs, saved_cpl
+  movl saved_cs, %eax
+  movl %eax, saved_cpl
   andl $0x3, saved_cpl
   pushal
   cld              # C code following the sysV ABI requires DF to be clear on function entry
