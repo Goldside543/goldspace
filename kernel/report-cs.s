@@ -5,4 +5,5 @@
 report_cs:
   push %cs
   pop %eax
+  and $0x3, %eax
   ret
