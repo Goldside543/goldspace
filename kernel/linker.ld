@@ -4,9 +4,9 @@ ENTRY(kernel_main)
 
 /* Define memory regions */
 MEMORY {
-    CODE (rx)     : ORIGIN = 0x00100000, LENGTH = 128M  /* Readable and Executable */
-    DATA (rw)     : ORIGIN = 0x08100000, LENGTH = 128M  /* Readable and Writable */
-    RO_DATA (r--) : ORIGIN = 0x10000000, LENGTH = 128M  /* Read-only, not executable */
+    CODE    : ORIGIN = 0x00100000, LENGTH = 128M
+    DATA    : ORIGIN = 0x08100000, LENGTH = 128M
+    RO_DATA : ORIGIN = 0x10000000, LENGTH = 128M
 }
 
 /* Define sections */
@@ -18,7 +18,7 @@ SECTIONS {
         LONG(0x1BADB002)
         LONG(0x00000000)  /* Flags (set to 0) */
         LONG(-(0x1BADB002 + 0x00000000))  /* Checksum (negative sum of header fields) */
-    }
+    } > RO_DATA
 
     /* Code section (.text) */
     .text : ALIGN(16) {
