@@ -1,8 +1,16 @@
 # SPDX-License-Identifier: GPL-2.0-only
 
 .global gpf_isr_wrapper
+.global saved_cs
 
+.data
+saved_cs: .long 0
+
+.text
 gpf_isr_wrapper:
+  popl %eax
+  popl %eax
+  movl %eax, saved_cs
   pushal
   cld              # C code following the sysV ABI requires DF to be clear on function entry
   call gpf_handler
