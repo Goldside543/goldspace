@@ -90,8 +90,6 @@ void shell_kunk() {
 
    else if (kunk == 1)
        print("No.\n");
-
-   return 0;
 }
 
 double calculate(double num1, char operator, double num2) {
