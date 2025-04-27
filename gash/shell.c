@@ -83,7 +83,7 @@ extern int kunk;
 void shell_kunk() {
    print("\n");
    print("Kunk is devising an answer to your question...\n");
-   print("Kunk says...");
+   print("Kunk says... ");
 
    if (kunk == 0)
        print("Yes.\n");
