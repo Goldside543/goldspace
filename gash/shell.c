@@ -78,6 +78,22 @@ void shell_scan() {
     find_rtl8139_dma_address();
 }
 
+extern int kunk;
+
+void shell_kunk() {
+   print("\n");
+   print("Kunk is devising an answer to your question...\n");
+   print("Kunk says...");
+
+   if (kunk == 0)
+       print("Yes.\n");
+
+   else if (kunk == 1)
+       print("No.\n");
+
+   return 0;
+}
+
 double calculate(double num1, char operator, double num2) {
     switch (operator) {
         case '+':
@@ -231,6 +247,8 @@ void shell_execute_command(const char *command) {
         }
     } else if (my_strcmp(command_name, "clear") == 0) {
         shell_clear();
+    } else if (my_strcmp(command_name, "kunk") == 0) {
+        shell_kunk();
     } else if (my_strcmp(command_name, "render") == 0) {
         shell_render(); // Execute the render command
     } else if (my_strcmp(command_name, "panic") == 0) { // Handle the panic command
