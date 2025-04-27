@@ -105,11 +105,7 @@ void pit_isr() {
         ticks = 0;
     }
 
-    if (kunk == 0)
-        kunk++;
-
-    else if (kunk == 1)
-        kunk--;
+    kunk ^= 1;
 
     schedule();
     outb(0x20, 0x20);
