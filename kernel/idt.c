@@ -93,6 +93,8 @@ void irq_clear_mask(uint8_t IRQline) {
     outb(port, value);        
 }
 
+int kunk = 0;
+
 void pit_isr() {
     static uint32_t ticks = 0;
     ticks++;
@@ -102,6 +104,12 @@ void pit_isr() {
         unix_time++;
         ticks = 0;
     }
+
+    if (kunk == 0)
+        kunk++;
+
+    else if (kunk == 1)
+        kunk--;
 
     schedule();
     outb(0x20, 0x20);
