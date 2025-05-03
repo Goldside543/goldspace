@@ -18,7 +18,7 @@ goldspace.iso: kernel/kernel.bin
 	mkdir -p isodir/boot/grub
 	cp kernel/kernel.bin isodir/boot/
 	cp grub.cfg isodir/boot/grub/
-	grub-mkrescue -o goldspace.iso isodir
+	grub-mkrescue --compression=xz -o goldspace.iso isodir
 
 kernel/kernel.bin: kernel/kernel.o gash/shell.o kernel/string.o fs/ramfs/ramfs.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o kernel/execute.o kernel/process.o ipc/ipc.o kernel/panic.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o drivers/pci.o security/aslr.o kernel/gdt.o kernel/tss.o kernel/keyboard_isr_wrapper.o kernel/pit_isr_wrapper.o kernel/privileges.o kernel/vm86.o kernel/enter_user_mode.o kernel/ring3.o kernel/software_isr_wrapper.o drivers/serial.o kernel/gpf_isr_wrapper.o
 	$(LD) $(DEBUG) $(LD_ARCH) -T kernel/linker.ld -o kernel/kernel.bin kernel/kernel.o gash/shell.o kernel/string.o fs/ramfs/ramfs.o mm/memory.o drivers/audio.o drivers/keyboard.o drivers/usb.o drivers/graphics.o drivers/mouse.o drivers/disk.o drivers/gpu.o drivers/rtc.o kernel/window.o kernel/abs.o kernel/cpudelay.o kernel/syscall_dispatcher.o kernel/syscall_table.o kernel/execute.o kernel/process.o ipc/ipc.o kernel/panic.o kernel/idt.o kernel/interrupt.o drivers/vga.o fs/vfs/vfs.o drivers/pci.o security/aslr.o kernel/gdt.o kernel/tss.o kernel/keyboard_isr_wrapper.o kernel/pit_isr_wrapper.o kernel/privileges.o kernel/vm86.o kernel/enter_user_mode.o kernel/ring3.o kernel/software_isr_wrapper.o drivers/serial.o kernel/gpf_isr_wrapper.o
