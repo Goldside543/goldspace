@@ -272,7 +272,7 @@ void kernel_main() {
 
     // gpu_init();
 
-    init_graphics();
+    // init_graphics();
 
     // init_serial();
 
