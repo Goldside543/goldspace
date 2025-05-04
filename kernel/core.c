@@ -250,6 +250,8 @@ void kernel_main() {
 
     gdt_init();
 
+    init_idt();
+
     init_paging();
 
     enable_paging();
@@ -257,8 +259,6 @@ void kernel_main() {
     unix_time = read_rtc_unix_time();
 
     setup_pit(4773);
-
-    init_idt();
 
     page_table_init();
 
