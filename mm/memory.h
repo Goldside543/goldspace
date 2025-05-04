@@ -6,6 +6,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+// Initialize heap
+void init_heap();
+
 // Allocate memory of a given size
 void* kmalloc(size_t size);
 
