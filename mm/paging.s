@@ -51,7 +51,6 @@ fill_page_table_loop:
 # - Loads CR3, sets PG bit in CR0
 # -------------------------------
 enable_paging:
-    movl $0x00300000, %esp
     lea page_directory, %eax
     movl %eax, %cr3                   # load page directory into CR3
 
