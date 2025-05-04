@@ -27,11 +27,14 @@ clear_page_directory:
     addl $4, %eax             # Move to next entry
     loop clear_page_directory
 
-    # Set up first page directory entry (maps to first page table)
+    # Set up page directory entries (maps to first 1024 page tables)
     lea page_tables, %eax    # Load address of page tables
-    movl %eax, page_directory  # Set first page directory entry to page table base (physical address)
-    orl $0x3, page_directory  # Set the present and read-write bits (bit 0 and 1)
-    addl $4, page_directory   # Move to next entry
+    movl $1024, %ecx          # Loop for 1024 page directory entries
+setup_page_directory:
+    movl %eax, (%eax)         # Set current page directory entry to page table base (physical address)
+    orl $0x3, (%eax)         # Set present and read-write bits (bit 0 and 1)
+    addl $4, %eax            # Move to next entry
+    loop setup_page_directory
 
     # Initialize page tables
     lea page_tables, %eax    # Load address of page tables
@@ -42,7 +45,7 @@ initialize_page_tables:
     addl $4, %eax             # Move to next entry
     loop initialize_page_tables
 
-    # Set up first page table (maps first 4MB of virtual memory to physical memory)
+    # Set up first page table (maps 4 MB of virtual memory to 4 MB of physical memory)
     lea page_tables, %eax    # Load address of page tables
     movl %eax, page_tables    # Set base address of page table
     orl $0x3, page_tables     # Set present and read-write bits
@@ -56,6 +59,6 @@ enable_paging:
 
     # Enable paging by setting the PG bit in CR0
     movl %cr0, %eax
-    orl $0x80000000, %eax
-    movl %eax, %cr0
+    orl $0x80000000, %eax     # Set the PG bit in CR0 (bit 31)
+    movl %eax, %cr0           # Write back to CR0
     ret
