@@ -139,7 +139,7 @@ void init_idt() {
     // Prepare the IDT pointer
     struct idt_pointer idtp;
     idtp.limit = (sizeof(struct idt_entry) * IDT_ENTRIES) - 1; // Size of IDT - 1
-    idtp.base = (uint32_t) idt; // Base address of IDT
+    idtp.base = (uint32_t)&idt; // Base address of IDT
 
     print("Loading IDT...\n");
     
