@@ -114,19 +114,19 @@ void gdt_init() {
     print("Set null descriptor.\n");
 
     // Kernel code segment (entry 1) - 0x08
-    gdt_set_entry(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
+    gdt_set_entry(1, 0xC0000000, 0xFFFFFFFF, 0x9A, 0xCF);
     print("Set kernel code segment.\n");
 
     // Kernel data segment (entry 2) - 0x10
-    gdt_set_entry(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
+    gdt_set_entry(2, 0xC0000000, 0xFFFFFFFF, 0x92, 0xCF);
     print("Set kernel data segment.\n");
 
     // User code segment (entry 3) - 0x18
-    gdt_set_entry(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
+    gdt_set_entry(3, 0xC0000000, 0xFFFFFFFF, 0xFA, 0xCF);
     print("Set user code segment.\n");
 
     // User data segment (entry 4) - 0x20
-    gdt_set_entry(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
+    gdt_set_entry(4, 0xC0000000, 0xFFFFFFFF, 0xF2, 0xCF);
     print("Set user data segment.\n");
 
     // TSS descriptor (entry 5) - 0x28
