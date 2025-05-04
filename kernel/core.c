@@ -230,6 +230,10 @@ void setup_pit(uint16_t divisor) {
 
 volatile int32_t unix_time = 0;
 
+extern void init_paging();
+
+extern void enable_paging();
+
 void kernel_main() {
 
 /* There is an issue with the way the kernel handles input that causes
@@ -245,6 +249,10 @@ void kernel_main() {
     init_heap();
 
     gdt_init();
+
+    init_paging();
+
+    enable_paging();
 
     unix_time = read_rtc_unix_time();
 
