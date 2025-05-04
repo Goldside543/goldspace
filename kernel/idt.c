@@ -53,7 +53,7 @@ struct idt_pointer {
 } __attribute__((packed));
 
 // The IDT itself
-struct idt_entry idt[IDT_ENTRIES];
+struct idt_entry idt[IDT_ENTRIES] __attribute__((aligned(4096)));
 
 void default_handler(void) {
     asm volatile("pushal");
