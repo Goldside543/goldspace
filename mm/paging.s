@@ -53,6 +53,9 @@ initialize_page_tables:
 
 # enable_paging: Enable paging by setting the CR0, CR3, and CR4 registers
 enable_paging:
+    call setup_page_directory
+    call initialize_page_tables
+
     # Set CR3 to the address of page directory
     lea page_directory, %eax
     movl %eax, %cr3           # Set CR3 to page directory base address
