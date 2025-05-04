@@ -242,6 +242,8 @@ void kernel_main() {
     cursor_y = 0;
     move_cursor();
 
+    init_heap();
+
     gdt_init();
 
     unix_time = read_rtc_unix_time();
