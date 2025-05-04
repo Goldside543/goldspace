@@ -2,52 +2,48 @@
 
 ENTRY(kernel_main)
 
-/* Physical load addresses for bootloader */
-PHYS_BASE = 0x00100000;
-
-/* Virtual addresses the kernel will use */
-VIRT_BASE = 0xC0000000;
-
+/* Define memory regions */
 MEMORY {
-    MULTIBOOT : ORIGIN = 0x00000000, LENGTH = 4K
-    CODE      : ORIGIN = VIRT_BASE,     LENGTH = 64M
-    DATA      : ORIGIN = VIRT_BASE + 0x01000000, LENGTH = 64M
-    RO_DATA   : ORIGIN = VIRT_BASE + 0x02000000, LENGTH = 64M
+    MULTIBOOT : ORIGIN = 0x00000000, LENGTH = 4K  /* Small region for Multiboot header */
+    CODE      : ORIGIN = 0x00100000, LENGTH = 64M  /* Kernel code section */
+    DATA      : ORIGIN = 0x06000000, LENGTH = 64M  /* Kernel data section */
+    RO_DATA   : ORIGIN = 0x0C000000, LENGTH = 64M  /* Read-only data section */
 }
 
+/* Define sections */
 SECTIONS {
-    . = VIRT_BASE;
+    . = 0x00000000;  /* Set the start of memory to the beginning */
 
-    /* Multiboot header — must be in the first 8KB of the file at physical address */
-    .multiboot : AT(PHYS_BASE - 0x1000) ALIGN(4) {
-        LONG(0x1BADB002)
-        LONG(0x00000000)
-        LONG(-(0x1BADB002 + 0x00000000))
-    } > MULTIBOOT
+    /* Multiboot header */
+    .multiboot : ALIGN(4) {
+        LONG(0x1BADB002)  /* Magic number */
+        LONG(0x00000000)  /* Flags (set to 0) */
+        LONG(-(0x1BADB002 + 0x00000000))  /* Checksum (negative sum of header fields) */
+    } > MULTIBOOT  /* Place Multiboot header in the MULTIBOOT section */
 
-    /* Code section */
-    .text : AT(ADDR(.text) - VIRT_BASE + PHYS_BASE) ALIGN(16) {
-        *(.text)
-        *(.text.*)
-        *(.rodata)
-        *(.rodata.*)
+    /* Code section (.text) */
+    .text : ALIGN(16) {
+        *(.text)         /* Kernel .text section */
+        *(.text.*)       /* Rust code may use additional .text.* sections */
+        *(.rodata)       /* Read-only data, often used by Rust */
+        *(.rodata.*)     /* Additional read-only data sections from Rust */
     } > CODE
 
-    /* Data section */
-    .data : AT(ADDR(.data) - VIRT_BASE + PHYS_BASE) ALIGN(16) {
-        *(.data)
-        *(.data.*)
+    /* Data section (.data) */
+    .data : ALIGN(16) {
+        *(.data)         /* Kernel .data section */
+        *(.data.*)       /* Rust-generated data sections */
     } > DATA
 
-    /* BSS section */
-    .bss : AT(ADDR(.bss) - VIRT_BASE + PHYS_BASE) ALIGN(16) {
-        *(.bss)
-        *(.bss.*)
+    /* BSS section (.bss) */
+    .bss : ALIGN(16) {
+        *(.bss)          /* Kernel .bss section */
+        *(.bss.*)        /* Uninitialized data from Rust */
         *(COMMON)
     } > DATA
 
-    /* Exception handling stuff */
-    .eh_frame : AT(ADDR(.eh_frame) - VIRT_BASE + PHYS_BASE) {
-        KEEP(*(.eh_frame))
+    /* Exception handling frames (used by Rust, if applicable) */
+    .eh_frame : {
+        KEEP(*(.eh_frame))  /* Ensure exception handling frames are kept, if present */
     } > RO_DATA
 }
