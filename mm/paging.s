@@ -45,16 +45,11 @@ initialize_page_tables:
 
 # enable_paging: Enable paging by setting the CR0, CR3, and CR4 registers
 enable_paging:
-    # Set CR0.PG to enable paging
-    movl %cr0, %eax
-    orl $0x80000000, %eax     # Set the PG bit in CR0 (bit 31)
-    movl %eax, %cr0           # Write back to CR0
-
     # Set CR3 to the address of page directory
     lea page_directory, %eax
     movl %eax, %cr3           # Set CR3 to page directory base address
 
-    # Enable paging by setting the PG bit in CR0 (again if needed)
+    # Enable paging by setting the PG bit in CR0
     movl %cr0, %eax
     orl $0x80000000, %eax
     movl %eax, %cr0
