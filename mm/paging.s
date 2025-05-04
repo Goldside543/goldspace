@@ -6,53 +6,56 @@
 .section .data
     .align 0x1000
 
-# One Page Directory (4KB) = 1024 entries
 page_directory:
-    .fill 1024, 4, 0
+    .fill 1024, 4, 0              # Page Directory: 1024 entries (4KB)
 
-# One Page Table (4KB) = 1024 entries
-page_table_0:
-    .fill 1024, 4, 0
+page_tables:
+    .fill 1024 * 1024, 4, 0       # 1024 Page Tables: each has 1024 entries
 
 .section .text
 
 # -------------------------------
 # init_paging:
-# - Setup identity-mapped paging
+# - Sets up 4GB identity paging
 # -------------------------------
 init_paging:
-    # Set up page directory entry 0 to point to page_table_0
-    lea page_table_0, %eax         # %eax = &page_table_0
-    movl %eax, %edx                # copy address
-    orl $0x3, %edx                 # present + writable
-    movl %edx, page_directory      # page_directory[0] = page_table_0 | flags
+    lea page_directory, %ebx           # %ebx = page_directory
+    lea page_tables, %edi              # %edi = start of all page tables
+    movl $0, %eax                      # physical address counter
+    movl $1024, %ecx                   # 1024 page tables to make
+page_dir_loop:
+    # Set page_directory[i] = &page_tables[i * 4KB] | 0x3
+    movl %edi, %edx                    # %edx = base addr of current page table
+    orl $0x3, %edx                     # mark as present + writable
+    movl %edx, (%ebx)                  # store in page_directory[i]
 
-    # Fill page_table_0 with identity-mapped entries
-    movl $0, %edi                  # Physical address counter
-    lea page_table_0, %eax
-    movl $1024, %ecx               # 1024 entries
-fill_page_table:
-    movl %edi, %edx                # edx = physical addr
-    orl $0x3, %edx                 # present + writable
-    movl %edx, (%eax)              # write entry
-    addl $4, %eax                  # next PTE
-    addl $0x1000, %edi             # next physical page (4KB)
-    loop fill_page_table
+    # Now fill the current page table
+    pushl %ecx                         # save outer loop counter
+    movl $1024, %ecx
+fill_page_table_loop:
+    movl %eax, %edx                    # physical address
+    orl $0x3, %edx                     # present + writable
+    movl %edx, (%edi)                  # write PTE
+    addl $4, %edi                      # next entry in PTE
+    addl $0x1000, %eax                 # next physical page (4KB)
+    loop fill_page_table_loop
+
+    popl %ecx                          # restore outer loop counter
+    addl $4, %ebx                      # next PDE
+    loop page_dir_loop
 
     ret
 
 # -------------------------------
 # enable_paging:
-# - Load CR3, set PG bit in CR0
+# - Loads CR3, sets PG bit in CR0
 # -------------------------------
 enable_paging:
-    # Load page directory base into CR3
     lea page_directory, %eax
-    movl %eax, %cr3
+    movl %eax, %cr3                   # load page directory into CR3
 
-    # Enable paging (set PG bit in CR0)
     movl %cr0, %eax
-    orl $0x80000000, %eax          # set PG bit (bit 31)
+    orl $0x80000000, %eax             # enable PG (bit 31)
     movl %eax, %cr0
 
     ret
