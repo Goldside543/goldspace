@@ -7,47 +7,71 @@
     .align 0x1000
 
 page_directory:
-    .fill 1024, 4, 0              # Whole page directory
+    .fill 1024, 4, 0              # Page Directory: 1024 entries (4KB)
 
 page_tables:
-    .fill 1024 * 16, 4, 0         # 16 page tables only (for 64MB)
+    .fill 1024 * 1024, 4, 0       # 1024 Page Tables: each has 1024 entries
 
 .section .text
 
+# -------------------------------
+# init_paging:
+# - Sets up identity mapping for the first 64MB
+# - Maps kernel at 0xC0000000 -> 0xFFFFFFFF (upper 2GB)
+# -------------------------------
 init_paging:
-    lea page_directory, %ebx      # %ebx = page_directory
-    lea page_tables, %edi         # %edi = page_tables start
-    movl $0, %eax                 # %eax = physical address
-    movl $16, %ecx                # we only want 16 page tables (64MB)
-
+    lea page_directory, %ebx           # %ebx = page_directory
+    lea page_tables, %edi              # %edi = start of all page tables
+    movl $0, %eax                      # physical address counter
+    movl $1024, %ecx                   # 1024 page tables to make
 page_dir_loop:
-    movl %edi, %edx               # %edx = current PT addr
-    orl $0x3, %edx                # present + writable
-    movl %edx, (%ebx)             # set page_directory[i]
+    # Set page_directory[i] = &page_tables[i * 4KB] | 0x3
+    movl %edi, %edx                    # %edx = base addr of current page table
+    orl $0x3, %edx                     # mark as present + writable
+    movl %edx, (%ebx)                  # store in page_directory[i]
 
-    pushl %ecx                    # save outer loop counter
-    movl $1024, %ecx              # 1024 PTEs per PT
-
+    # Now fill the current page table
+    pushl %ecx                         # save outer loop counter
+    movl $1024, %ecx
 fill_page_table_loop:
-    movl %eax, %edx               # %edx = physical address
-    orl $0x3, %edx                # mark PTE present + writable
-    movl %edx, (%edi)             # write PTE
-    addl $4, %edi                 # next PTE entry
-    addl $0x1000, %eax            # next physical page
+    movl %eax, %edx                    # physical address
+    orl $0x3, %edx                     # present + writable
+    movl %edx, (%edi)                  # write PTE
+    addl $4, %edi                      # next entry in PTE
+    addl $0x1000, %eax                 # next physical page (4KB)
     loop fill_page_table_loop
 
-    popl %ecx                     # restore outer loop counter
-    addl $4, %ebx                 # next PDE
+    popl %ecx                          # restore outer loop counter
+    addl $4, %ebx                      # next PDE
     loop page_dir_loop
+
+    # Now set up the higher-half kernel mapping at 0xC0000000
+    # Map 0xC0000000 to physical 0x00000000
+    lea page_tables + 0x400000, %edi    # Point to the page tables for higher-half kernel
+    movl $0xC0000000, %eax              # Virtual start address for kernel
+    movl $0x10000000, %ecx              # 256MB mapped this way (e.g., 0xC0000000 - 0xD0000000)
+
+higher_half_kernel_loop:
+    # Set page_tables[entries] = &physical_address + 0x3 (present + writable)
+    movl %eax, %edx
+    orl $0x3, %edx
+    movl %edx, (%edi)
+    addl $4, %edi                      # Next entry in the page table
+    addl $0x1000, %eax                  # Move to next physical page
+    loop higher_half_kernel_loop
 
     ret
 
+# -------------------------------
+# enable_paging:
+# - Loads CR3, sets PG bit in CR0
+# -------------------------------
 enable_paging:
     lea page_directory, %eax
-    movl %eax, %cr3               # load page directory
+    movl %eax, %cr3                   # load page directory into CR3
 
     movl %cr0, %eax
-    orl $0x80000000, %eax         # set PG bit
+    orl $0x80000000, %eax             # enable PG (bit 31)
     movl %eax, %cr0
 
     ret
