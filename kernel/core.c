@@ -274,7 +274,7 @@ void kernel_main() {
 
     init_graphics();
 
-    init_serial();
+    // init_serial();
 
     // protect_tsc();
 
