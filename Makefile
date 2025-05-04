@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-only
 
 LD = ld -z noexecstack		# Edit this to change the linker
-CC = gcc --std=gnu17		# Edit this to change the C compiler
+CC = gcc --std=gnu17 -pedantic	# Edit this to change the C compiler
 AS = as				# For now, as is the only option
 ARCH = -m32			# 64-bit support is lackluster, so only -m32 is gonna work
 LD_ARCH = -m elf_i386		# Architecture used in linker
