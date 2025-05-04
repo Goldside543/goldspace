@@ -1,3 +1,8 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
+.global init_paging
+.global enable_paging
+
 .section .data
     .align 0x1000            # Align to 4KB boundary for paging structures
 
