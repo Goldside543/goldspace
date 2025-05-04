@@ -278,10 +278,6 @@ void kernel_main() {
 
     // protect_tsc();
 
-    cpu_delay(50000000);
-
-    shell_clear();
-
     asm volatile("sti");
 
     print("Welcome to Goldspace and the Gash shell!\n");
