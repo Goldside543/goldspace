@@ -92,6 +92,16 @@ void shell_kunk() {
        print("No.\n");
 }
 
+void shell_reboot() {
+{
+   uint8_t good = 0x02;
+
+   while (good & 0x02)
+      good = inb(0x64);
+
+   outb(0x64, 0xFE);
+}
+
 double calculate(double num1, char operator, double num2) {
     switch (operator) {
         case '+':
@@ -247,6 +257,8 @@ void shell_execute_command(const char *command) {
         shell_clear();
     } else if (my_strcmp(command_name, "kunk") == 0) {
         shell_kunk();
+    } else if (my_strcmp(command_name, "reboot") == 0) {
+        shell_reboot();
     } else if (my_strcmp(command_name, "render") == 0) {
         shell_render(); // Execute the render command
     } else if (my_strcmp(command_name, "panic") == 0) { // Handle the panic command
