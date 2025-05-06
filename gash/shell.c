@@ -93,7 +93,6 @@ void shell_kunk() {
 }
 
 void shell_reboot() {
-{
    uint8_t good = 0x02;
 
    while (good & 0x02)
