@@ -4,11 +4,12 @@
 .global enable_paging
 
 .section .data
-    .align 0x1000
 
+.align 0x1000
 page_directory:
     .fill 1024, 4, 0              # Page Directory: 1024 entries (4KB)
 
+.align 0x1000
 page_tables:
     .fill 1024 * 1024, 4, 0       # 1024 Page Tables: each has 1024 entries
 
@@ -41,7 +42,6 @@ fill_page_table_loop:
     loop fill_page_table_loop
 
     popl %ecx                          # restore outer loop counter
-    addl $4096, %edi                   # next page table
     addl $4, %ebx                      # next PDE
     loop page_dir_loop
 
