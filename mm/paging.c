@@ -4,6 +4,21 @@
 uint32_t page_directory[1024] __attribute__((aligned(4096)));
 uint32_t first_page_table[1024] __attribute__((aligned(4096)));
 
+void loadPageDirectory(uint32_t* page_directory) {
+    asm volatile (
+        "push %%ebp;"              // Save the current base pointer
+        "mov %%esp, %%ebp;"        // Set up the new base pointer
+        "mov 8(%%esp), %%eax;"     // Load the page directory pointer from the function argument
+        "mov %%eax, %%cr3;"        // Load the page directory into CR3
+        "mov %%ebp, %%esp;"        // Restore the original stack pointer
+        "pop %%ebp;"               // Restore the base pointer
+        "ret;"                     // Return from function
+        :
+        : "m"(page_directory)      // Input: the page_directory pointer
+        : "%eax"                   // Clobber: we're modifying %eax
+    );
+}
+
 void init_paging() {
 
    unsigned int i;
@@ -27,21 +42,6 @@ void init_paging() {
 
    loadPageDirectory(page_directory);
 
-}
-
-void loadPageDirectory(uint32_t* page_directory) {
-    asm volatile (
-        "push %%ebp;"              // Save the current base pointer
-        "mov %%esp, %%ebp;"        // Set up the new base pointer
-        "mov 8(%%esp), %%eax;"     // Load the page directory pointer from the function argument
-        "mov %%eax, %%cr3;"        // Load the page directory into CR3
-        "mov %%ebp, %%esp;"        // Restore the original stack pointer
-        "pop %%ebp;"               // Restore the base pointer
-        "ret;"                     // Return from function
-        :
-        : "m"(page_directory)      // Input: the page_directory pointer
-        : "%eax"                   // Clobber: we're modifying %eax
-    );
 }
 
 void enable_paging() {
