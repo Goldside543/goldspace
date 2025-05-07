@@ -24,6 +24,10 @@ extern void pit_isr_wrapper(void);
 extern void gpf_isr_wrapper(void);
 extern long saved_cpl;
 
+void pf_handler() {
+   panic("Page Fault!");
+}
+
 void gpf_handler() {
     if (saved_cpl == 3) {
         terminate_process(current_process);
@@ -131,6 +135,10 @@ void init_idt() {
     set_idt_entry_exception(0x0D, gpf_handler); // Fault handler for GPF
 
     print("Set GPF handler.\n");
+
+    set_idt_entry_exception(0x0E, pf_handler);
+
+    print("Set PF handler.\n");
 
     set_idt_entry_exception(0x08, df_handler); // Fault handler for DF
 
