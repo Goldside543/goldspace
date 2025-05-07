@@ -36,7 +36,7 @@ fill_page_table_loop:
     movl %eax, %edx                    # physical address
     orl $0x3, %edx                     # present + writable
     movl %edx, (%edi)                  # write PTE
-    addl $4096, %edi                   # next entry in PTE
+    addl $4, %edi                      # next entry in PTE
     addl $0x1000, %eax                 # next physical page (4KB)
     loop fill_page_table_loop
 
