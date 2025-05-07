@@ -4,12 +4,11 @@
 .global enable_paging
 
 .section .data
-
-.align 0x1000
+    .align 0x1000
+    
 page_directory:
     .fill 1024, 4, 0              # Page Directory: 1024 entries (4KB)
 
-.align 0x1000
 page_tables:
     .fill 1024 * 1024, 4, 0       # 1024 Page Tables: each has 1024 entries
 
