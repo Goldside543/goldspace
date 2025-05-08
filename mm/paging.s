@@ -10,7 +10,7 @@ page_directory:
     .fill 1024, 4, 0              # Page Directory: 1024 entries (4KB)
 
 page_tables:
-    .fill 1024 * 1024, 4, 0       # 1024 Page Tables: each has 1024 entries
+    .fill 1024 * 1024 * 4, 4, 0       # 1024 Page Tables: each has 1024 entries
 
 .section .text
 
