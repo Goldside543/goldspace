@@ -2,6 +2,8 @@
 
 .global init_paging
 .global enable_paging
+.extern stack_addr
+.extern idt_addr
 
 .section .data
     .align 0x1000
@@ -10,13 +12,13 @@ page_directory:
     .fill 1024, 4, 0              # Page Directory: 1024 entries (4KB)
 
 page_tables:
-    .fill 1024 * 3, 4, 0          # Only enough for CODE, DATA, RO_DATA (3 page tables)
+    .fill 1024 * 5, 4, 0          # Enough for CODE, DATA, RO_DATA, VGA, stack, and IDT
 
 .section .text
 
 # -------------------------------
 # init_paging:
-# - Sets up paging for kernel sections
+# - Sets up paging for kernel sections, VGA, stack, and IDT
 # -------------------------------
 init_paging:
     lea page_directory, %ebx           # %ebx = page_directory
@@ -37,11 +39,26 @@ init_paging:
     movl $2, %ecx                      # Page Directory Index (RO_DATA)
     call map_section
 
+    # Map VGA framebuffer (0xB80000)
+    movl $0xB80000, %eax               # Start of VGA framebuffer
+    movl $3, %ecx                      # Page Directory Index (VGA)
+    call map_single_page
+
+    # Map stack (from stack_addr)
+    movl stack_addr, %eax              # Start of stack
+    movl $4, %ecx                      # Page Directory Index (stack)
+    call map_single_page
+
+    # Map IDT (from idt_addr)
+    movl idt_addr, %eax                # Start of IDT
+    movl $5, %ecx                      # Page Directory Index (IDT)
+    call map_single_page
+
     ret
 
 # -------------------------------
 # map_section:
-# - Maps a 64MB section at %eax
+# - Maps a 64MB section starting at %eax
 # - Page Directory Index in %ecx
 # -------------------------------
 map_section:
@@ -62,6 +79,24 @@ fill_page_table_loop:
     loop fill_page_table_loop
 
     popl %ecx                          # restore outer loop counter
+    ret
+
+# -------------------------------
+# map_single_page:
+# - Maps a single 4KB page starting at %eax
+# - Page Directory Index in %ecx
+# -------------------------------
+map_single_page:
+    # Set page_directory[ecx] = &page_tables[current] | 0x3
+    movl %edi, %edx                    # %edx = base addr of current page table
+    orl $0x3, %edx                     # mark as present + writable
+    movl %edx, (%ebx, %ecx, 4)         # store in page_directory[ecx]
+
+    # Map one page (4KB)
+    movl %eax, %edx                    # Physical address to map
+    orl $0x3, %edx                     # present + writable
+    movl %edx, (%edi)                  # write PTE
+    addl $4, %edi                      # next PTE
     ret
 
 # -------------------------------
