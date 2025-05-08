@@ -59,6 +59,8 @@ struct idt_pointer {
 // The IDT itself
 struct idt_entry idt[IDT_ENTRIES] __attribute__((aligned(4096)));
 
+long idt_addr = (long)(uintptr_t)&idt;
+
 void default_handler(void) {
     asm volatile("pushal");
     outb(0x20, 0x20);
