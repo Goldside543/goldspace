@@ -143,8 +143,8 @@ kernel/ring3.o: kernel/ring3.s
 kernel/gpf_isr_wrapper.o: kernel/gpf_isr_wrapper.s
 	$(AS) -32 -o kernel/gpf_isr_wrapper.o kernel/gpf_isr_wrapper.s
 
-mm/paging.o: mm/paging.c
-	$(CC) $(DEBUG) $(ARCH) $(WARNINGS) -ffreestanding -fno-stack-protector -c mm/paging.c -o mm/paging.o
+mm/paging.o: mm/paging.s
+	$(AS) -32 -o mm/paging.o mm/paging.s
 
 clean:
 	rm -rf *.bin *.o *.iso isodir rust/target kernel/*.o drivers/*.o net/*.o kernel/kernel.bin fs/*.o mm/*.o ipc/*.o gash/*.o
