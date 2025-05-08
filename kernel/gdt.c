@@ -62,6 +62,8 @@ extern void flush_tss(void);
 
 uint8_t kernel_stack[8192] __attribute__((aligned(16)));  // Align to 16 bytes
 
+long stack_addr = (long)(uintptr_t)&kernel_stack;
+
 void tss_init() {
     // Initialize the TSS with default values (this will be a minimal setup)
     tss.prev_task_link = 0;
