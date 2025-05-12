@@ -101,6 +101,42 @@ void shell_reboot() {
    outb(0x64, 0xFE);
 }
 
+void get_cpuid(unsigned int func, unsigned int *eax, unsigned int *ebx, unsigned int *ecx, unsigned int *edx) {
+    asm volatile (
+        "cpuid"
+        : "=a" (*eax), "=b" (*ebx), "=c" (*ecx), "=d" (*edx)
+        : "a" (func)
+    );
+}
+
+#define CPUID_VENDOR_AMD           "AuthenticAMD"
+#define CPUID_VENDOR_INTEL         "GenuineIntel"
+#define CPUID_VENDOR_KVM           " KVMKVMKVM  "
+
+void shell_vendor() {
+    print("\n");
+    unsigned int eax = 0, ebx, ecx, edx;
+    get_cpuid(eax, &eax, &ebx, &ecx, &edx);
+
+    char vendor[13];
+    ((unsigned int*)vendor)[0] = ebx;
+    ((unsigned int*)vendor)[1] = edx;
+    ((unsigned int*)vendor)[2] = ecx;
+    vendor[12] = '\0';  // Null-terminate the string
+
+    if (my_strcmp(vendor, CPUID_VENDOR_AMD) == 0)
+      print("AuthenticAMD\n");
+
+    else if (my_strcmp(vendor, CPUID_VENDOR_INTEL) == 0)
+      print("GenuineIntel\n");
+
+    else if (my_strcmp(vendor, CPUID_VENDOR_KVM) == 0)
+      print("Generic KVM processor\n");
+
+    else
+      print("Unknown processor\n");
+}
+
 double calculate(double num1, char operator, double num2) {
     switch (operator) {
         case '+':
