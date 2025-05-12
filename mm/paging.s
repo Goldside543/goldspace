@@ -26,7 +26,9 @@ init_paging:
 
     movl $0, %esi                      # page_table_index = 0
 page_dir_loop:
-    lea page_tables(,%esi,4096), %edx  # %edx = &page_tables[i * 4KB]
+    movl %esi, %edx
+    shll $12, %edx
+    addl $page_tables, %edx
     orl $0x3, %edx                     # present + writable
     movl %edx, (%ebx)                  # store in page_directory[i]
 
