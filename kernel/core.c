@@ -60,7 +60,12 @@ void move_cursor() {
     outb(0x3D5, cursorLocation);      // Send the low cursor byte
 }
 
+int interrupts_enabled = 0;
+
 void print(const char *str) {
+    if (interrupts_enabled == 1)
+        asm volatile("cli");
+
     while (*str != '\0') {
         switch (*str) {
             case '\n':
@@ -102,6 +107,9 @@ void print(const char *str) {
         str++;
     }
     move_cursor();
+
+    if (interrupts_enabled == 1)
+        asm volatile("sti");
 }
 
 void print_char(char c) {
@@ -279,6 +287,8 @@ void kernel_main() {
     // protect_tsc();
 
     asm volatile("sti");
+
+    interrupts_enabled++;
 
     print("Welcome to Goldspace and the Gash shell!\n");
     print("Type 'help' for available commands.\n");
