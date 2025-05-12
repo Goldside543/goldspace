@@ -110,8 +110,15 @@ void get_cpuid(unsigned int func, unsigned int *eax, unsigned int *ebx, unsigned
 }
 
 #define CPUID_VENDOR_AMD           "AuthenticAMD"
+#define CPUID_VENDOR_AMD_OLD       "AMDisbetter!" // Early engineering samples of AMD K5 processor
 #define CPUID_VENDOR_INTEL         "GenuineIntel"
 #define CPUID_VENDOR_KVM           " KVMKVMKVM  "
+#define CPUID_VENDOR_QEMU          "TCGTCGTCGTCG"
+#define CPUID_VENDOR_VMWARE        "VMwareVMware"
+#define CPUID_VENDOR_VIRTUALBOX    "VBoxVBoxVBox"
+#define CPUID_VENDOR_XEN           "XenVMMXenVMM"
+#define CPUID_VENDOR_HYPERV        "Microsoft Hv"
+
 
 void shell_vendor() {
     print("\n");
@@ -127,11 +134,29 @@ void shell_vendor() {
     if (my_strcmp(vendor, CPUID_VENDOR_AMD) == 0)
       print("AuthenticAMD\n");
 
+    else if (my_strcmp(vendor, CPUID_VENDOR_AMD_OLD) == 0)
+      print("AuthenticAMD\n");
+
     else if (my_strcmp(vendor, CPUID_VENDOR_INTEL) == 0)
       print("GenuineIntel\n");
 
     else if (my_strcmp(vendor, CPUID_VENDOR_KVM) == 0)
       print("Generic KVM processor\n");
+
+    else if (my_strcmp(vendor, CPUID_VENDOR_QEMU) == 0)
+      print("Generic QEMU processor\n");
+
+    else if (my_strcmp(vendor, CPUID_VENDOR_VMWARE) == 0)
+      print("Generic VMware processor\n");
+
+    else if (my_strcmp(vendor, CPUID_VENDOR_VIRTUALBOX) == 0)
+      print("Generic VirtualBox processor\n");
+
+    else if (my_strcmp(vendor, CPUID_VENDOR_XEN) == 0)
+      print("Generic Xen processor\n");
+
+    else if (my_strcmp(vendor, CPUID_VENDOR_HYPERV) == 0)
+      print("Generic Microsoft Hyper-V processor\n");
 
     else
       print("Unknown processor\n");
