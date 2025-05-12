@@ -306,6 +306,8 @@ void shell_execute_command(const char *command) {
         shell_usermode();
     } else if (my_strcmp(command_name, "scan") == 0) {
         shell_scan();
+    } else if (my_strcmp(command_name, "vendor") == 0) {
+        shell_vendor();
     } else if (my_strcmp(command_name, "calculate") == 0) {
         if (*args != '\0') {
             char calculated_number = shell_calculate(args);
