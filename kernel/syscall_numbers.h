@@ -11,5 +11,6 @@
 #define SYS_YIELD            5
 #define SYS_EXIT             6
 #define SYS_STAT             7
+#define SYS_TESTPUTS         8
 
 #endif // SYSCALL_NUMBERS_H
