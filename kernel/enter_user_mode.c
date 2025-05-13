@@ -11,13 +11,13 @@
 
 void puts(const char *str) {
     asm volatile (
-        "mov $8, %%eax;"          // Load syscall number (8) into eax
-        "mov %%ebx, 4(%%ebp);"    // Load the address of the string into 4(%%ebp)
-        "mov %[str], %%ebx;"      // Move the string pointer to ebx (1st argument)
-        "int $0x80;"              // Make the syscall
+        "push %[str];"         // Push the string argument onto the stack
+        "mov $8, %%eax;"       // Load syscall number (8) into eax
+        "int $0x80;"           // Trigger syscall interrupt
+        "add $4, %%esp;"       // Clean up the stack by removing the pushed argument
         :
-        : [str] "r"(str)          // Input: 'str' (the string argument)
-        : "%eax", "%ebx", "%ebp" // Clobbered registers
+        : [str] "r"(str)       // Input: pass the string pointer to the assembly function
+        : "%eax", "%esp"       // Clobbered registers
     );
 }
 
