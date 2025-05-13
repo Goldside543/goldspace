@@ -104,7 +104,7 @@ void print(const char *str) {
     move_cursor();
 }
 
-void sys_testputs(const char *str, void* unused1, void* unused2, void* unused3) {
+void sys_testputs(const char *str, void *unused1, void *unused2, void *unused3) {
     print("\n");
     print(str);
     print("\n");
