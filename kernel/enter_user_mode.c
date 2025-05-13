@@ -17,7 +17,7 @@ void puts(const char *str) {
         "add $4, %%esp;"       // Clean up the stack by removing the pushed argument
         :
         : [str] "r"(str)       // Input: pass the string pointer to the assembly function
-        : "%eax", "%esp"       // Clobbered registers
+        : "%eax"               // Clobbered registers
     );
 }
 
