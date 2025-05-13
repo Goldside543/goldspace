@@ -104,6 +104,13 @@ void print(const char *str) {
     move_cursor();
 }
 
+void sys_testputs(const char *str) {
+    print("\n");
+    print(str);
+    print("\n");
+}
+    
+
 void print_char(char c) {
     char str[2] = {c, '\0'};
     print(str);
