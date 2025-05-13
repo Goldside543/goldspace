@@ -111,6 +111,15 @@ void pit_isr() {
     outb(0x20, 0x20);
 }
 
+void set_idt_entry_syscall(int interrupt_number, void (*handler)()) {
+    idt[interrupt_number].offset_low = (uintptr_t)handler & 0xFFFF;
+    idt[interrupt_number].selector = 0x08; // Kernel code segment selector
+    idt[interrupt_number].zero = 0;
+    idt[interrupt_number].type_attr = 0xEE; // Present, DPL=3 (user mode), 32-bit interrupt gate
+    idt[interrupt_number].offset_high = ((uintptr_t)handler >> 16) & 0xFFFF;
+}
+
+
 // Function to initialize the IDT
 void init_idt() {
     print("Preparing IDT...\n");
