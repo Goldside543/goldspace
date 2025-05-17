@@ -4,10 +4,11 @@ ENTRY(kernel_main)
 
 /* Define memory regions */
 MEMORY {
-    MULTIBOOT : ORIGIN = 0x00000000, LENGTH = 4K  /* Small region for Multiboot header */
-    CODE      : ORIGIN = 0x00100000, LENGTH = 8M  /* Kernel code section */
-    DATA      : ORIGIN = 0x06000000, LENGTH = 8M  /* Kernel data section */
-    RO_DATA   : ORIGIN = 0x0C000000, LENGTH = 8M  /* Read-only data section */
+    MULTIBOOT : ORIGIN = 0x00000000, LENGTH = 4K
+    REALMODE  : ORIGIN = 0x00080000, LENGTH = 32K
+    CODE      : ORIGIN = 0x00100000, LENGTH = 8M
+    DATA      : ORIGIN = 0x06000000, LENGTH = 8M
+    RO_DATA   : ORIGIN = 0x0C000000, LENGTH = 8M
 }
 
 /* Define sections */
@@ -20,6 +21,10 @@ SECTIONS {
         LONG(0x00000000)  /* Flags (set to 0) */
         LONG(-(0x1BADB002 + 0x00000000))  /* Checksum (negative sum of header fields) */
     } > MULTIBOOT  /* Place Multiboot header in the MULTIBOOT section */
+
+    .realmode : ALIGN(0x10) { /* Align to 16 bytes */
+        *(.realmode)
+    } > REALMODE
 
     /* Code section (.text) */
     .text : ALIGN(0x1000) {  /* Align to 4KB pages */
