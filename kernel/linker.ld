@@ -6,48 +6,49 @@ ENTRY(kernel_main)
 MEMORY {
     MULTIBOOT : ORIGIN = 0x00000000, LENGTH = 4K
     REALMODE  : ORIGIN = 0x00080000, LENGTH = 32K
-    CODE_PHYS : ORIGIN = 0x00100000, LENGTH = 8M   /* Physical address for kernel code */
-    DATA_PHYS : ORIGIN = 0x06000000, LENGTH = 8M   /* Physical address for kernel data */
-    RO_DATA_PHYS : ORIGIN = 0x0C000000, LENGTH = 8M/* Physical address for read-only data */
+    CODE      : ORIGIN = 0x00100000, LENGTH = 8M
+    DATA      : ORIGIN = 0x06000000, LENGTH = 8M
+    RO_DATA   : ORIGIN = 0x0C000000, LENGTH = 8M
 }
 
-/* Define virtual addresses for higher half magic */
-KERNEL_VMA = 0xC0000000;
-KERNEL_LMA = 0x00100000;
-
+/* Define sections */
 SECTIONS {
-    . = 0x00000000;  /* Start from zero for multiboot, just like before */
+    . = 0x00000000;  /* Set the start of memory to the beginning */
 
-    .multiboot : ALIGN(0x1000) {
-        LONG(0x1BADB002)
-        LONG(0x00000000)
-        LONG(-(0x1BADB002 + 0x00000000))
-    } > MULTIBOOT
+    /* Multiboot header */
+    .multiboot : ALIGN(0x1000) {  /* Align to 4KB pages */
+        LONG(0x1BADB002)  /* Magic number */
+        LONG(0x00000000)  /* Flags (set to 0) */
+        LONG(-(0x1BADB002 + 0x00000000))  /* Checksum (negative sum of header fields) */
+    } > MULTIBOOT  /* Place Multiboot header in the MULTIBOOT section */
 
-    .realmode : ALIGN(0x10) {
+    .realmode : ALIGN(0x10) { /* Align to 16 bytes */
         *(.realmode)
     } > REALMODE
 
-    . = KERNEL_VMA;
+    /* Code section (.text) */
+    .text : ALIGN(0x1000) {  /* Align to 4KB pages */
+        *(.text)         /* Kernel .text section */
+        *(.text.*)       /* Rust code may use additional .text.* sections */
+        *(.rodata)       /* Read-only data, often used by Rust */
+        *(.rodata.*)     /* Additional read-only data sections from Rust */
+    } > CODE
 
-    .text : AT(KERNEL_LMA) ALIGN(0x1000) {
-        *(.text)
-        *(.text.*)
-        *(.rodata)
-        *(.rodata.*)
-    } > CODE_PHYS
+    /* Data section (.data) */
+    .data : ALIGN(0x1000) {  /* Align to 4KB pages */
+        *(.data)         /* Kernel .data section */
+        *(.data.*)       /* Rust-generated data sections */
+    } > DATA
 
-    .data : AT(LOADADDR(.text) + SIZEOF(.text)) ALIGN(0x1000) {
-        *(.data)
-        *(.data.*)
-    } > DATA_PHYS
-
-    .bss : AT(LOADADDR(.data) + SIZEOF(.data)) ALIGN(0x1000) {
-        *(.bss)
-        *(.bss.*)
+    /* BSS section (.bss) */
+    .bss : ALIGN(0x1000) {  /* Align to 4KB pages */
+        *(.bss)          /* Kernel .bss section */
+        *(.bss.*)        /* Uninitialized data from Rust */
         *(COMMON)
-    } > DATA_PHYS
+    } > DATA
 
-   .eh_frame : AT(LOADADDR(.bss) + SIZEOF(.bss)) ALIGN(0x1000) {
-       KEEP(*(.eh_frame))
-    } > RO_DATA_PHYS
+    /* Exception handling frames (used by Rust, if applicable) */
+    .eh_frame : ALIGN(0x1000) {  /* Align to 4KB pages */
+        KEEP(*(.eh_frame))  /* Ensure exception handling frames are kept, if present */
+    } > RO_DATA
+}
