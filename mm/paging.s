@@ -7,45 +7,107 @@
     .align 0x1000
 
 page_directory:
-    .fill 1024, 4, 0              # Page Directory: 1024 entries (4KB)
+    .fill 1024, 4, 0
 
 page_tables:
-    .fill 1024 * 1024, 4, 0       # 1024 Page Tables: each has 1024 entries
+    .fill 1024 * 8, 4, 0        # Let's allocate 8 page tables for our mapped regions (adjust as needed)
 
 .section .text
 
+# Helper macros for mapping
+.macro MAP_REGION vaddr, paddr, size
+    # vaddr = virtual start, paddr = physical start, size = bytes
+    # Will map [vaddr, vaddr+size) to [paddr, paddr+size)
+    # Assumes %ebx = page_directory base, %edi = page_tables base
+
+    pushl %eax
+    pushl %ecx
+    pushl %edx
+
+    movl $\vaddr, %eax      # Current virtual address
+    movl $\paddr, %edx      # Current physical address
+    movl $\size, %ecx       # Bytes left to map
+
+.map_page_loop\@:
+    movl %eax, %esi
+    shrl $22, %esi                  # page directory index
+    movl %edi, %ebp
+    addl $(4096 * 1024), %ebp       # skip over identity-mapped tables
+    movl %ebp, %ebp                 # for clarity
+    movl %ebx, %ebp                 # directory base
+
+    # Set up page directory entry for this vaddr
+    movl %ebx, %ebp
+    movl %esi, %ebp
+    shll $2, %ebp
+    addl %ebx, %ebp
+    movl %ebp, %ebp                 # %ebp = &page_directory[pd_index]
+
+    # Set page directory entry if not present yet
+    movl (%ebp), %ebx
+    testl $1, %ebx
+    jnz .pd_entry_set\@
+    # Set page table pointer
+    movl %edi, (%ebp)
+    orl $0x3, (%ebp)
+.pd_entry_set\@:
+
+    # Now set page table entry
+    movl %eax, %ebx
+    shrl $12, %ebx                  # page table index
+    andl $0x3FF, %ebx
+    movl (%ebp), %ebp               # get page table address
+    andl $0xFFFFF000, %ebp
+    addl %ebx, %ebx
+    shll $2, %ebx
+    addl %ebx, %ebp
+    movl %edx, (%ebp)
+    orl $0x3, (%ebp)
+
+    # Advance
+    addl $0x1000, %eax
+    addl $0x1000, %edx
+    subl $0x1000, %ecx
+    jg .map_page_loop\@
+
+    popl %edx
+    popl %ecx
+    popl %eax
+.endm
+
 # -------------------------------
 # init_paging:
-# - Sets up 4GB identity paging
+# - Sets up identity & higher-half kernel paging
 # -------------------------------
 init_paging:
-    lea page_directory, %ebx           # %ebx = page_directory
-    lea page_tables, %edi              # %edi = start of all page tables
-    movl $0, %eax                      # physical address counter
-    movl $1024, %ecx                   # 1024 page tables
+    lea page_directory, %ebx
+    lea page_tables, %edi
 
-    movl $0, %esi                      # page_table_index = 0
-page_dir_loop:
-    movl %esi, %edx
-    shll $12, %edx
-    addl $page_tables, %edx
-    orl $0x3, %edx                     # present + writable
-    movl %edx, (%ebx)                  # store in page_directory[i]
+    # Clear page directory and tables
+    movl $0, %eax
+    movl $1024*4, %ecx
+    rep stosl
+    movl $0, %eax
+    movl $1024*8*4, %ecx     # 8 tables * 1024 entries * 4 bytes
+    rep stosl
 
-    pushl %ecx                         # save outer loop counter
-    movl $1024, %ecx                   # fill 1024 PTEs
-fill_page_table_loop:
-    movl %eax, %edx
-    orl $0x3, %edx
-    movl %edx, (%edi)
-    addl $4, %edi
-    addl $0x1000, %eax
-    loop fill_page_table_loop
+    # Identity map Multiboot (0x00000000 - 0x00000FFF)
+    MAP_REGION 0x00000000, 0x00000000, 0x1000
 
-    popl %ecx
-    addl $4, %ebx                      # next PDE
-    incl %esi                          # next page table
-    loop page_dir_loop
+    # Identity map Realmode (0x00080000 - 0x00087FFF)
+    MAP_REGION 0x00080000, 0x00080000, 0x8000
+
+    # Identity map Kernel code (.text, .rodata): 0x00100000 - 0x008FFFFF (8MB)
+    MAP_REGION 0x00100000, 0x00100000, 0x800000
+
+    # Identity map Kernel data (.data, .bss): 0x06000000 - 0x067FFFFF (8MB)
+    MAP_REGION 0x06000000, 0x06000000, 0x800000
+
+    # Identity map Kernel rodata: 0x0C000000 - 0x0C7FFFFF (8MB)
+    MAP_REGION 0x0C000000, 0x0C000000, 0x800000
+
+    # Map kernel to higher-half (virtual 0xC0000000 - 0xC07FFFFF -> physical 0x00100000 - 0x008FFFFF)
+    MAP_REGION 0xC0000000, 0x00100000, 0x800000
 
     ret
 
