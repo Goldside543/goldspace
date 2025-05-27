@@ -37,18 +37,17 @@ SECTIONS {
         *(.rodata.*)
     } > CODE_PHYS
 
-    .data : AT(LMA_DATA = KERNEL_LMA + (ADDR(.data) - KERNEL_VMA)) ALIGN(0x1000) {
+    .data : AT(LOADADDR(.text) + SIZEOF(.text)) ALIGN(0x1000) {
         *(.data)
         *(.data.*)
     } > DATA_PHYS
 
-    .bss : AT(LMA_BSS = KERNEL_LMA + (ADDR(.bss) - KERNEL_VMA)) ALIGN(0x1000) {
+    .bss : AT(LOADADDR(.data) + SIZEOF(.data)) ALIGN(0x1000) {
         *(.bss)
         *(.bss.*)
         *(COMMON)
     } > DATA_PHYS
 
-    .eh_frame : AT(LMA_EH = KERNEL_LMA + (ADDR(.eh_frame) - KERNEL_VMA)) ALIGN(0x1000) {
-        KEEP(*(.eh_frame))
+   .eh_frame : AT(LOADADDR(.bss) + SIZEOF(.bss)) ALIGN(0x1000) {
+       KEEP(*(.eh_frame))
     } > RO_DATA_PHYS
-}
