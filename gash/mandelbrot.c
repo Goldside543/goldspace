@@ -37,7 +37,7 @@ int shell_mandelbrot() {
     double centerX = -0.7436438870371587; // some juicy zoom spot
     double centerY = 0.13182590420531198;
 
-    double zoom = 1.0; // zoom factor, 1 = default view
+    double zoom = 20.0; // zoom factor, 1 = default view
 
     while (1) {
         // Shrink the window to zoom in over time
