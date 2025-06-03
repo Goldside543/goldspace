@@ -5,7 +5,7 @@
  * A mandelbrot set. A neat way to test Goldspace's
  * speed. Or something. I don't know.
  *
- * Copyright (C) 2024-2025 Goldside543
+ * Copyright (C) 2025 Goldside543
  *
  */
 
