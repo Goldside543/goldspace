@@ -63,7 +63,6 @@ int shell_mandelbrot() {
         }
         frame[pos] = '\0';
 
-        shell_clear();
         print(frame);
     }
 
