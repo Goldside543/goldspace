@@ -5,4 +5,4 @@
 
 int shell_mandelbrot();
 
-#endif MANDELBROT_H
+#endif // MANDELBROT_H
