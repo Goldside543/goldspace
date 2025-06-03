@@ -11,6 +11,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "shell.h"
+#include "mandelbrot.h"
 #include "../kernel/io.h"
 #include "../kernel/string.h"
 #include "../drivers/graphics.h"
@@ -333,6 +334,8 @@ void shell_execute_command(const char *command) {
         shell_scan();
     } else if (my_strcmp(command_name, "vendor") == 0) {
         shell_vendor();
+    } else if (my_strcmp(command_name, "mandel") == 0) {
+        shell_mandelbrot();
     } else if (my_strcmp(command_name, "calculate") == 0) {
         if (*args != '\0') {
             char calculated_number = shell_calculate(args);
