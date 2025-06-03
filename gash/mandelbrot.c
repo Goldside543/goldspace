@@ -15,7 +15,7 @@
 
 #define WIDTH 80
 #define HEIGHT 25
-#define MAX_ITER 30
+#define MAX_ITER 100
 
 int mandelbrot(double cr, double ci) {
     double zr = 0.0, zi = 0.0;
@@ -37,11 +37,11 @@ int shell_mandelbrot() {
     double centerX = -0.7436438870371587; // some juicy zoom spot
     double centerY = 0.13182590420531198;
 
-    double zoom = 20.0; // zoom factor, 1 = default view
+    double zoom = 10.0; // zoom factor, 1 = default view
 
     while (1) {
         // Shrink the window to zoom in over time
-        zoom *= 0.95;  // zoom speed (0.95 = 5% zoom per frame)
+        zoom *= 0.98;  // zoom speed
 
         double rangeX = 3.0 * zoom; // original range from -2 to 1 is 3 units
         double rangeY = 2.0 * zoom; // original range from -1 to 1 is 2 units
