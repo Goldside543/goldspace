@@ -20,9 +20,6 @@ int syscall_handler(int syscall_number, void* arg1, void* arg2, void* arg3, void
         return -1;
     }
 
-    print("\n");
-    print("Handler works!\n");
-
     // Get the function pointer from the syscall_table
     int (*handler)(void*, void*, void*, void*) = syscall_table[syscall_number];
 
