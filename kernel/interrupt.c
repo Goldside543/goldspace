@@ -25,10 +25,10 @@ void software_interrupt_handler() {
     void* arg4;
 
     asm volatile (
-        "movl 4(%%ebp), %0\n"   // Get the first argument (arg1)
-        "movl 8(%%ebp), %1\n"   // Get the second argument (arg2)
-        "movl 12(%%ebp), %2\n"  // Get the third argument (arg3)
-        "movl 16(%%ebp), %3"    // Get the fourth argument (arg4)
+        "movl %%ebx, %0\n"   // Get the first argument (arg1)
+        "movl %%ecx, %1\n"   // Get the second argument (arg2)
+        "movl %%edx, %2\n"  // Get the third argument (arg3)
+        "movl %%esi, %3"    // Get the fourth argument (arg4)
         : "=r"(arg1), "=r"(arg2), "=r"(arg3), "=r"(arg4)
         : /* no input */
         : /* no clobber */
