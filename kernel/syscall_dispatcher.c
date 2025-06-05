@@ -11,10 +11,11 @@
 #include "syscall_table.h"
 #include "syscall_numbers.h"
 
+#define SYSCALL_TABLE_SIZE 9
+
 int syscall_handler(int syscall_number, void* arg1, void* arg2, void* arg3, void* arg4) {
     // Check if syscall_number is within valid range
-    int table_size = sizeof(syscall_table) / sizeof(syscall_table[0]);
-    if (syscall_number < 0 || syscall_number >= table_size) {
+    if (syscall_number < 0 || syscall_number >= SYSCALL_TABLE_SIZE) {
         return -1;
     }
 
