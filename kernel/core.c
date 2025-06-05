@@ -104,10 +104,11 @@ void print(const char *str) {
     move_cursor();
 }
 
-void sys_testputs(const char *str, void *unused1, void *unused2, void *unused3) {
-    print("\n");
+int sys_testputs(const char *str, void *unused1, void *unused2, void *unused3) {
     print(str);
     print("\n");
+
+    return 0;
 }
     
 
@@ -287,7 +288,7 @@ void kernel_main() {
     print("Type 'help' for available commands.\n");
     print("\n");
 
-    print("Goldspace Beta 1.1.0, Copyright (C) 2024-2025 Goldside543\n");
+    print("Goldspace Beta 1.2.0, Copyright (C) 2024-2025 Goldside543\n");
     print("Goldspace comes with ABSOLUTELY NO WARRANTY.\n");
     print("This is free software, and you are welcome to redistribute it\n");
     print("under certain conditions. See the GPL-2.0 license for details.\n");

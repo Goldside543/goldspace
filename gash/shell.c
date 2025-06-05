@@ -275,6 +275,7 @@ double shell_calculate(const char *args) {
 extern void jump_usermode(void);
 
 void shell_usermode() {
+   print("\n");
    jump_usermode();
 }
 
