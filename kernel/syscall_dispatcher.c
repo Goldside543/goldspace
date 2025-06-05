@@ -10,6 +10,7 @@
 
 #include "syscall_table.h"
 #include "syscall_numbers.h"
+#include "print.h"
 
 #define SYSCALL_TABLE_SIZE 9
 
