@@ -14,16 +14,12 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-// Get hardware random number
-static inline bool rdrand32(uint32_t *val) {
-    unsigned char success;
-    asm volatile("rdrand %0; setc %1" : "=r" (*val), "=qm" (success));
-    return success;
-}
+extern int rdrand32(void);
 
 uint32_t rand32() {
-    uint32_t val;
-    if (rdrand32(&val)) {
+    uint32_t val = rdrand32();
+
+    if (rdrand_present != 0) {
         return val;  // Use RDRAND if available
     }
 
