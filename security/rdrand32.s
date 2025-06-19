@@ -6,7 +6,7 @@ rdrand32:
     pushl %ebx
     pushl %ecx
 
-    movl $01H, %eax
+    movl $01h, %eax
     cpuid
     
     btl $30, %ecx
