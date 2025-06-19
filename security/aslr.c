@@ -19,7 +19,7 @@ extern int rdrand32(void);
 uint32_t rand32() {
     uint32_t val = rdrand32();
 
-    if (rdrand_present != 0) {
+    if (val != 0) {
         return val;  // Use RDRAND if available
     }
 
