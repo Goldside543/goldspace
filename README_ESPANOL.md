@@ -10,26 +10,18 @@ Ahora pasemos al shell, Gash. Gash es una combinación de "Gold" y "Bash", y est
 # Instrucciones de compilación:
 * `git clone https://github.com/Goldside543/goldspace.git`
 * `cd goldspace`
-* `make` <br> <br>
-(para compilar en 64 bits, los siguientes comandos van entre `cd goldspace` y `make`) <br> <br>
-* `chmod +x scripts/64-bitifier.sh`
-* `sed -i "s|path/to/kernel/source|$(pwd)|" scripts/64-bitifier.sh`
-* `scripts/64-bitifier.sh`
+* `make -j4`
 
 # Lista de comandos:
 * `help` muestra la ayuda.
 * `clear` limpia la pantalla.
 * `echo <mensaje>` te permite escribir algo, ¡y será repetido!
-* `create <nombre_archivo>` ¡crea un archivo!
-* `write <nombre_archivo> <datos>` escribe datos en un archivo.
-* `read <nombre_archivo>` lee un archivo.
-* `delete <nombre_archivo>` elimina un archivo.
 * `render` realiza una prueba de renderizado en la GPU.
 * `panic` causa un pánico del kernel.
 * `builddate` imprime la fecha y hora de la compilación.
 
-# Para documentación adicional...
-¡Consulta el manual de usuario o el manual del desarrollador, convenientemente ubicados en el directorio de Documentación!
+# Documentación
+Consulta el directorio Documentation para los manuales de usuario y desarrollador.
 
 # Número de versión: 
 Ver README.md

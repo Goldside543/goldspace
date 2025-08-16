@@ -10,26 +10,18 @@
 # 编译说明：
 * `git clone https://github.com/Goldside543/goldspace.git`
 * `cd goldspace`
-* `make` <br> <br>
-（为了编译为 64 位，以下命令需要在 `cd goldspace` 和 `make` 之间运行） <br> <br>
-* `chmod +x scripts/64-bitifier.sh`
-* `sed -i "s|path/to/kernel/source|$(pwd)|" scripts/64-bitifier.sh`
-* `scripts/64-bitifier.sh`
+* `make -j4`
 
 # 命令列表：
 * `help` 显示帮助信息。
 * `clear` 清除屏幕。
 * `echo <消息>` 允许你输入一些内容，并将其重复显示！
-* `create <文件名>` 创建一个文件！
-* `write <文件名> <数据>` 向文件写入数据！
-* `read <文件名>` 读取一个文件！
-* `delete <文件名>` 删除一个文件！
 * `render` 在 GPU 上进行渲染测试。
 * `panic` 触发内核恐慌。
 * `builddate` 打印构建日期和时间。
 
-# 获取更多文档...
-请查阅用户手册或开发者手册，方便地位于文档目录中！
+# 文档
+请参阅 Documentation 目录中的用户手册和开发者手册。
 
 # 版本号:
 看 README.md
