@@ -11,18 +11,15 @@
  */
 
 #![no_std]
-#![no_main]
 #![allow(warnings)]
 
-use core::panic::PanicInfo;
 use core::arch::asm;
 
 static mut LOG_BUFFER: [u8; 1024] = [0; 1024];
 static mut LOG_INDEX: usize = 0;
 
 #[panic_handler]
-#[no_mangle]
-fn panic(_info: &PanicInfo) -> ! {
+fn panic(_info: &core::panic::PanicInfo) -> ! {
     // Halt the CPU
     loop {
         unsafe {
