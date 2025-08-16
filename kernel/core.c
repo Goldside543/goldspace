@@ -260,7 +260,9 @@ void kernel_main() {
 
     init_idt();
 
-    page_table_init();
+    // Initialize paging before enabling interrupts
+    extern void paging_init();
+    paging_init();
 
     // audio_init();
 

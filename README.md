@@ -3,8 +3,10 @@
 # Goldspace
 Crappy Unix-like kernel I'm making. We've got the bootloader, the kernel, the linker script, the Gash shell, the Makefile...
 It's practically better than Linux.
+
 # Gash
 Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is designed specifically for Goldspace. How the hell do I give it input, you ask? Well, the core of the kernel has a keyboard driver inside of it!
+
 # Compilation instructions:
 * `git clone https://github.com/Goldside543/goldspace.git`
 * `cd goldspace`
@@ -13,6 +15,7 @@ Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is des
 * `chmod +x scripts/64-bitifier.sh`
 * `sed -i "s|path/to/kernel/source|$(pwd)|" scripts/64-bitifier.sh`
 * `scripts/64-bitifier.sh`
+
 # Command list:
 * `help` displays help.
 * `clear` clears the screen.
@@ -20,6 +23,14 @@ Now onto the shell, Gash. Gash is a portmanteau of "Gold" and "Bash", and is des
 * `render` does a rendering test on the GPU.
 * `panic` causes a kernel panic.
 * `builddate` prints build date and time.
+
+# Documentation
+The project now includes comprehensive documentation:
+
+* [User Manual](Documentation/usermanual.md) - For end users
+* [Developer Manual](Documentation/devmanual.md) - For developers
+* [Kernel Documentation](Documentation/kernel/README.md) - Detailed kernel internals
+
 # For additional documentation...
 See the user manual or developer manual, conveniently located in the Documentation directory!
 # Donate

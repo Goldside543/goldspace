@@ -194,36 +194,49 @@ int kmemcmp(const void* ptr1, const void* ptr2, size_t num) {
     return 0;
 }
 
-static page_table_t* page_table;
+// Paging functions
+extern void init_paging();
+extern void enable_paging();
 
-void page_table_init() {
-    page_table = (page_table_t*)kmalloc(sizeof(page_table_t));
-    if (page_table == NULL) {
-        print("Memory allocation failed during page table initialization.\n");
-        return;
+static uint32_t page_directory[1024] __attribute__((aligned(4096)));
+static uint32_t page_tables[1024][1024] __attribute__((aligned(4096)));
+
+void paging_init() {
+    // Initialize page directory
+    for (int i = 0; i < 1024; i++) {
+        page_directory[i] = 0x00000002; // Supervisor, RW, Not Present
     }
 
-    // Initialize page table entries to zero
-    for (int i = 0; i < NUM_PAGES; ++i) {
-        page_table->page_table[i] = 0;
+    // Map first 4MB (identity mapping) to cover kernel and VGA buffer
+    for (int i = 0; i < 1024; i++) {
+        // Set up page directory entry
+        page_directory[i] = ((uint32_t)page_tables[i] - 0xC0000000) | 0x00000003; // Present, RW
+
+        // Set up page table entries (identity mapping)
+        for (int j = 0; j < 1024; j++) {
+            uint32_t address = (i * 0x400000) + (j * 0x1000);
+            page_tables[i][j] = address | 0x00000003; // Present, RW, 4KB
+        }
     }
+
+    // Load page directory into CR3
+    asm volatile("mov %0, %%cr3" :: "r"(page_directory));
+
+    // Enable paging
+    asm volatile("mov %%cr0, %0" : "=r"(page_directory[0])); // Use page_directory[0] as temp
+    page_directory[0] |= 0x80000000; // Set PG bit (bit 31)
+    asm volatile("mov %0, %%cr0" :: "r"(page_directory[0]));
 }
 
-void map_page(uint32_t virtual_address, uint32_t physical_address) {
-    uint32_t page_index = virtual_address / PAGE_SIZE;
-    page_table->page_table[page_index] = physical_address | 0x3; // Set present and writable bits
+void page_table_init() {
+    // This function is kept for compatibility but does nothing now
+    // All paging initialization is done in paging_init()
 }
 
 void kmempaging(void* virtual_address, size_t size) {
-    uint32_t start_page = (uint32_t)virtual_address / PAGE_SIZE;
-    uint32_t end_page = ((uint32_t)virtual_address + size - 1) / PAGE_SIZE;
-
-    for (uint32_t page = start_page; page <= end_page; ++page) {
-        uint32_t physical_address = (uint32_t)kmalloc(PAGE_SIZE);
-        if (physical_address == 0) {
-            print("Memory allocation failed during paging.\n");
-            return;
-        }
-        map_page(page * PAGE_SIZE, physical_address);
-    }
+    // In our simple implementation, we assume the memory is already mapped
+    // This function is a placeholder for more complex paging implementations
+    (void)virtual_address;
+    (void)size;
+    // No-op in this implementation
 }
