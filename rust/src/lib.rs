@@ -28,6 +28,14 @@ fn panic(_info: &core::panic::PanicInfo) -> ! {
     }
 }
 
+/*
+found duplicate lang item `panic_impl`
+the lang item is first defined in crate `std` (which `test` depends on)
+first definition in `std` loaded from /home/ravenclast/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-099ea48a26be4ce8.rlib
+second definition in the local crate (`goldspacerust`)rustcClick for full compiler diagnostic
+theres a error like that above but i didn't care that much i think its normal
+*/
+
 pub enum LogLevel {
     Info,
     Warn,

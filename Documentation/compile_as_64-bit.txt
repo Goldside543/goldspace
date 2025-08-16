@@ -1,1 +1,2 @@
-To compile Goldspace as 64-bit, run 64-bitifier.sh. It will do everything required for x86_64 automatically.
+To compile Goldspace as 64-bit, run 64-bitifier.sh. 
+It will do everything required for x86_64 automatically.
