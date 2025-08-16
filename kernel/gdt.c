@@ -15,6 +15,12 @@
 // GDT entries
 #define GDT_SIZE 6
 
+// Kernel: 0x00000000 - 0x0C800000 (~200 MB)
+#define KERNEL_LIMIT ((0x0C800000 / 0x1000) - 1)
+
+// User: everything above 0x0C800000 (up to 0xFFFFFFFF)
+#define USER_LIMIT ((0xFFFFFFFF / 0x1000) - 1)
+
 // TSS (Task State Segment) structure
 struct tss_entry {
     uint32_t prev_task_link;
@@ -114,19 +120,19 @@ void gdt_init() {
     print("Set null descriptor.\n");
 
     // Kernel code segment (entry 1) - 0x08
-    gdt_set_entry(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
-    print("Set kernel code segment.\n");
+    gdt_set_entry(1, 0, KERNEL_LIMIT, 0x9A, 0xCF);
+    print("Set kernel code segment (limited to around 200 MB).\n");
 
     // Kernel data segment (entry 2) - 0x10
-    gdt_set_entry(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
-    print("Set kernel data segment.\n");
+    gdt_set_entry(2, 0, KERNEL_LIMIT, 0x92, 0xCF);
+    print("Set kernel data segment (limited to around 200 MB).\n");
 
     // User code segment (entry 3) - 0x18
-    gdt_set_entry(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
-    print("Set user code segment.\n");
+    gdt_set_entry(3, 0x0C800000, USER_LIMIT, 0xFA, 0xCF);
+    print("Set user code segment (everything above kernel).\n");
 
     // User data segment (entry 4) - 0x20
-    gdt_set_entry(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
+    gdt_set_entry(4, 0x0C800000, USER_LIMIT, 0xF2, 0xCF);
     print("Set user data segment.\n");
 
     // TSS descriptor (entry 5) - 0x28
