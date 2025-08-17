@@ -20,12 +20,23 @@ pcb_t *current_process = NULL;
 pcb_t *process_queue = NULL;
 
 void context_switch(pcb_t *next_process) {
-    // Save the current process's state
-    asm volatile (
-        "mov %%esp, %0\n"
-        "mov %%ebp, %1\n"
-        : "=m" (current_process->esp), "=m" (current_process->ebp)
-    );
+    // Check for null pointer
+    if (!next_process) {
+        return;
+    }
+    
+    // Only save current process state if there is a current process
+    if (current_process != NULL) {
+        // Save the current process's state
+        asm volatile (
+            "mov %%esp, %0\n"
+            "mov %%ebp, %1\n"
+            : "=m" (current_process->esp), "=m" (current_process->ebp)
+        );
+    }
+
+    // Update current process pointer
+    current_process = next_process;
 
     // Load the next process's state
     asm volatile (
@@ -44,12 +55,37 @@ void context_switch(pcb_t *next_process) {
 }
 
 void schedule() {
+    // Check if process queue is initialized
     if (process_queue == NULL) {
         return; // No processes to schedule
     }
-
-    // Move to the next process in the queue
-    current_process = current_process->next;
+    
+    // If no current process, start with the first one in the queue
+    if (current_process == NULL) {
+        current_process = process_queue;
+    } else {
+        // Move to the next process in the queue
+        current_process = current_process->next;
+        
+        // If we've reached the end of the queue, wrap around to the beginning
+        if (current_process == NULL) {
+            current_process = process_queue;
+        }
+        
+        // Skip any terminated processes
+        while (current_process->state == PROCESS_TERMINATED) {
+            current_process = current_process->next;
+            if (current_process == NULL) {
+                current_process = process_queue;
+            }
+            // If we've gone through the entire queue and all processes are terminated,
+            // there's nothing to schedule
+            if (current_process->state == PROCESS_TERMINATED && current_process->next == process_queue) {
+                current_process = NULL;
+                return;
+            }
+        }
+    }
 
     // Perform context switch to the next process
     context_switch(current_process);
@@ -68,7 +104,12 @@ uint32_t* setup_page_directory() {
     if (page_directory == NULL) {
         return NULL; // Allocation failed
     }
-    // Initialize page directory here
+    
+    // Initialize page directory entries to zero
+    for (int i = 0; i < PAGE_DIRECTORY_SIZE / sizeof(uint32_t); i++) {
+        page_directory[i] = 0;
+    }
+    
     return page_directory;
 }
 
@@ -81,11 +122,22 @@ uint32_t* setup_stack() {
     if (stack == NULL) {
         return NULL; // Allocation failed
     }
-    // Set up the stack pointer
+    
+    // Initialize stack to zero
+    for (int i = 0; i < STACK_SIZE / sizeof(uint32_t); i++) {
+        stack[i] = 0;
+    }
+    
+    // Set up the stack pointer to point to the top of the stack
     return stack + STACK_SIZE / sizeof(uint32_t); // Return the top of the stack
 }
 
 pcb_t* create_process(void (*entry_point)()) {
+    // Check for valid entry point
+    if (!entry_point) {
+        return NULL;
+    }
+    
     pcb_t *new_pcb = (pcb_t*)kmalloc(sizeof(pcb_t));
     if (new_pcb == NULL) {
         return NULL; // Allocation failed
@@ -129,7 +181,8 @@ pcb_t* create_process(void (*entry_point)()) {
 }
 
 void terminate_process(pcb_t *pcb) {
-    if (process_queue == NULL || pcb == NULL) {
+    // Check for valid parameters
+    if (!pcb || process_queue == NULL) {
         return;
     }
 
@@ -138,6 +191,7 @@ void terminate_process(pcb_t *pcb) {
     pcb_t *prev = NULL;
     do {
         if (current == pcb) {
+            // Found the PCB to terminate
             if (prev == NULL) { // First PCB in the queue
                 // Find the last PCB to maintain circularity
                 pcb_t *last = process_queue;
@@ -145,6 +199,7 @@ void terminate_process(pcb_t *pcb) {
                     last = last->next;
                 }
                 if (current->next == current) {
+                    // Only one process in the queue
                     process_queue = NULL;
                 } else {
                     process_queue = current->next;
@@ -152,10 +207,26 @@ void terminate_process(pcb_t *pcb) {
                 }
             } else {
                 prev->next = current->next;
+                // If we're removing the last element, update the previous element's next pointer
+                if (current->next == process_queue) {
+                    prev->next = process_queue;
+                }
             }
-            kfree(current->page_directory);
-            kfree(current->stack);
+            
+            // Free allocated memory
+            if (current->page_directory) {
+                kfree(current->page_directory);
+            }
+            if (current->stack) {
+                kfree(current->stack);
+            }
             kfree(current);
+            
+            // If we just terminated the current process, update current_process
+            if (current_process == pcb) {
+                current_process = process_queue; // Point to the next process or NULL
+            }
+            
             break;
         }
         prev = current;
@@ -166,6 +237,45 @@ void terminate_process(pcb_t *pcb) {
 void initialize_process_system() {
     process_queue = NULL; // Initialize the process queue to be empty
     current_process = NULL; // No current process initially
+}
+
+// Function to get information about a process
+int get_process_info(int pid, pcb_t* info) {
+    // Check for valid parameters
+    if (!info || process_queue == NULL) {
+        return -1; // Invalid parameters
+    }
+    
+    // Search for the process with the given PID
+    pcb_t *current = process_queue;
+    do {
+        if (current->pid == pid) {
+            // Found the process, copy its information
+            *info = *current;
+            return 0; // Success
+        }
+        current = current->next;
+    } while (current != process_queue);
+    
+    return -1; // Process not found
+}
+
+// Function to get the number of active processes
+int get_process_count() {
+    if (process_queue == NULL) {
+        return 0;
+    }
+    
+    int count = 0;
+    pcb_t *current = process_queue;
+    do {
+        if (current->state != PROCESS_TERMINATED) {
+            count++;
+        }
+        current = current->next;
+    } while (current != process_queue);
+    
+    return count;
 }
 
 void sys_yield() {
