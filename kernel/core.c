@@ -34,6 +34,10 @@ void protect_tsc(void);
 #include "../drivers/rtc.h"
 #include "../drivers/serial.h"
 
+// External declarations for paging functions
+extern void init_paging(void);
+extern void enable_paging(void);
+
 multiboot_header_t mb_header = {
     .magic = 0x1BADB002,
     .flags = 0x0,
@@ -48,11 +52,18 @@ multiboot_header_t mb_header = {
 // Define VGA text mode buffer address
 volatile uint16_t *VideoMemory = (volatile uint16_t *)0xB8000; // 0xB8000 can be a Problem
 
+// Forward declaration of print function
+void print(const char *str);
+
 // Cursor position variables
 static uint8_t cursor_x = 0;
 static uint8_t cursor_y = 0;
 
 void move_cursor() {
+    // Ensure cursor position is within valid range
+    if (cursor_x >= 80) cursor_x = 79;
+    if (cursor_y >= 25) cursor_y = 24;
+    
     uint16_t cursorLocation = cursor_y * 80 + cursor_x;
     outb(0x3D4, 14);                  // Tell VGA board we are setting the high cursor byte
     outb(0x3D5, cursorLocation >> 8); // Send the high cursor byte
@@ -60,7 +71,56 @@ void move_cursor() {
     outb(0x3D5, cursorLocation);      // Send the low cursor byte
 }
 
+// VGA text mode color constants
+#define VGA_COLOR_BLACK 0
+#define VGA_COLOR_BLUE 1
+#define VGA_COLOR_GREEN 2
+#define VGA_COLOR_CYAN 3
+#define VGA_COLOR_RED 4
+#define VGA_COLOR_MAGENTA 5
+#define VGA_COLOR_BROWN 6
+#define VGA_COLOR_LIGHT_GRAY 7
+#define VGA_COLOR_DARK_GRAY 8
+#define VGA_COLOR_LIGHT_BLUE 9
+#define VGA_COLOR_LIGHT_GREEN 10
+#define VGA_COLOR_LIGHT_CYAN 11
+#define VGA_COLOR_LIGHT_RED 12
+#define VGA_COLOR_LIGHT_MAGENTA 13
+#define VGA_COLOR_YELLOW 14
+#define VGA_COLOR_WHITE 15
+
+// Default text color (light gray on black)
+static uint8_t default_color = VGA_COLOR_LIGHT_GRAY | (VGA_COLOR_BLACK << 4);
+
+void set_text_color(uint8_t foreground, uint8_t background) {
+    default_color = foreground | (background << 4);
+}
+
+void print_colored(const char *str, uint8_t foreground, uint8_t background) {
+    // Check for null pointer
+    if (!str) {
+        return;
+    }
+    
+    // Save current color
+    uint8_t saved_color = default_color;
+    
+    // Set new color
+    set_text_color(foreground, background);
+    
+    // Print the string
+    print(str);
+    
+    // Restore original color
+    default_color = saved_color;
+}
+
 void print(const char *str) {
+    // Check for null pointer
+    if (!str) {
+        return;
+    }
+    
     while (*str != '\0') {
         switch (*str) {
             case '\n':
@@ -74,8 +134,8 @@ void print(const char *str) {
                 }
                 break;
             default:
-                // Write character to VGA buffer at current cursor position
-                VideoMemory[cursor_y * 80 + cursor_x] = (VideoMemory[cursor_y * 80 + cursor_x] & 0xFF00) | *str;
+                // Write character to VGA buffer at current cursor position with color
+                VideoMemory[cursor_y * 80 + cursor_x] = (default_color << 8) | *str;
                 cursor_x++;
                 break;
         }
@@ -94,7 +154,7 @@ void print(const char *str) {
             }
             // Clear the last line
             for (int i = 24 * 80; i < 25 * 80; i++) {
-                VideoMemory[i] = (VideoMemory[i] & 0xFF00) | ' ';
+                VideoMemory[i] = (default_color << 8) | ' ';
             }
             cursor_y = 24;
         }
@@ -105,7 +165,7 @@ void print(const char *str) {
 }
 
 int sys_testputs(const char *str, void *unused1, void *unused2, void *unused3) {
-    print(str);
+    print_colored(str, VGA_COLOR_LIGHT_GREEN, VGA_COLOR_BLACK);
     print("\n");
 
     return 0;
@@ -191,7 +251,6 @@ char keyboard_isr() {
 
         if (shift_pressed && ascii >= 'a' && ascii <= 'z') {
             ascii -= ('a' - 'A');  // Convert to uppercase
-            shift_pressed = false; // Backup to ensure that the shift flag is false
         }
 
         // Handle special characters
@@ -199,30 +258,37 @@ char keyboard_isr() {
             if (input_len > 0) {
                 input_len--;
                 input_buffer[input_len] = '\0';
+                backspace_flag = true;  // Set backspace flag
             }
         } else if (ascii == '\r' || ascii == '\n') {  // Enter
             input_buffer[input_len] = '\0';
             input_len = 0;
-            enter_flag = true;
+            // Don't set enter_flag here, let the main loop handle it
         } else if (ascii != 0 && input_len < sizeof(input_buffer) - 1) {  // Regular character
             input_buffer[input_len] = ascii;
             input_len++;
             input_buffer[input_len] = '\0';
         }
+        
+        return ascii;  // Return the ASCII character
     }
+    
+    return 0;
 }
 
 char get_char() {
-    if (input_len > 0) {
-        char c = input_buffer[0];  // Read the first character in the buffer
-        for (int i = 0; i < input_len - 1; i++) {
-            input_buffer[i] = input_buffer[i + 1];  // Shift the buffer left
-        }
-        input_len--;  // Decrement length after reading
-        return c;
+    // Check for empty buffer
+    if (input_len <= 0) {
+        return 0;  // Return 0 if the buffer is empty
     }
-
-    return 0;  // Return 0 if the buffer is empty
+    
+    char c = input_buffer[0];  // Read the first character in the buffer
+    for (int i = 0; i < input_len - 1; i++) {
+        input_buffer[i] = input_buffer[i + 1];  // Shift the buffer left
+    }
+    input_len--;  // Decrement length after reading
+    input_buffer[input_len] = '\0';  // Null terminate
+    return c;
 }
 
 void setup_pit(uint16_t divisor) {
@@ -260,7 +326,16 @@ void kernel_main() {
 
     init_idt();
 
+    // Initialize paging before enabling it
+    init_paging();
     page_table_init();
+
+    // Enable paging
+    enable_paging();
+    
+    // Reinitialize VideoMemory pointer after paging is enabled
+    // This ensures we're using the correct virtual address
+    VideoMemory = (volatile uint16_t *)0xB8000;
 
     // audio_init();
 
@@ -306,9 +381,8 @@ void kernel_main() {
            while (1) {
                asm volatile("hlt");
                char c = get_char();
-               if (enter_flag == true) {
+               if (c == '\n' || c == '\r') {
                    command[command_len] = '\0';  // Null-terminate the command string
-                   enter_flag = false;
                    break;
                } else if (command_len < sizeof(command) - 1 && c != 0) {
                    command[command_len++] = c;

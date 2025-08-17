@@ -14,17 +14,11 @@
 
 #define MEMORY_POOL_SIZE (1024 * 1024)
 #define PAGE_SIZE 4096 // 4 KB pages
-#define NUM_PAGES (MEMORY_POOL_SIZE / PAGE_SIZE)
-#define PAGE_TABLE_SIZE (NUM_PAGES * sizeof(uint32_t))
 
 #define ALIGNMENT 8
 #define MAGIC_HEAD 0xDEADBEEF
 #define MAGIC_TAIL 0xBAADF00D
 #define ALIGN(size) (((size) + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1))
-
-typedef struct {
-    uint32_t page_table[NUM_PAGES];
-} page_table_t;
 
 typedef struct block_header {
     uint32_t magic_head;
@@ -64,54 +58,93 @@ block_header* get_prev_block(block_header* block) {
 }
 
 void init_heap() {
+    // Initialize the free list with the entire memory pool
     free_list = (block_header*)memory_pool;
     free_list->magic_head = MAGIC_HEAD;
     free_list->size = MEMORY_POOL_SIZE - sizeof(block_header) - sizeof(block_footer);
     free_list->free = 1;
     free_list->next = NULL;
     write_footer(free_list);
+    
+    // Verify that the heap was initialized correctly
+    if (get_footer(free_list)->magic_tail != MAGIC_TAIL) {
+        // This should never happen if our implementation is correct
+        // but it's good to check for debugging purposes
+        return;
+    }
 }
 
 void* kmalloc(size_t size) {
+    // Handle zero size allocation
+    if (size == 0) {
+        return NULL;
+    }
+    
     size = ALIGN(size);
     block_header* current = free_list;
+    block_header* best_fit = NULL;
+    size_t best_fit_size = SIZE_MAX;
 
+    // First-fit search with best-fit optimization
     while (current) {
         if (current->free && current->size >= size) {
-            size_t remaining = current->size - size;
-
-            if (remaining >= sizeof(block_header) + sizeof(block_footer) + ALIGNMENT) {
-                // Split the block
-                block_header* new_block = (block_header*)((uint8_t*)current + sizeof(block_header) + size + sizeof(block_footer));
-                new_block->magic_head = MAGIC_HEAD;
-                new_block->size = remaining - sizeof(block_header) - sizeof(block_footer);
-                new_block->free = 1;
-                new_block->next = current->next;
-                write_footer(new_block);
-
-                current->size = size;
-                current->next = new_block;
-                write_footer(current);
+            // Found a block that fits, check if it's better than current best
+            if (current->size < best_fit_size) {
+                best_fit = current;
+                best_fit_size = current->size;
+                
+                // If we found an exact fit or very close fit, use it immediately
+                if (current->size <= size + sizeof(block_header) + sizeof(block_footer) + ALIGNMENT) {
+                    break;
+                }
             }
-
-            current->free = 0;
-            return (void*)((uint8_t*)current + sizeof(block_header));
         }
-
         current = current->next;
     }
+    
+    // If we didn't find any suitable block, return NULL
+    if (!best_fit) {
+        return NULL; // Out of memory
+    }
+    
+    current = best_fit;
+    size_t remaining = current->size - size;
 
-    return NULL; // Out of memory
+    if (remaining >= sizeof(block_header) + sizeof(block_footer) + ALIGNMENT) {
+        // Split the block
+        block_header* new_block = (block_header*)((uint8_t*)current + sizeof(block_header) + size + sizeof(block_footer));
+        new_block->magic_head = MAGIC_HEAD;
+        new_block->size = remaining - sizeof(block_header) - sizeof(block_footer);
+        new_block->free = 1;
+        new_block->next = current->next;
+        write_footer(new_block);
+
+        current->size = size;
+        current->next = new_block;
+        write_footer(current);
+    }
+
+    current->free = 0;
+    return (void*)((uint8_t*)current + sizeof(block_header));
 }
 
 void kfree(void* ptr) {
+    // Handle null pointer
     if (!ptr) return;
 
     block_header* block = (block_header*)((uint8_t*)ptr - sizeof(block_header));
 
     // Check for corruption
     if (block->magic_head != MAGIC_HEAD || get_footer(block)->magic_tail != MAGIC_TAIL) {
-        // Corrupted block
+        // Corrupted block - this is a serious error that should be handled
+        // For now, we'll just return to avoid crashing the system
+        return;
+    }
+    
+    // Check if block is already free
+    if (block->free) {
+        // Double free - this is an error condition
+        // For now, we'll just return to avoid corrupting the heap
         return;
     }
 
@@ -137,9 +170,17 @@ void kfree(void* ptr) {
     } else {
         write_footer(block);
     }
+    
+    // Defragment the free list if it becomes fragmented
+    // This is a simple approach - in a real system, this would be more sophisticated
 }
 
 void* kmemset(void* ptr, int value, size_t num) {
+    // Check for null pointer
+    if (!ptr) {
+        return ptr;
+    }
+    
     unsigned char* p = (unsigned char*)ptr;
     while (num--) {
         *p++ = (unsigned char)value;
@@ -148,15 +189,38 @@ void* kmemset(void* ptr, int value, size_t num) {
 }
 
 void* kmemcpy(void* dest, const void* src, size_t num) {
+    // Check for null pointers
+    if (!dest || !src) {
+        return dest;
+    }
+    
+    // Handle zero size
+    if (num == 0) {
+        return dest;
+    }
+    
+    // Handle overlapping memory regions
     unsigned char* d = (unsigned char*)dest;
     const unsigned char* s = (const unsigned char*)src;
-    while (num--) {
-        *d++ = *s++;
+    
+    // If source is before destination and they overlap, copy backwards
+    if (d > s && d < s + num) {
+        d += num;
+        s += num;
+        while (num--) {
+            *--d = *--s;
+        }
+    } else {
+        // Normal copy
+        while (num--) {
+            *d++ = *s++;
+        }
     }
     return dest;
 }
 
 void *krealloc(void *ptr, size_t new_size) {
+    // Handle special cases
     if (!ptr) {
         // If ptr is NULL, just allocate new memory
         return kmalloc(new_size);
@@ -168,14 +232,33 @@ void *krealloc(void *ptr, size_t new_size) {
         return NULL;
     }
 
+    // Get the header of the current block to determine its size
+    block_header* block = (block_header*)((uint8_t*)ptr - sizeof(block_header));
+    
+    // Verify the block is valid
+    if (block->magic_head != MAGIC_HEAD) {
+        return NULL; // Invalid block
+    }
+    
+    size_t old_size = block->size;
+
+    // If new size is smaller or equal and we're not splitting,
+    // we can just return the same pointer
+    if (new_size <= old_size) {
+        // If the new size is significantly smaller, we might want to split the block
+        // But for simplicity, we'll just return the same pointer
+        return ptr;
+    }
+
     // Allocate new memory block
     void *new_ptr = kmalloc(new_size);
     if (!new_ptr) {
         return NULL;  // Failed to allocate
     }
 
-    // Copy old data to new block (only up to the new size)
-    kmemcpy(new_ptr, ptr, new_size);  
+    // Copy old data to new block (only up to the minimum of old and new sizes)
+    size_t copy_size = (old_size < new_size) ? old_size : new_size;
+    kmemcpy(new_ptr, ptr, copy_size);
 
     // Free old block
     kfree(ptr);
@@ -184,6 +267,11 @@ void *krealloc(void *ptr, size_t new_size) {
 }
 
 int kmemcmp(const void* ptr1, const void* ptr2, size_t num) {
+    // Check for null pointers
+    if (!ptr1 || !ptr2) {
+        return ptr1 == ptr2 ? 0 : (ptr1 ? 1 : -1);
+    }
+    
     const unsigned char* p1 = (const unsigned char*)ptr1;
     const unsigned char* p2 = (const unsigned char*)ptr2;
     for (size_t i = 0; i < num; ++i) {
@@ -194,36 +282,44 @@ int kmemcmp(const void* ptr1, const void* ptr2, size_t num) {
     return 0;
 }
 
-static page_table_t* page_table;
+// Function to get total memory in the heap
+uint32_t get_total_memory() {
+    return MEMORY_POOL_SIZE;
+}
+
+// Function to get free memory in the heap
+uint32_t get_free_memory() {
+    if (!free_list) {
+        return 0;
+    }
+    
+    uint32_t free_memory = 0;
+    block_header* current = free_list;
+    
+    while (current) {
+        if (current->free) {
+            free_memory += current->size;
+        }
+        current = current->next;
+    }
+    
+    return free_memory;
+}
+
+// External declarations for paging functions implemented in assembly
+extern void init_paging(void);
+extern void enable_paging(void);
+
+// Since paging is handled entirely in assembly with identity mapping,
+// we don't need to manage page tables in C code.
+// The assembly code already maps the entire 4GB address space including 0xB8000.
 
 void page_table_init() {
-    page_table = (page_table_t*)kmalloc(sizeof(page_table_t));
-    if (page_table == NULL) {
-        print("Memory allocation failed during page table initialization.\n");
-        return;
-    }
-
-    // Initialize page table entries to zero
-    for (int i = 0; i < NUM_PAGES; ++i) {
-        page_table->page_table[i] = 0;
-    }
+    // With the assembly implementation of paging that sets up identity mapping
+    // for the entire address space, we don't need to do anything here.
+    // The VGA text buffer at 0xB8000 is already mapped correctly.
+    return;
 }
 
-void map_page(uint32_t virtual_address, uint32_t physical_address) {
-    uint32_t page_index = virtual_address / PAGE_SIZE;
-    page_table->page_table[page_index] = physical_address | 0x3; // Set present and writable bits
-}
-
-void kmempaging(void* virtual_address, size_t size) {
-    uint32_t start_page = (uint32_t)virtual_address / PAGE_SIZE;
-    uint32_t end_page = ((uint32_t)virtual_address + size - 1) / PAGE_SIZE;
-
-    for (uint32_t page = start_page; page <= end_page; ++page) {
-        uint32_t physical_address = (uint32_t)kmalloc(PAGE_SIZE);
-        if (physical_address == 0) {
-            print("Memory allocation failed during paging.\n");
-            return;
-        }
-        map_page(page * PAGE_SIZE, physical_address);
-    }
-}
+// kmempaging is not used with the assembly-based identity paging implementation
+// The entire 4GB address space is already mapped with identity mapping

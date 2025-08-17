@@ -9,6 +9,7 @@
  */
 
 #include <stdint.h>
+#include <stddef.h>
 #include "interrupt.h"
 #include "print.h"
 #include "io.h"
@@ -64,6 +65,11 @@ void default_handler(void) {
 
 // Function to set an IDT entry
 void set_idt_entry(int interrupt_number, void (*handler)()) {
+    // Check for valid parameters
+    if (interrupt_number < 0 || interrupt_number >= IDT_ENTRIES || !handler) {
+        return;
+    }
+    
     idt[interrupt_number].offset_low = (uintptr_t)handler & 0xFFFF;
     idt[interrupt_number].selector = 0x08; // Kernel code segment selector
     idt[interrupt_number].zero = 0;
@@ -72,6 +78,11 @@ void set_idt_entry(int interrupt_number, void (*handler)()) {
 }
 
 void set_idt_entry_exception(int exception_number, void (*handler)()) {
+    // Check for valid parameters
+    if (exception_number < 0 || exception_number >= IDT_ENTRIES || !handler) {
+        return;
+    }
+    
     idt[exception_number].offset_low = (uintptr_t)handler & 0xFFFF;
     idt[exception_number].selector = 0x08; // Kernel code segment selector
     idt[exception_number].zero = 0;
@@ -107,11 +118,20 @@ void pit_isr() {
 
     kunk ^= 1;
 
-    schedule();
+    // Only schedule if process system is initialized
+    if (process_queue != NULL) {
+        schedule();
+    }
+    
     outb(0x20, 0x20);
 }
 
 void set_idt_entry_syscall(int interrupt_number, void (*handler)()) {
+    // Check for valid parameters
+    if (interrupt_number < 0 || interrupt_number >= IDT_ENTRIES || !handler) {
+        return;
+    }
+    
     idt[interrupt_number].offset_low = (uintptr_t)handler & 0xFFFF;
     idt[interrupt_number].selector = 0x08; // Kernel code segment selector
     idt[interrupt_number].zero = 0;
@@ -123,6 +143,15 @@ void set_idt_entry_syscall(int interrupt_number, void (*handler)()) {
 // Function to initialize the IDT
 void init_idt() {
     print("Preparing IDT...\n");
+
+    // Initialize all IDT entries to zero
+    for (int i = 0; i < IDT_ENTRIES; i++) {
+        idt[i].offset_low = 0;
+        idt[i].selector = 0;
+        idt[i].zero = 0;
+        idt[i].type_attr = 0;
+        idt[i].offset_high = 0;
+    }
 
     // Set specific IDT entries (e.g., software interrupt)
     set_idt_entry_syscall(0x80, software_isr_wrapper); // Software interrupt for syscalls
@@ -155,31 +184,42 @@ void init_idt() {
     // Load the IDT using the lidt instruction
     asm volatile("lidt %0" : : "m"(idtp));
 
+    // Initialize the PIC (Programmable Interrupt Controller)
+    print("Initializing PIC...\n");
+    
+    // Send ICW1: Start initialization sequence
     outb(0x20, 0x11);  // ICW1 for master PIC: begin initialization, cascade mode
     outb(0xA0, 0x11);  // ICW1 for slave PIC: same for slave PIC
 
     print("ICW1 set...\n");
 
+    // Send ICW2: Set interrupt vector offsets
     outb(0x21, 0x20);  // ICW2 for master PIC: vector offset 0x20
     outb(0xA1, 0x28);  // ICW2 for slave PIC: vector offset 0x28
 
     print("ICW2 set...\n");
 
+    // Send ICW3: Configure cascade mode
     outb(0x21, 0x04);  // ICW3 for master PIC: tell it the slave is on IRQ2
     outb(0xA1, 0x02);  // ICW3 for slave PIC: tell it the master is on IRQ2
 
     print("ICW3 set...\n");
  
+    // Send ICW4: Set operating mode
     outb(0x21, 0x01);  // ICW4 for master PIC: 8086 mode, no special features
     outb(0xA1, 0x01);  // ICW4 for slave PIC: 8086 mode, no special features
 
     print("ICW4 set...\n");
 
+    // Send OCW1: Set interrupt masks
     outb(0x21, 0xFF);  // Mask all IRQs on master PIC
     outb(0xA1, 0xFF);  // Mask all IRQs on slave PIC
+    
+    // Unmask specific IRQs we want to handle
     irq_clear_mask(1); // Unmask IRQ1 (keyboard)
     irq_clear_mask(0); // Unmask IRQ0 (PIT)
 
     print("OCW1 set...\n");
-
+    
+    print("IDT initialization complete.\n");
 }
