@@ -13,6 +13,11 @@
 
 #define NAME_MAX 255
 
+#define O_CREAT 0
+#define O_RDONLY 1
+#define O_WRONLY 2
+#define O_RDWR 3
+
 struct ramfs_node {
     char name[NAME_MAX];   // File name
     int is_directory;      // 1 if directory, 0 if file
@@ -47,12 +52,12 @@ struct ramfs_node *ramfs_find(struct ramfs_node *dir, const char *name) {
 }
 
 // Create or open a file
-struct ramfs_node *ramfs_open(const char *path) {
+struct ramfs_node *ramfs_open(const char *path, int flags) {
     // Assume path parsing is done and `parent_dir` is found
     struct ramfs_node *parent_dir = root;
     struct ramfs_node *file = ramfs_find(parent_dir, path);
     
-    if (!file) {  // Create if it doesn't exist
+    if (!file && flags == O_CREAT) {  // Create if it doesn't exist and O_CREAT is set
         file = kmalloc(sizeof(struct ramfs_node));
         my_strcpy(file->name, path);
         file->is_directory = 0;
@@ -62,6 +67,10 @@ struct ramfs_node *ramfs_open(const char *path) {
         file->next = parent_dir->children;
         parent_dir->children = file;
     }
+
+    else if (!file) // Return error if file doesn't exist and O_CREAT is not set
+        return -1;
+    
     return file;
 }
 
