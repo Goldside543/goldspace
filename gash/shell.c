@@ -23,6 +23,7 @@ const char *build_date = __DATE__;    // Compile date
 const char *build_time = __TIME__;    // Compile time
 
 void print(const char *str);
+static void int_to_string(int num, char* str);
 
 void shell_help() {
     print("\n");
@@ -35,6 +36,13 @@ void shell_help() {
     print("builddate - Print build date and time\n");
     print("mode13h - Switch to graphics mode 13h\n");
     print("scan - Scan PCI bus for devices\n");
+    print("kunk - Ask Kunk a yes/no question\n");
+    print("reboot - Reboot the system\n");
+    print("user - Switch to user mode\n");
+    print("vendor - Display CPU vendor information\n");
+    print("mandel - Render a Mandelbrot set\n");
+    print("calculate <num1> <operator> <num2> - Perform basic arithmetic\n");
+    print("\n");
 }
 
 void shell_echo(const char *message) {
@@ -175,11 +183,43 @@ double calculate(double num1, char operator, double num2) {
             if (num2 != 0)
                 return num1 / num2;
             else {
+                print("Error: Division by zero\n");
                 return 0; // Return 0 for error case
             }
         default:
+            print("Error: Invalid operator\n");
             return 0; // Return 0 for invalid operator
     }
+}
+
+// Helper function to convert integer to string
+static void int_to_string(int num, char* str) {
+    int i = 0, j = 0;
+    char temp[16];
+    
+    if (num == 0) {
+        str[0] = '0';
+        str[1] = '\0';
+        return;
+    }
+    
+    if (num < 0) {
+        str[0] = '-';
+        j = 1;
+        num = -num;
+    }
+    
+    // Convert number to string in reverse order
+    while (num > 0) {
+        temp[i++] = (num % 10) + '0';
+        num /= 10;
+    }
+    
+    // Reverse the string to get correct order
+    for (int k = 0; k < i; k++) {
+        str[j++] = temp[i - k - 1];
+    }
+    str[j] = '\0';
 }
 
 int isspace(char c) {
@@ -187,6 +227,8 @@ int isspace(char c) {
 }
 
 double atof(const char *str) {
+    if (!str) return 0.0;
+    
     double result = 0.0;
     double sign = 1.0;
     int i = 0;
@@ -225,6 +267,8 @@ double atof(const char *str) {
 }
 
 double shell_calculate(const char *args) {
+    if (!args) return 0.0;
+    
     int state = 0;  // 0 = reading number 1, 1 = reading operator, 2 = reading number 2
     char current_char;
     char num1_str[100], num2_str[100];  // Temporary storage for numbers as strings
@@ -232,15 +276,23 @@ double shell_calculate(const char *args) {
     double num1 = 0, num2 = 0;
     char operator = '\0';
 
+    // Initialize arrays
+    for (int i = 0; i < sizeof(num1_str); i++) num1_str[i] = 0;
+    for (int i = 0; i < sizeof(num2_str); i++) num2_str[i] = 0;
+
     while ((current_char = *args++) != '\0') {
         switch (state) {
             case 0: // Reading number 1
                 if (current_char == ' ') {
-                    num1_str[num1_idx] = '\0';  // Null-terminate the first number string
-                    num1 = atof(num1_str);  // Convert the first number to a double
-                    state = 1;  // Move to reading operator
+                    if (num1_idx > 0) {
+                        num1_str[num1_idx] = '\0';  // Null-terminate the first number string
+                        num1 = atof(num1_str);  // Convert the first number to a double
+                        state = 1;  // Move to reading operator
+                    }
                 } else {
-                    num1_str[num1_idx++] = current_char;
+                    if (num1_idx < sizeof(num1_str) - 1) {
+                        num1_str[num1_idx++] = current_char;
+                    }
                 }
                 break;
 
@@ -252,15 +304,20 @@ double shell_calculate(const char *args) {
                 break;
 
             case 2: // Reading number 2
-                if (current_char != '\0' && current_char != ' ') {
-                    num2_str[num2_idx++] = current_char;
-                } else if (current_char == '\0') {
-                    num2_str[num2_idx] = '\0';  // Null-terminate the second number string
-                    num2 = atof(num2_str);  // Convert the second number to a double
-                    state = 3;  // We are done, go to the calculation step
+                if (current_char != ' ') {
+                    if (num2_idx < sizeof(num2_str) - 1) {
+                        num2_str[num2_idx++] = current_char;
+                    }
                 }
                 break;
         }
+    }
+
+    // Handle the last number if we're still in state 2
+    if (state == 2 && num2_idx > 0) {
+        num2_str[num2_idx] = '\0';  // Null-terminate the second number string
+        num2 = atof(num2_str);  // Convert the second number to a double
+        state = 3;  // We are done, go to the calculation step
     }
 
     // After parsing the inputs, call the calculate function
@@ -268,6 +325,7 @@ double shell_calculate(const char *args) {
         double result = calculate(num1, operator, num2);
         return result;
     } else {
+        print("Error: Invalid expression format\n");
         return 0;
     }
 }
@@ -283,6 +341,43 @@ void shell_render() {
     draw_rectangle(50, 75, 100, 50, 1);    
     print("\n");
     print("GPU render executed.\n");
+}
+
+void shell_sysinfo() {
+    print("\n");
+    print("=== Goldspace System Information ===\n");
+    print("Kernel Version: Beta 1.2.0\n");
+    print("Architecture: x86 (32-bit)\n");
+    print("Build Date: ");
+    print(build_date);
+    print("\n");
+    print("Build Time: ");
+    print(build_time);
+    print("\n");
+    
+    // Display memory information
+    extern uint32_t get_free_memory();
+    extern uint32_t get_total_memory();
+    char mem_str[32];
+    int_to_string(get_total_memory() / 1024, mem_str);
+    print("Total Memory: ");
+    print(mem_str);
+    print(" KB\n");
+    
+    int_to_string(get_free_memory() / 1024, mem_str);
+    print("Free Memory: ");
+    print(mem_str);
+    print(" KB\n");
+    
+    // Display process information
+    extern int get_process_count();
+    int process_count = get_process_count();
+    int_to_string(process_count, mem_str);
+    print("Active Processes: ");
+    print(mem_str);
+    print("\n");
+    
+    print("====================================\n");
 }
 
 void shell_execute_command(const char *command) {
@@ -339,8 +434,41 @@ void shell_execute_command(const char *command) {
         shell_mandelbrot();
     } else if (my_strcmp(command_name, "calculate") == 0) {
         if (*args != '\0') {
-            char calculated_number = shell_calculate(args);
-            char str[15] = {calculated_number, '\0'};
+            double result = shell_calculate(args);
+            // Convert the result to a string
+            char str[32];
+            // Simple conversion for integer results
+            if (result == (int)result) {
+                int_to_string((int)result, str);
+            } else {
+                // For floating point, we'll just show 2 decimal places
+                int whole = (int)result;
+                int fractional = (int)((result - whole) * 100);
+                if (fractional < 0) fractional = -fractional; // Handle negative
+                char whole_str[16], fractional_str[16];
+                int_to_string(whole, whole_str);
+                int_to_string(fractional, fractional_str);
+                
+                // Combine strings
+                int i = 0, j = 0;
+                // Handle negative sign for whole part
+                if (result < 0 && whole >= 0) {
+                    str[j++] = '-';
+                }
+                while (whole_str[i] != '\0') {
+                    str[j++] = whole_str[i++];
+                }
+                str[j++] = '.';
+                // Ensure two digits for fractional part
+                if (fractional < 10) {
+                    str[j++] = '0';
+                }
+                i = 0;
+                while (fractional_str[i] != '\0') {
+                    str[j++] = fractional_str[i++];
+                }
+                str[j] = '\0';
+            }
             print("\n");
             print(str);
             print("\n");
@@ -348,10 +476,13 @@ void shell_execute_command(const char *command) {
             print("\n");
             print("calculate: missing arguments\n");
         }
+    } else if (my_strcmp(command_name, "sysinfo") == 0) {
+        shell_sysinfo();
     } else {
         print("\n");
         print("Unknown command: ");
         print(command_name);
         print("\n");
+        print("Type 'help' for a list of available commands.\n");
     }
 }

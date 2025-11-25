@@ -42,7 +42,8 @@ void execute_program(const void *program_code, size_t size, char **argv) {
         }
 
         kmemcpy(segment_memory, (const uint8_t *)program_code + prog_header->p_offset, prog_header->p_filesz);
-        kmempaging(segment_memory, prog_header->p_memsz);
+        // With identity paging, we don't need to explicitly map pages
+        // The entire address space is already mapped
     }
 
     // Get entry point from ELF header
