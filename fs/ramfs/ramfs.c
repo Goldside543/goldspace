@@ -68,8 +68,8 @@ struct ramfs_node *ramfs_open(const char *path, int flags) {
         parent_dir->children = file;
     }
 
-    else if (!file) // Return error if file doesn't exist and O_CREAT is not set
-        return -1;
+    else if (!file) // Return nothing if file doesn't exist and O_CREAT is not set
+        return;
     
     return file;
 }
