@@ -69,7 +69,7 @@ struct ramfs_node *ramfs_open(const char *path, int flags) {
     }
 
     else if (!file) // Return nothing if file doesn't exist and O_CREAT is not set
-        return;
+        return NULL;
     
     return file;
 }
