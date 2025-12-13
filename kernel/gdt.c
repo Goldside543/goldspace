@@ -14,9 +14,8 @@
 
 // GDT entries
 #define GDT_SIZE 6
-
-// User: everything above 0x0C800000 (up to 0xFFFFFFFF)
-#define USER_LIMIT ((0xFFFFFFFF / 0x1000) - 1)
+#define USER_SIZE  0xF0000000   // Around 3.75 GB of memory can be used by userspace
+#define USER_LIMIT ((USER_SIZE - 1) >> 12)
 
 // TSS (Task State Segment) structure
 struct tss_entry {
