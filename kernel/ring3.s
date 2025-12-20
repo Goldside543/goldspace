@@ -14,10 +14,10 @@ jump_usermode:
     cli                          # Clear interrupts
 
     movw $0x23, %ax              # Load 3 into eax
-    movl %ax, %ds                # Move the value into ds
-    movl %ax, %es                # Move the value into es
-    movl %ax, %fs                # Move the value into fs
-    movl %ax, %gs                # Move the value into gs
+    movw %ax, %ds                # Move the value into ds
+    movw %ax, %es                # Move the value into es
+    movw %ax, %fs                # Move the value into fs
+    movw %ax, %gs                # Move the value into gs
 
     # Set up the stack frame iret expects
     movl $user_stack + 8192, %eax  # Move current esp into eax
