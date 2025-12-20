@@ -13,7 +13,7 @@ user_stack:
 jump_usermode:
     cli                          # Clear interrupts
 
-    movl $0x23, %ax              # Load 3 into eax
+    movw $0x23, %ax              # Load 3 into eax
     movl %ax, %ds                # Move the value into ds
     movl %ax, %es                # Move the value into es
     movl %ax, %fs                # Move the value into fs
