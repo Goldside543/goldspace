@@ -9,7 +9,7 @@
  *
  */
 
-void puts(const char *str) {
+void __attribute__((section(".userland"))) puts(const char *str) {
     asm volatile (
         "mov %[str], %%ebx;"   // Push the string argument onto the stack
         "mov $8, %%eax;"       // Load syscall number (8) into eax
@@ -20,7 +20,7 @@ void puts(const char *str) {
     );
 }
 
-int run_user_space() {
+int __attribute__((section(".userland"))) run_user_space() {
    puts("Hello, ring 3 and system calls!");
 
    for (;;) {
