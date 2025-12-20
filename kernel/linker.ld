@@ -9,6 +9,7 @@ MEMORY {
     CODE      : ORIGIN = 0x00100000, LENGTH = 8M
     DATA      : ORIGIN = 0x06000000, LENGTH = 8M
     RO_DATA   : ORIGIN = 0x0C000000, LENGTH = 8M
+    USERLAND  : ORIGIN = 0x0C800000, LENGTH = 8M
 }
 
 /* Define sections */
@@ -46,6 +47,10 @@ SECTIONS {
         *(.bss.*)        /* Uninitialized data from Rust */
         *(COMMON)
     } > DATA
+
+    .userland : ALIGN(0x1000) {
+        *(.userland)
+    } > USERLAND
 
     /* Exception handling frames (used by Rust, if applicable) */
     .eh_frame : ALIGN(0x1000) {  /* Align to 4KB pages */
