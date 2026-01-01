@@ -1,5 +1,7 @@
 ![Drawing](https://github.com/user-attachments/assets/341a14bd-a23a-4742-ac67-bb30a29c6892)
 
+# IMPORTANT NOTE
+Welp, it's 2026, and I decided to review Goldspace's code again, and I really don't think I can salvage it. Too many mistakes from when I didn't know better. Gonna end things here, learn, and try again with a new OS called Ultraspace, coming soon.
 # Goldspace
 Crappy Unix-like kernel I'm making. We've got the bootloader, the kernel, the linker script, the Gash shell, the Makefile...
 It's practically better than Linux.
